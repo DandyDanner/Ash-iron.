@@ -65,7 +65,7 @@ func run() -> void:
 	check(Profile.load_profile() == Profile.clean(expected), "Saved appearance differs from selection")
 	var player := current_scene.get_node("Player")
 	check(player.identity_label.text.contains("Rowan"), "World HUD lost the chosen identity")
-	check(player.camera.get_child_count() == 4, "First-person hands and sleeves missing")
+	check(player.camera.has_node("LeftHand") and player.camera.has_node("StarterAxe/RightHand"), "First-person hands and sleeves missing")
 	await capture("traveler-in-clearing.png")
 	var event := InputEventKey.new()
 	event.pressed = true

@@ -29,7 +29,10 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - Backgrounds and keepsakes are cosmetic. Classes and abilities are deferred.
 - `W A S D` — move
 - `Shift` — sprint
+- `Space` — jump
 - Mouse — look
+- Left click — swing the starter axe (while the mouse is captured)
+- `E` — collect a wood bundle while aiming at it
 - `Esc` — release mouse
 - Click game window — capture mouse again
 - `C` — return to character creation (re-entering resets the test clearing)
@@ -42,6 +45,18 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 4. Create your traveler, then enter the tiny placeholder 3D test area.
 
 Your name and appearance are saved locally between launches. They are separate from future gameplay save data. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
+
+## Try jumping and chopping
+
+If the game is already running, stop it with the editor's square **Stop** button, then press **Run Project** again to load the changes. No new download is needed when using this project folder.
+
+After entering the clearing, walk toward the pine directly ahead. Press **Space** to jump. Get close enough to see the chopping prompt, aim the crosshair at the trunk, and click four times. Each full axe swing deals one hit. When the tree falls, look down at the bundled logs and press **E** to collect five wood. The wood total appears at the upper left.
+
+The axe starts equipped for every background. It has a visible swing, contact feedback, wood chips, and simple swing/impact sounds. Obstacles block hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point.
+
+Wood and harvested trees currently reset when restarting the clearing or returning through character creation. Persistent inventory, home drop-off, and a bow are future work.
+
+Gameplay verification: run `Godot --headless --path . --script res://tests/jump_axe_test.gd` using your Godot executable. This covers jumping and landing, preventing double jumps, axe reach, blocked hits, swing cooldown, tree felling, one-time pickup, resuming mouse capture, and recovery after falling off the map.
 
 ## First milestone
 

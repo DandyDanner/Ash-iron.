@@ -15,6 +15,7 @@ If it fails two of the three, cut or defer it.
 - [x] Godot project scaffold
 - [x] Simple 3D test scene
 - [x] First-person walking/mouselook
+- [x] Jumping, landing, and recovery after falling off the test clearing
 - [ ] Establish project naming conventions
 - [x] Confirm clean launch on M2 Mac (Godot 4.7.2)
 - [x] First character-creation prototype: cosmetic backgrounds, editable appearance, keepsake, local profile save
@@ -33,10 +34,10 @@ Goal: make simply moving through the prototype world feel competent.
 
 Goal: walk out, collect one thing, bring it home.
 
-- [ ] Interactable tree
-- [ ] Axe swing
-- [ ] Tree health / hit response
-- [ ] Wood pickup
+- [x] Interactable tree
+- [x] Axe swing
+- [x] Tree health / hit response
+- [x] Wood pickup (five wood per tree; session-only HUD counter)
 - [ ] Minimal inventory
 - [ ] Home/workshop drop-off or connected storage
 
