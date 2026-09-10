@@ -1,0 +1,123 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
+
+[sub_resource type="StandardMaterial3D" id="MatGround"]
+albedo_color = Color(0.32, 0.48, 0.25, 1)
+roughness = 1.0
+
+[sub_resource type="BoxMesh" id="MeshGround"]
+material = SubResource("MatGround")
+size = Vector3(40, 0.4, 40)
+
+[sub_resource type="BoxShape3D" id="ShapeGround"]
+size = Vector3(40, 0.4, 40)
+
+[sub_resource type="StandardMaterial3D" id="MatRock"]
+albedo_color = Color(0.42, 0.43, 0.39, 1)
+roughness = 0.95
+
+[sub_resource type="BoxMesh" id="MeshRock"]
+material = SubResource("MatRock")
+size = Vector3(3, 2, 3)
+
+[sub_resource type="BoxShape3D" id="ShapeRock"]
+size = Vector3(3, 2, 3)
+
+[sub_resource type="CapsuleShape3D" id="ShapePlayer"]
+radius = 0.45
+height = 1.8
+
+[sub_resource type="Environment" id="EnvWorld"]
+background_mode = 1
+background_color = Color(0.53, 0.72, 0.87, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72, 0.78, 0.70, 1)
+ambient_light_energy = 0.75
+
+[sub_resource type="StandardMaterial3D" id="MatTree"]
+albedo_color = Color(0.24, 0.14, 0.07, 1)
+roughness = 1.0
+
+[sub_resource type="CylinderMesh" id="MeshTree"]
+material = SubResource("MatTree")
+top_radius = 0.35
+bottom_radius = 0.5
+height = 5.0
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("EnvWorld")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -35, 0)
+light_energy = 1.1
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("MeshGround")
+
+[node name="Collision" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("ShapeGround")
+
+[node name="Rock1" type="StaticBody3D" parent="."]
+position = Vector3(5, 1, -7)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rock1"]
+mesh = SubResource("MeshRock")
+
+[node name="Collision" type="CollisionShape3D" parent="Rock1"]
+shape = SubResource("ShapeRock")
+
+[node name="Rock2" type="StaticBody3D" parent="."]
+position = Vector3(-6, 1, -11)
+scale = Vector3(0.6, 1.4, 0.8)
+
+[node name="Mesh" type="MeshInstance3D" parent="Rock2"]
+mesh = SubResource("MeshRock")
+
+[node name="Collision" type="CollisionShape3D" parent="Rock2"]
+shape = SubResource("ShapeRock")
+
+[node name="Tree1" type="MeshInstance3D" parent="."]
+position = Vector3(8, 2.5, 2)
+mesh = SubResource("MeshTree")
+
+[node name="Tree2" type="MeshInstance3D" parent="."]
+position = Vector3(-8, 2.5, -4)
+mesh = SubResource("MeshTree")
+
+[node name="Tree3" type="MeshInstance3D" parent="."]
+position = Vector3(2, 2.5, -13)
+mesh = SubResource("MeshTree")
+
+[node name="Player" type="CharacterBody3D" parent="."]
+position = Vector3(0, 1.1, 6)
+script = ExtResource("1_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+shape = SubResource("ShapePlayer")
+
+[node name="Camera3D" type="Camera3D" parent="Player"]
+position = Vector3(0, 0.65, 0)
+current = true
+fov = 75.0
+
+[node name="Crosshair" type="Label" parent="Player/Camera3D"]
+offset_left = -8.0
+offset_top = -12.0
+offset_right = 8.0
+offset_bottom = 12.0
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2

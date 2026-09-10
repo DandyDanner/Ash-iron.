@@ -1,0 +1,14 @@
+# Godot 4+
+.godot/
+/export/
+*.tmp
+
+# macOS
+.DS_Store
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Local scratch
+scratch/
