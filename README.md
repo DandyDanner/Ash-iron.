@@ -25,18 +25,23 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 
 ## Starter controls
 
+- The project opens with character creation. Choose a background, customize your traveler, pick a keepsake, then select **Begin your journey**.
+- Backgrounds and keepsakes are cosmetic. Classes and abilities are deferred.
 - `W A S D` — move
 - `Shift` — sprint
 - Mouse — look
 - `Esc` — release mouse
 - Click game window — capture mouse again
+- `C` — return to character creation (re-entering resets the test clearing)
 
 ## Run it
 
 1. Install the current stable Godot 4 release for Apple Silicon.
 2. Open `project.godot` in Godot.
-3. Press the Play button (or F6/F5 as appropriate).
-4. You should spawn into a tiny placeholder 3D test area.
+3. Press **F5** or the **Run Project** button in the top-right. On some Mac keyboards use **Fn + F5**.
+4. Create your traveler, then enter the tiny placeholder 3D test area.
+
+Your name and appearance are saved locally between launches. They are separate from future gameplay save data. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
 
 ## First milestone
 

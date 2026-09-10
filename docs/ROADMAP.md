@@ -16,7 +16,8 @@ If it fails two of the three, cut or defer it.
 - [x] Simple 3D test scene
 - [x] First-person walking/mouselook
 - [ ] Establish project naming conventions
-- [ ] Confirm clean launch on M2 Mac
+- [x] Confirm clean launch on M2 Mac (Godot 4.7.2)
+- [x] First character-creation prototype: cosmetic backgrounds, editable appearance, keepsake, local profile save
 
 ## Phase 1 — Ten good seconds
 
@@ -83,3 +84,4 @@ Do not build these until the core loop is proven:
 - Dynamic ecosystem simulation
 - Cart/wagon
 - Multiplayer
+- Background classes and abilities (background selection is cosmetic for now)
