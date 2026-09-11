@@ -6,9 +6,11 @@ const Pickup = preload("res://scripts/resource_pickup.gd")
 const Bundle = preload("res://scripts/wood_bundle.gd")
 const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const Boar = preload("res://scripts/bristleback.gd")
 const Bench = preload("res://scripts/workbench.gd")
 const AUTOSAVE_INTERVAL := 15.0
 const DIRTY_DELAY := 1.0
+var boar: Node3D
 var player: Node3D
 var dirty := false
 var since_save := 0.0
@@ -20,6 +22,10 @@ signal quit_requested
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
 	player = get_node_or_null("Player")
+	boar = Boar.new()
+	boar.name = "Bristleback"
+	boar.position = Boar.HOME
+	add_child(boar)
 	var data := GameSave.load_state()
 	if not data.is_empty():
 		_apply(data)
@@ -89,6 +95,7 @@ func to_data() -> Dictionary:
 		if not arrow.is_queued_for_deletion() and not arrow.landed:
 			arrows.append(arrow.to_data())
 	return {
+		"boar": boar.to_data(),
 		"arrows": arrows,
 		"boulders": boulders,
 		"player": {
@@ -96,7 +103,7 @@ func to_data() -> Dictionary:
 			"yaw": player.rotation.y, "pitch": player.camera.rotation.x,
 			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped,
 			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate(),
-			"third_person": player.view_rig.third_person
+			"third_person": player.view_rig.third_person, "health": player.health
 		},
 		"workbenches": workbenches,
 		"trees": trees, "pickups": pickups, "bundles": bundles, "chests": chests
@@ -162,7 +169,9 @@ func _apply(data: Dictionary) -> void:
 			if str(_dict(entry).get("name", "")) == str(rock.name):
 				rock.restore(int(_num(_dict(entry).get("hits_left"), 4.0)))
 	var saved := _dict(data.get("player"))
+	boar.restore(_dict(data.get("boar")))
 	if player:
+		player.health = clampi(int(_num(saved.get("health"), 100)), 1, 100)
 		player.inventory.restore(saved.get("slots", []))
 		player.restore_equipment(saved)
 		var spot := _vec(saved, player.global_position)

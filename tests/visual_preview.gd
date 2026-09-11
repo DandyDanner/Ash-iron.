@@ -38,7 +38,7 @@ func _ready() -> void:
 	player.camera.rotation.x = -0.12
 	player._capture_controls(true)
 	var label := Label.new()
-	label.text = "VISUAL PREVIEW • Temporary inventory / save • O: portrait • J/U/T: axe/pick/spear poses • K: drawn bow • L: orbit • P: capture"
+	label.text = "VISUAL PREVIEW • Temporary inventory / save • B: boar encounter • N: boar portrait • O: traveler • J/U/T: axe/pick/spear poses • K: drawn bow • L: orbit • P: capture"
 	label.position = Vector2(24, 120)
 	label.add_theme_font_size_override("font_size", 13)
 	var hud := CanvasLayer.new()
@@ -47,6 +47,25 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and is_instance_valid(preview_player):
+		if event.physical_keycode == KEY_B:
+			if is_instance_valid(portrait): portrait.queue_free()
+			portrait = null
+			preview_player.global_position = world.boar.global_position + Vector3(0, 0.9, 6)
+			preview_player.rotation = Vector3.ZERO
+			preview_player.camera.rotation = Vector3(-0.15, 0, 0)
+			preview_player.equip_item("stone_spear")
+			preview_player.view_rig.set_physics_process(true)
+			preview_player.view_rig.set_mode(true)
+			preview_player._capture_controls(true)
+		if event.physical_keycode == KEY_N:
+			preview_player._capture_controls(false)
+			if is_instance_valid(portrait): portrait.queue_free()
+			portrait = Camera3D.new()
+			portrait.fov = 42
+			add_child(portrait)
+			portrait.global_position = world.boar.global_position + Vector3(3, 1.9, 3.6)
+			portrait.look_at(world.boar.global_position + Vector3.UP * 0.65)
+			portrait.make_current()
 		if event.physical_keycode == KEY_O:
 			if is_instance_valid(portrait):
 				portrait.queue_free()

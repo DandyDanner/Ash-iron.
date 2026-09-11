@@ -64,17 +64,19 @@ Goal: walk out, collect one thing, bring it home.
 
 ## Phase 4 — Danger
 
-Current agreed order: finish the stone spear, add one enemy with readable attacks and spear/bow hit responses, then return to ore → smelter → ingots → an iron weapon upgrade. Keep the same clearing while proving this loop.
+Current agreed order: stone spear and first Bristleback Boar are playable; next comes ore → smelter → ingots → an iron weapon upgrade. Keep the same clearing while proving this loop.
 
 - [x] Craftable stone spear, forward thrust, hotbar/save support, and practice-target melee hits
 
-- [ ] One animal/enemy archetype
-- [ ] Health/stamina
+- [x] First animal/enemy: territorial Bristleback Boar, warning, straight charge, recovery, and one hide reward
+- [x] Player/enemy health, safe camp recovery, and defeat returning the player with inventory intact
+- [ ] Stamina
 - [x] Craftable bow and arrows, draw/release, ballistics, recovery, practice target, and saved flight state
-- [ ] Bow damage against the first animal/enemy
-- [ ] Damage reactions
+- [x] Spear and bow damage against the first animal/enemy
+- [x] Basic hit recoil and health feedback
 - [ ] Death + recoverable carried loot
 - [ ] Basic day/night pressure
+- [ ] Later wildlife progression: Woodland Hog → Ridgeback Boar → Meadow Buck; bear after those
 
 ## Phase 5 — Prototype 0.1
 

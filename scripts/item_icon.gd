@@ -35,6 +35,9 @@ func _draw() -> void:
 				draw_rect(Rect2(center + Vector2(x - 3, -17), Vector2(6, 37)), Color("4a4640"))
 			draw_rect(Rect2(center + Vector2(-4, -8), Vector2(8, 9)), Color("c9b47a"))
 
+		"boar_hide":
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-24, -20), center + Vector2(-8, -16), center + Vector2(10, -22), center + Vector2(23, -13), center + Vector2(16, 4), center + Vector2(22, 23), center + Vector2(0, 17), center + Vector2(-21, 25), center + Vector2(-16, 2)]), Color("9b6744"))
+			draw_line(center + Vector2(-3, -14), center + Vector2(3, 15), Color("cfb786"), 3, true)
 		"stone_spear":
 			draw_line(center + Vector2(-16, 25), center + Vector2(10, -17), Color("b8915d"), 4, true)
 			draw_colored_polygon(PackedVector2Array([center + Vector2(19, -28), center + Vector2(2, -19), center + Vector2(7, -10), center + Vector2(16, -14)]), Color("a9b6a0"))

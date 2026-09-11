@@ -16,6 +16,9 @@ func _ready() -> void:
 	collision.shape = shape
 	add_child(collision)
 	match item_id:
+		"boar_hide":
+			Model.box(self, Vector3(0, 0.06, 0), Vector3(0.45, 0.08, 0.34), Color("805138"))
+			Model.box(self, Vector3(0, 0.107, 0), Vector3(0.05, 0.015, 0.36), Color("c5af7f"))
 		"stick":
 			for i in range(2):
 				var branch := Model.cylinder(self, Vector3((i - 0.5) * 0.15, 0.08, 0), 0.035, 0.68, Color("a07a4e"), 0.021)

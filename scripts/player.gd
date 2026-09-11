@@ -25,6 +25,10 @@ const JUMP_BUFFER := 0.12
 @export var jump_speed: float = 5.4
 @onready var camera: Camera3D = $Camera3D
 
+var health := 100
+var damage_grace := 0.0
+var heal_delay := 0.0
+var heal_clock := 0.0
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var identity_label: Label
 var resource_label: Label
@@ -196,6 +200,14 @@ func _cancel_actions() -> void:
 func _physics_process(delta: float) -> void:
 	if not controls_active:
 		return
+	damage_grace = maxf(0, damage_grace - delta)
+	heal_delay = maxf(0, heal_delay - delta)
+	if health < 100 and heal_delay == 0 and global_position.distance_to(spawn_position) < 6:
+		heal_clock += delta
+		if heal_clock >= 0.25:
+			heal_clock = 0
+			health = mini(100, health + 1)
+			_progress_changed()
 	bow.advance(delta)
 	grounded_grace = JUMP_GRACE if is_on_floor() else maxf(0.0, grounded_grace - delta)
 	if not is_on_floor():
@@ -279,6 +291,25 @@ func _spear_target() -> Dictionary:
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(1) * Axe.SPEAR_REACH, 1, [get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
+func receive_damage(amount: int) -> bool:
+	if not controls_active or amount <= 0 or damage_grace > 0: return false
+	health = maxi(0, health - amount)
+	damage_grace = 1.0
+	heal_delay = 8.0
+	if health == 0:
+		_cancel_actions()
+		global_position = spawn_position
+		velocity = Vector3.ZERO
+		health = 100
+		damage_grace = 3.0
+		_show_feedback("Back at camp • Your backpack is safe. Prepare and try again.")
+		feedback_time = 4.0
+	else:
+		_show_feedback("Boar hit! • Sidestep its charge, then counterattack.")
+	_progress_changed()
+	_update_hud()
+	return true
+
 func _show_feedback(text: String) -> void:
 	feedback = text
 	feedback_time = 1.2
@@ -336,6 +367,7 @@ func _interaction_target() -> Node3D:
 
 func _update_hud() -> void:
 	resource_label.text = "%s   /   PACK %d / 8" % [Inventory.ITEMS[equipped_item].name.to_upper() if not equipped_item.is_empty() else "EMPTY HANDS", inventory.used_slots()]
+	resource_label.text += "   /   HEALTH %d / 100" % health
 	if equipped_item == "bow":
 		resource_label.text += "   /   ARROWS %d" % inventory.count("arrow")
 	if is_instance_valid(hotbar_view):
