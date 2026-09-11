@@ -66,7 +66,23 @@ Reviewed all 36 actual renders across the four profile passes. Cycle 12 retains 
 
 Native verification reopened all four files: all eight visible model collections, all three packed references, finite face vertices, and 890 non-face objects retained identical geometry, transforms, and material assignments. All fourteen gameplay suites passed with exit 0. No world, gameplay, balance, save, or playable model changes.
 
-**Continue from `cycle_12/characters.blend`.** Next is a substantial garment pass: sloping cape shoulders and natural folds, shaped jacket/sleeve joins, gathered cuffs/scarves, and equipment clearance. Preserve current faces/hair. To reproduce the profile checkpoint in a fresh folder: `Blender --background --factory-startup --python tools/blender/refine_traveler_profiles.py -- --art-pass=99 --refinement=4`; it intentionally reads cycle 8 and therefore must not overwrite later clothing work.
+At the end of the profile pass, the continuation source was `cycle_12/characters.blend`. Next is a substantial garment pass: sloping cape shoulders and natural folds, shaped jacket/sleeve joins, gathered cuffs/scarves, and equipment clearance. Preserve current faces/hair. To reproduce the profile checkpoint in a fresh folder: `Blender --background --factory-startup --python tools/blender/refine_traveler_profiles.py -- --art-pass=99 --refinement=4`; it intentionally reads cycle 8 and therefore must not overwrite later clothing work.
+
+## Cycles 13–15 — overnight garment reconstruction
+
+Loaded cycle 12 and rebuilt all four travelers' sleeves/cuffs, the scout's cape and teal sash, the wayfarer's closed poncho, both scarves and the ranger jacket. Facial profiles, hair, bodies and animals remain intact. Each saved pass includes front/rear lineups, four outfit closeups and a scout side view.
+
+Cycle 13 replaces the flat cape shoulders with a sloping silhouette, adds fuller gathered sleeves and rolled fabric cuffs, a longer closed poncho with woven borders, and shaped jacket panels/lapels. The review caught buried straps/scarf, the scout sash intersecting a pouch, a visible wrap seam, jacket back coverage gaps, and capes that still resembled stiff domes.
+
+Cycle 14 increases cape folds, reduces front/back depth, raises and broadens scarves, reconstructs the ranger's jacket back, draws sleeve starts farther into the shoulder, gives the forager cream cuff linings, and moves the sash tail behind the pouch. Rebuilt the cape straps to follow the actual cloth surface. The closeups then exposed ochre sleeve patches through the poncho and abrupt strap bends at the cape edge; the sash wrap also had a non-periodic fold phase.
+
+Cycle 15 adds clearance around the sleeve volumes, eases the strap depth transition across cape edges, moves strap stitches above the leather surface, and makes the sash fold phase periodic. These are static model corrections; there is no animated cloth or equipment-clearance approval.
+
+Reviewed all 21 actual images from the three garment passes. The final front/three-quarter views no longer show the ochre sleeve patches through the poncho or sash through the pouch; the scarf and stitched straps are visible and the sash seam is corrected. Remaining issues are visible: capes still have a stiff overall shape, shoulder joins and shirt collars need a more integrated construction, the scarf/sash folds repeat too regularly, and the scout side view shows the strap standing away from the chest as it bridges the cape edge. The strap/buckle stitching also needs contact cleanup. This remains an offline study, well short of the illustrated cloth detail or animated fit.
+
+Reopened all three native files and verified all eight visible model collections, all three packed references, and 1,292 non-garment objects with identical geometry, transforms and material assignments. Fourteen gameplay suites passed with exit 0. No runtime/world/save/balance changes.
+
+**Continue from `cycle_15/characters.blend`.** Next pass should refine animals while retaining the complete traveler work. Reproduce this garment checkpoint in a fresh output directory with `Blender --background --factory-startup --python tools/blender/refine_traveler_clothing.py -- --art-pass=99 --refinement=3`; this intentionally reads cycle 12 and must not overwrite later animal/model changes.
 
 ## Reproduce
 
