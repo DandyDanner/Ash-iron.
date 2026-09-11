@@ -28,6 +28,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] First coordinated stylized asset pass: Willow Scout, trees, rocks, bench, chest, and shared materials
 - [x] Third-person camera with wall collision, first-person toggle, walking/jumping/tool/bow poses
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
+- [x] Blender modeling studio, packed references, and verified GLB round trip to Godot
 - [ ] Current art priority: authored scout and boar sculpts/textures closer to the approved illustrations, followed by rig/animation refinement
 - [ ] Later: foliage refinement from play feedback; leave the world unchanged during the character/boar work
 - [x] Add terrain variation

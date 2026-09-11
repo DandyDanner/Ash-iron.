@@ -12,3 +12,10 @@
 
 # Local scratch
 scratch/
+
+# Blender backup files
+*.blend1
+*.blend2
+
+# Python tool caches
+__pycache__/

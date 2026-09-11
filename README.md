@@ -53,6 +53,10 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 
 Your name and appearance are saved locally between launches. They are separate from the clearing save. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
 
+## Character modeling in Blender
+
+Blender 5.2.1 LTS is installed. Open `art/blender/ash_iron_character_studio.blend` for the existing prototype baselines and packed approved references. This source workspace is separate from playable assets; it does not change the world. See `art/blender/README.md` for reproduction, the verified export/import check, and the next authored-model milestone.
+
 ## Coordinated visual pass
 
 The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. Saved skin, hair, build, clothing color, and keepsake choices still apply. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler. The stone pickaxe has a faceted hooked point, a shorter rear chisel, a lashed socket, and a wrapped wooden handle; held tools, dropped pickups, and inventory icons share that design. The axe and pickaxe lift back and strike forward/down in a vertical plane in both camera views, with a windup and follow-through. The woodland bow has curved, tapered limbs, a wrapped palm grip, an upright hold, and a drawing hand that follows the string; the arrow rests above the grip.
