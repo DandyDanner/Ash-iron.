@@ -28,6 +28,8 @@ const JUMP_BUFFER := 0.12
 @onready var camera: Camera3D = $Camera3D
 
 var health := 100
+var stamina := preload("res://scripts/stamina.gd").new()
+var vitals: Control
 var damage_grace := 0.0
 var heal_delay := 0.0
 var heal_clock := 0.0
@@ -76,6 +78,8 @@ func _ready() -> void:
 	identity_label.text = "%s  ·  %s\nKeepsake: %s" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
 	resource_label = _label(hud, Vector2(24, 79), 18)
 	resource_label.add_theme_color_override("font_color", Color("f4d79a"))
+	vitals = preload("res://scripts/player_vitals.gd").new()
+	hud.add_child(vitals)
 	prompt_label = _label(hud, Vector2.ZERO, 21)
 	prompt_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	prompt_label.offset_left = -450
@@ -241,7 +245,8 @@ func _physics_process(delta: float) -> void:
 		input_vector.x += 1.0
 	input_vector = input_vector.normalized()
 	var move_direction := (transform.basis * Vector3(input_vector.x, 0.0, input_vector.y)).normalized()
-	var speed := sprint_speed if Input.is_physical_key_pressed(KEY_SHIFT) else walk_speed
+	var sprinting := stamina.advance(delta, Input.is_physical_key_pressed(KEY_SHIFT) and not input_vector.is_zero_approx())
+	var speed := sprint_speed if sprinting else walk_speed
 	velocity.x = move_direction.x * speed
 	velocity.z = move_direction.z * speed
 	move_and_slide()
@@ -320,6 +325,7 @@ func receive_damage(amount: int, message: String = "Boar hit! • Sidestep its c
 		global_position = spawn_position
 		velocity = Vector3.ZERO
 		health = 100
+		stamina.restore({})
 		damage_grace = 3.0
 		_show_feedback("Back at camp • Your backpack is safe. Prepare and try again.")
 		feedback_time = 4.0
@@ -386,7 +392,7 @@ func _interaction_target() -> Node3D:
 
 func _update_hud() -> void:
 	resource_label.text = "%s   /   PACK %d / %d" % [Inventory.ITEMS[equipped_item].name.to_upper() if not equipped_item.is_empty() else "EMPTY HANDS", inventory.used_slots(), inventory.slots.size()]
-	resource_label.text += "   /   HEALTH %d / 100" % health
+	vitals.refresh(health, stamina)
 	if equipped_item == "bow":
 		resource_label.text += "   /   ARROWS %d" % inventory.count("arrow")
 	if is_instance_valid(hotbar_view):
@@ -466,6 +472,7 @@ func _enter_menu() -> void:
 	_cancel_actions()
 	identity_label.hide()
 	resource_label.hide()
+	vitals.hide()
 	prompt_label.hide()
 	save_label.hide()
 	hotbar_view.hide()
@@ -474,6 +481,7 @@ func _enter_menu() -> void:
 func _leave_menu() -> void:
 	identity_label.show()
 	resource_label.show()
+	vitals.show()
 	prompt_label.show()
 	save_label.show()
 	hotbar_view.show()

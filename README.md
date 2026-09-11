@@ -30,7 +30,7 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - Press **C** in the clearing to change travelers, then **Continue your journey**. Your inventory, placed furniture, and world progress are kept. Existing profiles retain their original look until you choose a new traveler.
 - Travelers, backgrounds and keepsakes are cosmetic. Classes and abilities are deferred.
 - `W A S D` — move
-- `Shift` — sprint
+- `Shift` — sprint while stamina is available
 - `Space` — jump
 - Mouse — look / orbit the traveler while standing still
 - `V` — switch third person / first person; the choice is saved
@@ -45,6 +45,8 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `1`–`9`, `0` — equip a hotbar tool; press its key again to put it away
 - In the backpack, select a tool and press a number or click a shortcut button to assign it. Select an empty backpack slot to clear that shortcut.
 - Progress saves automatically. **Save game** saves on demand; **Save & Quit** saves successfully before closing the game. A failed save keeps the game open.
+
+**Health and stamina** appear as red and green bars with numeric values in the upper-left corner in both camera views. Low health adds a warning at 25 or below. Sprinting uses 16 stamina per second from a 100-point reserve (about 6.25 seconds); walking or resting restores 22 per second after a 0.9-second delay. At zero, **Catch your breath** appears and you walk until stamina reaches 20. Holding Shift while standing still spends nothing. Menus/focus loss pause stamina, and defeat restores both bars. Jumping and attacks currently have no stamina cost.
 
 ## Run it
 
@@ -112,7 +114,7 @@ Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby 
 
 **Your progress is kept.** Your health, the boar’s and Bellmaw’s health and defeat, the Explorer Pack upgrade, your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree, boulder, and iron vein damage, loose and dropped resources, every placed chest with its contents, and every furnace with its ore, wood, ingots, and smelting progress are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
 
-Save format 9 accepts existing format 1 through 8 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. Format 5 stores every placed workbench with its position and rotation. An older built camp bench becomes a movable bench at its original location; an unbuilt worksite disappears without granting a free bench. Format 6 adds traveler and boar health; older saves keep their progress and gain a healthy boar and full traveler health. A defeated boar’s hide persists without duplicating; format 9 adds its respawn countdown. Format 7 adds iron vein damage and placed furnaces; older saves start with fresh veins and no furnace. Format 8 adds Bellmaw health/defeat and the permanent Explorer Pack flag. Older saves keep eight slots and receive a fresh Bellmaw, fresh Echo Hollow pines and an unmined lookout vein. Bellmaw resumes at its home position with saved health and a new warning before it can attack; its saved hide does not duplicate. The added grove pines begin uncut and subsequently save like the original trees. Format 9 stores both enemy respawn countdowns and each furnace’s auto-feed switch. Older defeated enemies start a two-minute countdown; old Bellmaw health is scaled from 80 to 160 while preserving its health percentage. Existing furnaces gain auto-feed and keep their stored materials, ingots and percentage progress at the new twelve-second rate. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
+Save format 10 accepts existing format 1 through 9 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. Format 5 stores every placed workbench with its position and rotation. An older built camp bench becomes a movable bench at its original location; an unbuilt worksite disappears without granting a free bench. Format 6 adds traveler and boar health; older saves keep their progress and gain a healthy boar and full traveler health. A defeated boar’s hide persists without duplicating; format 9 adds its respawn countdown. Format 7 adds iron vein damage and placed furnaces; older saves start with fresh veins and no furnace. Format 8 adds Bellmaw health/defeat and the permanent Explorer Pack flag. Older saves keep eight slots and receive a fresh Bellmaw, fresh Echo Hollow pines and an unmined lookout vein. Bellmaw resumes at its home position with saved health and a new warning before it can attack; its saved hide does not duplicate. The added grove pines begin uncut and subsequently save like the original trees. Format 9 stores both enemy respawn countdowns and each furnace’s auto-feed switch. Older defeated enemies start a two-minute countdown; old Bellmaw health is scaled from 80 to 160 while preserving its health percentage. Existing furnaces gain auto-feed and keep their stored materials, ingots and percentage progress at the new twelve-second rate. Format 10 adds current stamina, recovery delay and exhaustion state; older saves keep their health and gain full stamina. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
 ## Stone spear and the Bristleback Boar
 
@@ -120,7 +122,7 @@ Craft a **stone spear** at a nearby workbench using **2 wood + 2 stones**. Conne
 
 The first enemy is the **Bristleback Boar**, a russet animal with a dark mane and curved tusks in the back-left grove (left and forward from the starting camp, around x = -15, z = -13). It notices you within eight meters when it can see you. It approaches, lowers its head and paws the ground for a one-second warning, then commits to a straight charge. Sidestep with A/D, turn toward it, and strike during its recovery. Trees and rocks stop charges. It returns home when you leave its territory, restoring its health; the starting camp is safe.
 
-The boar has **60 health**: three spear hits (20 each) or three arrows (25 each) defeat it. Each charge deals 25 of your 100 health. Opening a panel or losing focus pauses its behavior. Defeat returns you to the starting camp with full health and all your belongings. Resting near that starting point restores health gradually after eight seconds without damage. This is an approachable first combat prototype, with no dropped death bag or stamina system yet.
+The boar has **60 health**: three spear hits (20 each) or three arrows (25 each) defeat it. Each charge deals 25 of your 100 health. Opening a panel or losing focus pauses its behavior. Defeat returns you to the starting camp with full health and all your belongings. Resting near that starting point restores health gradually after eight seconds without damage. This is an approachable first combat prototype, with no dropped death bag yet; stamina currently governs sprinting.
 
 Defeating the boar leaves **one boar hide** to gather with E. It stacks to ten and can be stored or dropped; leather recipes will come later. Both the boar and Bellmaw respawn **two minutes of active play after defeat**, once you are at least **8 meters from their home** and the spawn space is clear. Menus/focus loss pause the timer; saving and quitting preserves the remaining time, with no offline countdown. Each new defeat drops one hide; old loose hides remain collectible. The approved wildlife art direction and later progression are recorded in `docs/art/BRISTLEBACK.md`. Ore, the furnace, and ingots are in; the next progression milestone is **an iron weapon upgrade** made from ingots.
 
@@ -142,7 +144,7 @@ For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (C
 
 For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
-Use your Godot executable in these commands (twenty suites):
+Use your Godot executable in these commands (twenty-one suites):
 
 - `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four previews and skins, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
 
@@ -167,6 +169,8 @@ Use your Godot executable in these commands (twenty suites):
 - `Godot --headless --path . --script res://tests/explorer_pack_test.gd` — workbench/linked costs, full-pack fitting, capacity, scrollable final slot, drop/transfer, hotbar, save and version 7 migration.
 
 - `Godot --headless --path . --script res://tests/survival_refinement_test.gd` — guarded/recovery damage, respawn delay/pause/clearance/persistence, falling mining drops, furnace chest range/atomic feed/output cap/12-second timing/toggle save, first-person grips and format 8 migration.
+
+- `Godot --headless --path . --script res://tests/player_vitals_test.gd` — live health/stamina bars, damage/healing/defeat, actual sprint input, exhaustion/recovery, pause, camera views, layout bounds and save migration. With graphics enabled, add `-- --screenshots=/absolute/output/folder` for HUD captures.
 
 For native hand/Bellmaw/furnace captures, run `Godot --path . --script res://tests/refinement_preview.gd -- --output=/absolute/output/folder`. It uses isolated saves and closes its own window.
 

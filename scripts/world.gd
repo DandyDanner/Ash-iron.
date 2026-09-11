@@ -125,7 +125,7 @@ func to_data() -> Dictionary:
 			"explorer_pack": player.inventory.slots.size() == Inventory.EXPLORER_CAPACITY,
 			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped,
 			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate(),
-			"third_person": player.view_rig.third_person, "health": player.health
+			"third_person": player.view_rig.third_person, "health": player.health, "stamina": player.stamina.to_data()
 		},
 		"workbenches": workbenches,
 		"trees": trees, "pickups": pickups, "bundles": bundles, "chests": chests
@@ -208,6 +208,7 @@ func _apply(data: Dictionary) -> void:
 	bellmaw.restore(bell_data)
 	if player:
 		player.health = clampi(int(_num(saved.get("health"), 100)), 1, 100)
+		player.stamina.restore(saved.get("stamina"))
 		# Only an explicit saved upgrade unlocks the extra slots; versions 1–7 stay at eight.
 		if saved.get("explorer_pack", false) == true:
 			player.inventory.expand_backpack()

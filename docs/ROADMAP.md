@@ -83,7 +83,8 @@ Current order: spear and Bristleback Boar → ore/furnace → one strange creatu
 - [x] More dangerous Bellmaw: 160 health, guarded hide, 34-damage boom, faster pursuit and shorter recovery
 - [x] Both enemies respawn after 120 active seconds, away from the player and only into clear space; timer persists
 - [x] Echo Hollow trail, marked warning, cover rocks, harvestable pines and Old Lookout iron vein
-- [ ] Stamina
+- [x] Health/stamina HUD in both camera views, low-health/exhaustion cues, sprint drain/recovery and saved reserve
+- [ ] Extend stamina costs to combat/jumping after playtesting sprint pressure
 - [x] Craftable bow and arrows, draw/release, ballistics, recovery, practice target, and saved flight state
 - [x] Spear and bow damage against the first animal/enemy
 - [x] Axe as a backup melee weapon: 10 damage versus spear 20, existing chopping retained; durability/breakage deferred
@@ -120,6 +121,7 @@ Do not build these until the core loop is proven:
 
 ## Next playtest and design boundaries — September 11
 
+- Check health/stamina readability and sprint reserve when dodging Bellmaw; current stamina costs apply only to sprinting.
 - Test finding Echo Hollow from camp, reading the throat warning, retreating behind cover, and bringing its hide home for four more slots.
 - Retest the stronger boom and armored hide: punish recovery instead of trading repeated spear hits. Check the two-minute respawns, chest-fed twelve-second smelting and falling mining drops.
 - Tune this one encounter before adding Threadwing or another enemy. Bellmaw is the first strange creature; Threadwing remains an approved future concept.
