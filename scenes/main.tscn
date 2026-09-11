@@ -1,7 +1,9 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/harvest_tree.gd" id="2_tree"]
+[ext_resource type="Script" path="res://scripts/clearing_resources.gd" id="3_resources"]
+[ext_resource type="Script" path="res://scripts/field_boulder.gd" id="4_boulder"]
 
 [sub_resource type="StandardMaterial3D" id="MatGround"]
 albedo_color = Color(0.32, 0.48, 0.25, 1)
@@ -13,17 +15,6 @@ size = Vector3(40, 0.4, 40)
 
 [sub_resource type="BoxShape3D" id="ShapeGround"]
 size = Vector3(40, 0.4, 40)
-
-[sub_resource type="StandardMaterial3D" id="MatRock"]
-albedo_color = Color(0.42, 0.43, 0.39, 1)
-roughness = 0.95
-
-[sub_resource type="BoxMesh" id="MeshRock"]
-material = SubResource("MatRock")
-size = Vector3(3, 2, 3)
-
-[sub_resource type="BoxShape3D" id="ShapeRock"]
-size = Vector3(3, 2, 3)
 
 [sub_resource type="CapsuleShape3D" id="ShapePlayer"]
 radius = 0.45
@@ -55,23 +46,13 @@ mesh = SubResource("MeshGround")
 shape = SubResource("ShapeGround")
 
 [node name="Rock1" type="StaticBody3D" parent="."]
-position = Vector3(5, 1, -7)
-
-[node name="Mesh" type="MeshInstance3D" parent="Rock1"]
-mesh = SubResource("MeshRock")
-
-[node name="Collision" type="CollisionShape3D" parent="Rock1"]
-shape = SubResource("ShapeRock")
+position = Vector3(5, 1.2, -7)
+script = ExtResource("4_boulder")
 
 [node name="Rock2" type="StaticBody3D" parent="."]
-position = Vector3(-6, 1, -11)
-scale = Vector3(0.6, 1.4, 0.8)
-
-[node name="Mesh" type="MeshInstance3D" parent="Rock2"]
-mesh = SubResource("MeshRock")
-
-[node name="Collision" type="CollisionShape3D" parent="Rock2"]
-shape = SubResource("ShapeRock")
+position = Vector3(-6, 1.6, -4)
+script = ExtResource("4_boulder")
+dimensions = Vector3(2, 2.8, 2.4)
 
 [node name="PracticePine" type="StaticBody3D" parent="."]
 position = Vector3(0, 0.2, 0)
@@ -88,6 +69,9 @@ script = ExtResource("2_tree")
 [node name="Tree3" type="StaticBody3D" parent="."]
 position = Vector3(2, 0.2, -13)
 script = ExtResource("2_tree")
+
+[node name="ClearingResources" type="Node3D" parent="."]
+script = ExtResource("3_resources")
 
 [node name="Player" type="CharacterBody3D" parent="."]
 position = Vector3(0, 1.1, 6)

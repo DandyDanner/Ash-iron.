@@ -22,7 +22,7 @@ func setup(cloth: Color, skin: Color) -> void:
 	Model.cylinder(tool, Vector3(0, 0.18, 0), 0.025, 0.66, Color("86603c"), 0.02)
 	for i in range(5):
 		Model.cylinder(tool, Vector3(0, -0.08 + i * 0.037, 0), 0.029, 0.025, Color("49352b"))
-	Model.box(tool, Vector3(0.02, 0.46, 0), Vector3(0.11, 0.16, 0.1), Color("565e60"))
+	Model.box(tool, Vector3(0.02, 0.46, 0), Vector3(0.11, 0.16, 0.1), Color("65705f"))
 	# A flared blade with a thin cutting edge and a thicker socket at the handle.
 	var points := [Vector3(-0.22, -0.12, 0.016), Vector3(-0.22, 0.12, 0.016), Vector3(0, 0.065, 0.05), Vector3(0, -0.065, 0.05), Vector3(-0.22, -0.12, -0.016), Vector3(-0.22, 0.12, -0.016), Vector3(0, 0.065, -0.05), Vector3(0, -0.065, -0.05)]
 	var surface := SurfaceTool.new()
@@ -31,8 +31,10 @@ func setup(cloth: Color, skin: Color) -> void:
 		for vertex in [face[0], face[1], face[2], face[0], face[2], face[3]]:
 			surface.add_vertex(points[vertex])
 	surface.generate_normals()
-	Model.part(tool, surface.commit(), Vector3(0, 0.46, 0), Color("829392"))
-	Model.box(tool, Vector3(-0.218, 0.46, 0), Vector3(0.012, 0.235, 0.033), Color("a6b7b2"))
+	Model.part(tool, surface.commit(), Vector3(0, 0.46, 0), Color("788374"))
+	Model.box(tool, Vector3(-0.218, 0.46, 0), Vector3(0.012, 0.235, 0.033), Color("98a38f"))
+	for i in range(3):
+		Model.box(tool, Vector3(0, 0.415 + i * 0.035, 0.06), Vector3(0.135, 0.021, 0.035), Color("c2ac7c"))
 	for mesh in find_children("*", "MeshInstance3D", true, false):
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	rotation_degrees = Vector3(0, -12, -12)
@@ -61,8 +63,13 @@ func _sound(wood: bool) -> AudioStreamPlayer:
 	add_child(player)
 	return player
 
+func set_equipped(equipped: bool) -> void:
+	$Tool.visible = equipped
+	if not equipped:
+		cancel_swing()
+
 func start_swing() -> bool:
-	if elapsed >= 0.0:
+	if not $Tool.visible or elapsed >= 0.0:
 		return false
 	elapsed = 0.0
 	contact_sent = false

@@ -31,8 +31,9 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `Shift` — sprint
 - `Space` — jump
 - Mouse — look
-- Left click — swing the starter axe (while the mouse is captured)
-- `E` — collect a wood bundle while aiming at it
+- Left click — swing your crafted and equipped axe (while the mouse is captured)
+- `E` — gather sticks, loose stones, or wood; use the camp worksite or bench
+- `I` — open or close your backpack and crafting panel
 - `Esc` — release mouse
 - Click game window — capture mouse again
 - `C` — return to character creation (re-entering resets the test clearing)
@@ -46,21 +47,39 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 
 Your name and appearance are saved locally between launches. They are separate from future gameplay save data. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
 
-## Try jumping and chopping
+## Start with empty hands
 
-If the game is already running, stop it with the editor's square **Stop** button, then press **Run Project** again to load the changes. No new download is needed when using this project folder.
+If the game is already running, click the editor's square **Stop** button, then **Run Project** again to load the changes. No new download is needed when using this project folder.
 
-After entering the clearing, walk toward the pine directly ahead. Press **Space** to jump. Get close enough to see the chopping prompt, aim the crosshair at the trunk, and click four times. Each full axe swing deals one hit. When the tree falls, look down at the bundled logs and press **E** to collect five wood. The wood total appears at the upper left.
+Every background now starts with **eight empty inventory slots and no tools**. Your keepsake stays part of your character identity and does not consume a slot.
 
-The axe starts equipped for every background. It has a visible swing, contact feedback, wood chips, and simple swing/impact sounds. Obstacles block hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point.
+1. Look down for fallen sticks and loose stones. Aim at them and press **E** to gather. Each starting pile contains two items.
+2. Press **I** to see your backpack. Sticks, stones, and wood stack to **10** per slot. A tool occupies one slot.
+3. Collect **6 sticks + 4 stones**, then approach the marked **Camp Worksite**, ahead and left of the starting point. Press **E**, or open **I** while standing nearby, and choose **Build simple bench**.
+4. At the built bench, spend **3 sticks + 2 stones** on **Craft & equip stone axe**. Starting from scratch, that is nine sticks and six stones total; gathering five stick piles and three stone piles is enough.
+5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
 
-Wood and harvested trees currently reset when restarting the clearing or returning through character creation. Persistent inventory, home drop-off, and a bow are future work.
+The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
-Gameplay verification: run `Godot --headless --path . --script res://tests/jump_axe_test.gd` using your Godot executable. This covers jumping and landing, preventing double jumps, axe reach, blocked hits, swing cooldown, tree felling, one-time pickup, resuming mouse capture, and recovery after falling off the map.
+Select a backpack slot to inspect an item, equip or put away the axe, or **Drop selected stack**. Dropped items can be recovered. The equipped axe still occupies its backpack slot. Large boulders are solid scenery for now; gather the loose stones around them by hand.
+
+Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point with your current inventory.
+
+**Prototype persistence:** inventory, dropped items, harvested resources, and the workbench reset when restarting the clearing or returning through character creation. Your saved character appearance is preserved. Gameplay save/load and connected home storage remain future milestones.
+
+## Verification
+
+Use your Godot executable in these commands:
+
+- `Godot --headless --path . --script res://tests/inventory_crafting_test.gd` — slot limits, stacking, partial pickups, atomic crafting, empty-handed start, gathering, workbench, axe, equip/drop/recover.
+- `Godot --headless --path . --script res://tests/jump_axe_test.gd` — jumping, landing, axe reach and obstruction, cooldown, felling, wood pickup, mouse resume, and fall recovery after obtaining an axe.
+- `Godot --headless --path . --script res://tests/character_creation_test.gd` — character customization, isolated save round trip, world entry, and reopening.
+
+The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. Tests use separate profile paths and do not overwrite your character.
 
 ## First milestone
 
-Do **not** start with inventory, skills, NPCs, weather, or procedural generation.
+Keep the backpack and crafting loop small. Skills, NPCs, weather, and procedural generation remain deferred.
 
 The first gameplay milestone is:
 

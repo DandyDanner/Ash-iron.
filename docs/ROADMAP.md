@@ -37,15 +37,19 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Interactable tree
 - [x] Axe swing
 - [x] Tree health / hit response
-- [x] Wood pickup (five wood per tree; session-only HUD counter)
-- [ ] Minimal inventory
+- [x] Wood pickup (five wood per tree, into available backpack space)
+- [x] Minimal inventory (eight slots; resource stacks of ten; equip/drop/recover)
+- [x] Gather loose sticks and stones without tools
+- [x] Build a simple bench at the camp worksite
+- [x] Craft the first stone axe from gathered materials
 - [ ] Home/workshop drop-off or connected storage
 
 ## Phase 3 — First expedition loop
 
-- [ ] Stone + iron ore
+- [x] Loose stone gathering
+- [ ] Iron ore
 - [ ] Weight/encumbrance stages
-- [ ] Basic backpack
+- [x] Basic backpack (slot capacity; weight and upgrades remain later work)
 - [ ] Furnace
 - [ ] Ore smelting into ingots
 - [ ] Craft one meaningful upgrade

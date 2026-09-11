@@ -47,6 +47,9 @@ func run() -> void:
 	player._capture_controls(true)
 	await ticks(8)
 	var tree := current_scene.get_node("PracticePine")
+	# This regression verifies axe mechanics after crafting; the starting-loop test covers earning it.
+	player.inventory.add("stone_axe", 1)
+	player.equip_axe(true)
 	check(player.is_on_floor(), "Player did not settle on the ground")
 	await capture("jump-and-axe.png")
 	var start_height: float = player.position.y
