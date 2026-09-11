@@ -19,7 +19,12 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Art limits: actual captures remain visibly simpler than the illustrations. This pass does not resculpt the traveler face or replace source GLBs. Willow remains the main fidelity target; hair clumps, clothing anatomy and rig deformation need further work. Latest Blender source remains `art/blender/cycles/cycle_30/characters.blend`; Willow uses cycle 30, other travelers cycle 26; wildlife Blender studies remain offline. Preserve the matched reference reviews.
 - Player vitals: upper-left red health and green stamina bars with values, low-health cue (≤25) and exhaustion cue. Sprinting spends 16/s from 100; walking/rest recovers 22/s after 0.9 s. Exhaustion clears at 20; idle Shift costs nothing. Menus/focus pause, defeat resets, and both views share the HUD.
 - Saves: format 10 adds saved stamina/recovery/exhaustion; format 9 includes enemy respawn timers and furnace auto-feed. Formats 1–9 migrate without clearing progress; old Bellmaw health scales from 80 to 160 at the same percentage, old defeated enemies get a fresh respawn delay. No real player save/profile was read or edited during tests.
-- Later: iron equipment, armor, combat/jump stamina costs, resource regrowth, day/night pressure and the Wayfarer's Lantern; preserve discovery/villager direction and Threadwing concept in `docs/CREATURE_DIRECTION.md`. Furniture placement ghost/manual rotation, foot IK, cloth simulation and further deformation polish remain gaps.
+- Later: iron equipment, armor with optional ore/metal/mineral decorative trim and inlays (see `docs/CRAFTSMAN_PROGRESSION.md`), combat/jump stamina costs, resource regrowth, day/night pressure and the Wayfarer's Lantern; preserve discovery/villager direction and Threadwing concept in `docs/CREATURE_DIRECTION.md`. Furniture placement ghost/manual rotation, foot IK, cloth simulation and further deformation polish remain gaps.
+
+## 2026-09-11 — Codex: future armor decoration
+
+- Added Dallon's request to use different ores for armor design to the crafting plan and roadmap. Proposed metal/mineral trim, inlays and emblems with preview, replacement and per-piece saved appearance; protection remains tied to the base armor. Exact materials, costs, patterns and station rules are future design work.
+- Deferred until basic wearable armor exists. Current priority stays the stone/copper crafting foundation. Documentation only; no runtime, items, recipes, graphics or player-save changes. All twenty-two headless suites pass with only the known macOS certificate warning.
 
 ## 2026-09-11 — Codex: approved craftsman progression
 

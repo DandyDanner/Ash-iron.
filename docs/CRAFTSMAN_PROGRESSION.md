@@ -34,3 +34,13 @@ These are game abstractions, not a historical chronology or a claim that every l
 3. Verify a fresh player can complete the loop without recipe dependency traps. Verify full inventories, material transfers, furnace queues and save/reload.
 4. Preserve existing iron ore, ingots, placed furnaces and progress during the transition. Explicitly migrate any changed save structure; do not silently rename or delete old items. Existing iron processing needs a compatibility decision before changing its availability.
 5. Playtest stone/copper before adding tin/bronze, then iron forging and steel refinement. Do not expand the enemy roster or require a large new biome merely to supply the next material.
+
+## Future armor decoration — requested September 11
+
+After basic wearable armor exists, let players use different ores and their processed metals/minerals to customize its appearance. This is an optional crafting feature for personal expression, separate from the stone-to-steel protection progression. It is recorded for later; armor and decoration are not implemented.
+
+Proposed examples: copper edging on an iron breastplate, bronze rivets on leather armor, contrasting steel emblems, and polished mineral pieces set into decorative panels. These are examples to explore, not a commitment to add every material or recipe now.
+
+Proposed flow: choose an owned armor piece at a crafting station, choose a trim/inlay/emblem region, select a discovered material and pattern, preview the result, then apply it for a small visible material cost. Base armor determines protection; decorative materials change appearance without forcing a stat tradeoff. Let players replace decorations later so experimenting does not require crafting another suit.
+
+Start with one armor piece, a few decoration regions and existing metals. Decide exact costs, patterns, mineral processing and replacement/refund rules during implementation. Save each piece's chosen appearance and support nearby chest supplies. This gives returning with an interesting mineral a visible reward without adding another required equipment tier.

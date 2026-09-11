@@ -27,6 +27,8 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 
 **Stone → Copper → Bronze → Iron → Steel.** The next crafting slice is inventory-made stone tools, then primitive copper smelting and the first useful metal upgrade. Each later stage should introduce a new technique or capability. See the [craftsman progression plan](docs/CRAFTSMAN_PROGRESSION.md).
 
+Future armor customization is also planned: use discovered ores/metals/minerals for decorative trim and inlays, separate from armor protection. This comes after basic armor.
+
 This is the approved direction, not yet the live recipe order. The instructions below describe the current bench-based stone tools and existing iron-furnace prototype. Existing saves and materials are unchanged.
 
 ## Starter controls

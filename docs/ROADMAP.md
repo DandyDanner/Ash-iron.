@@ -84,6 +84,7 @@ Goal: walk out, collect one thing, bring it home.
 - [ ] Tin discovery and bronze alloying/casting
 - [ ] Iron forging and workshop capability
 - [ ] Steel refinement, heat treatment and specialized tools
+- [ ] Later, after wearable armor: ore/metal/mineral decoration with selectable trim, inlays and emblems; appearance independent of protection (see craftsman plan)
 
 ## Phase 4 — Danger
 
