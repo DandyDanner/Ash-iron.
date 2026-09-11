@@ -1,14 +1,16 @@
-# Character and boar modeling studio
+# Character and wildlife modeling studio
 
-Open `ash_iron_character_studio.blend` in Blender 5.2.1 LTS.
+Open `cycles/cycle_04/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
 
-This workspace contains the **existing prototypes as a scale/rig baseline**, not newly sculpted or finished replacement characters. The approved Willow Scout turnaround and wildlife concept sheet are packed into the file. The wildlife target is panel #1, Bristleback.
+`ash_iron_character_studio.blend` remains the original baseline.
 
-The current models are in separate named collections. Toggle the screen icon for **APPROVED REFERENCES** to show the reference images, placed beside the models. Studio lights, camera, and floor are review aids, hidden in the modeling viewport and excluded from the exported check file. The internal text **START HERE — Character and Boar.txt** records scope and next steps.
+The original studio contains the **existing prototypes as a scale/rig baseline**, not newly sculpted or finished replacement characters. The approved Willow Scout turnaround and wildlife concept sheet are packed into the file. The wildlife target is panel #1, Bristleback.
+
+The original studio models are in separate named collections. Toggle the screen icon for **APPROVED REFERENCES** to show the reference images, placed beside the models. Studio lights, camera, and floor are review aids, hidden in the modeling viewport and excluded from the exported check file. The internal text **START HERE — Character and Boar.txt** records scope and next steps.
 
 ## Scope
 
-Build complete authored scout and boar assets toward the approved illustrations, then assess actual front/side/back renders before replacing the playable models. Keep customization, equipment contacts, animation, and scale in mind. Do not change the world or combat while doing this art work.
+Build all four approved traveler designs and all four approved wildlife studies toward the approved illustrations, then assess actual front/side/back renders before replacing the playable models. Keep customization, equipment contacts, animation, and scale in mind. Do not change the world or combat while doing this art work.
 
 Save new authored versions under distinct names so this baseline remains available. The `.gdignore` keeps this entire source folder out of Godot’s asset importer. No scene currently loads these files. Finished approved GLBs will eventually go under `assets/` with explicit integration.
 

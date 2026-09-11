@@ -55,7 +55,7 @@ Your name and appearance are saved locally between launches. They are separate f
 
 ## Character modeling in Blender
 
-Blender 5.2.1 LTS is installed. Open `art/blender/ash_iron_character_studio.blend` for the existing prototype baselines and packed approved references. This source workspace is separate from playable assets; it does not change the world. See `art/blender/README.md` for reproduction, the verified export/import check, and the next authored-model milestone.
+Blender 5.2.1 LTS is installed. Open `art/blender/cycles/cycle_04/characters.blend` for all four traveler and all four wildlife studies. Four saved modeling/render/review cycles and their actual images are documented in [the art review](art/blender/cycles/REVIEW.md). These are unrigged studies with further fidelity work remaining; the playable characters and world are unchanged. The original prototype baseline remains in `art/blender/ash_iron_character_studio.blend`. See `art/blender/README.md` for reproduction and integration limits.
 
 ## Coordinated visual pass
 
