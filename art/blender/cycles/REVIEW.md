@@ -52,7 +52,21 @@ The scout profile also exposes an unresolved facial issue from cycle 6: the tran
 
 Reviewed all seven actual renders in each hair pass. The corrected braids reach the forehead, though the exposed side foundation and very regular braid rows still read as a stylized cap. Reopened both native files and verified all eight visible model collections, three packed references, and 1,194 unchanged non-hair objects (geometry, transforms, material assignments). All fourteen gameplay suites passed with exit 0. No runtime changes.
 
-**Continue from `cycle_08/characters.blend`.** Next: correct facial profiles while preserving the new hair, then improve garment drape and distinct silhouettes; refine animal anatomy/fur afterward. Both old generators read earlier baselines and must not discard newer work. To reproduce the hair pass in a fresh directory: `Blender --background --factory-startup --python tools/blender/refine_traveler_hair.py -- --art-pass=99 --refinement=2` (intentionally reads cycle 6).
+At the end of the hair pass, the continuation source was `cycle_08/characters.blend`. Next: correct facial profiles while preserving the new hair, then improve garment drape and distinct silhouettes; refine animal anatomy/fur afterward. Both old generators read earlier baselines and must not discard newer work. To reproduce the hair pass in a fresh directory: `Blender --background --factory-startup --python tools/blender/refine_traveler_hair.py -- --art-pass=99 --refinement=2` (intentionally reads cycle 6).
+
+## Cycles 9–12 — overnight profile reconstruction
+
+Loaded cycle 8 and reshaped the four saved facial surfaces plus their attached eyelids, lips, nostrils, freckles and beard strands. New hair, garments and animals are preserved. Each version includes a full traveler lineup and front/side portraits of all four travelers, so the side-view faults are recorded explicitly.
+
+Cycle 9 softened the isolated nose peak, filled the upper-lip region and shortened the lower face (more for scout/forager). Actual profile review showed a receding chin and a hollow beneath the lip. Cycle 10 broadened the chin and raised the mouth, but the separate local adjustments introduced an obvious pinched philtrum above the lips. These are retained as intermediate review records, not approved profiles.
+
+Cycle 11 replaces those local offsets with a continuous authored nose–lip–chin silhouette, smoothly interpolated without overshoot and blended across the cheek surface. Attached features follow the same surface adjustment. The scout side view lost the deep pinch, but the front portraits exposed an overly broad nasal-to-cheek blend, particularly on the wayfarer. Cycle 12 narrows that influence around the nose while retaining the broader chin transition.
+
+Reviewed all 36 actual renders across the four profile passes. Cycle 12 retains a continuous side silhouette with reduced nasal side bulges. Remaining limitations: the facial planes and expressions are still simplified and too similar; the chin has a noticeable planar shading transition, nostrils are surface strokes, ears are thin folded shells in side view, and the eyes still lack full socket depth. The forager profile is partly obscured by her bob. This is a structural correction, not a fidelity approval.
+
+Native verification reopened all four files: all eight visible model collections, all three packed references, finite face vertices, and 890 non-face objects retained identical geometry, transforms, and material assignments. All fourteen gameplay suites passed with exit 0. No world, gameplay, balance, save, or playable model changes.
+
+**Continue from `cycle_12/characters.blend`.** Next is a substantial garment pass: sloping cape shoulders and natural folds, shaped jacket/sleeve joins, gathered cuffs/scarves, and equipment clearance. Preserve current faces/hair. To reproduce the profile checkpoint in a fresh folder: `Blender --background --factory-startup --python tools/blender/refine_traveler_profiles.py -- --art-pass=99 --refinement=4`; it intentionally reads cycle 8 and therefore must not overwrite later clothing work.
 
 ## Reproduce
 
