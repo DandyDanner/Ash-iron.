@@ -20,3 +20,9 @@ Home is in the back-left grove at (-15, 0.22, -13). Approach → one-second lowe
 4. Meadow Buck — deer and fleeing wildlife later.
 
 A bear comes later still. Ore and smelting are the next crafting milestone; the other creatures are not implemented yet.
+
+## Current rendered refinement
+
+The September 10 character/boar-only pass adds higher resolution rounded surfaces and curved volumes while retaining the existing animation and gameplay interfaces. The scout has swept hair, defined facial features, cape embroidery, and a folded hood; the boar has curved tusks, muzzle details, and layered fur. The world is unchanged. These remain simplified procedural models, not final sculpts or textured matches to the illustrations.
+
+`tests/art_portrait.gd` renders the actual geometry in a neutral studio and in the existing clearing, without reading or modifying the player's save. Use these actual renders for judging progress, rather than generating another concept image as evidence of game quality.

@@ -57,6 +57,8 @@ Your name and appearance are saved locally between launches. They are separate f
 
 The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. Saved skin, hair, build, clothing color, and keepsake choices still apply. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler. The stone pickaxe has a faceted hooked point, a shorter rear chisel, a lashed socket, and a wrapped wooden handle; held tools, dropped pickups, and inventory icons share that design. The axe and pickaxe lift back and strike forward/down in a vertical plane in both camera views, with a windup and follow-through. The woodland bow has curved, tapered limbs, a wrapped palm grip, an upright hold, and a drawing hand that follows the string; the arrow rests above the grip.
 
+The scout and boar now have a focused model refinement pass: smoother shaped surfaces, swept hair and defined eyelids/lips, cape embroidery and a folded hood, and curved tusks with layered boar fur. These are still simplified procedural assets; the concept illustrations remain the target for future sculpted/textured models. This pass does not change the world.
+
 The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The bench has a planked top and braces; chests have planks, rivets, and an opening lid; boulders have lichen. The HUD is shorter, with camera and full-screen hints beside the hotbar. These are original procedural prototype assets, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
 
 ## Start with empty hands
@@ -116,6 +118,8 @@ Defeating the boar leaves **one boar hide** to gather with E. It stacks to ten a
 ## Verification
 
 For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (Command + R on Mac). Press O for portrait mode; J cycles axe carry/windup/contact/follow-through (U does the same for the pickaxe; T for the spear), K shows a drawn bow, and L orbits the camera. The J/U/T pose controls also work in first person. O enters/exits portrait mode and returns to play. B starts an isolated boar encounter with the spear; N shows its portrait. This scene uses temporary inventory and saves. Run Project returns to the regular game.
+
+For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
 Use your Godot executable in these commands:
 

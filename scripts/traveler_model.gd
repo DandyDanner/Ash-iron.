@@ -1,5 +1,6 @@
 extends Node3D
 ## Willow Scout: original shaped meshes and an articulated procedural animation rig.
+const Detail = preload("res://scripts/character_mesh.gd")
 const Profile = preload("res://scripts/character_profile.gd")
 var body: Node3D
 var elapsed := 0.0
@@ -109,45 +110,45 @@ func rebuild(profile: Dictionary) -> void:
 	for side in [-1.0, 1.0]:
 		var leg := joint(body, "LeftLeg" if side < 0 else "RightLeg", Vector3(side * 0.13, 1.00, 0))
 		legs.append(leg)
-		loft(leg, [Vector4(-0.43, 0.093, 0.10, 0), Vector4(-0.24, 0.115, 0.115, 0.006), Vector4(0, 0.11, 0.12, 0)], trousers)
+		Detail.loft(leg, [Vector4(-0.43, 0.093, 0.10, 0), Vector4(-0.24, 0.115, 0.115, 0.006), Vector4(0, 0.11, 0.12, 0)], trousers, 32, 0.06)
 		var knee := joint(leg, "Knee", Vector3(0, -0.43, 0))
 		knees.append(knee)
-		loft(knee, [Vector4(-0.30, 0.077, 0.08, 0), Vector4(-0.22, 0.097, 0.10, 0.004), Vector4(0, 0.095, 0.10, 0)], trousers.lightened(0.035))
+		Detail.loft(knee, [Vector4(-0.30, 0.077, 0.08, 0), Vector4(-0.22, 0.097, 0.10, 0.004), Vector4(0, 0.095, 0.10, 0)], trousers.lightened(0.035), 32, 0.075)
 		cylinder(knee, Vector3(0, -0.31, 0), 0.082, 0.052, trousers.darkened(0.08))
 		cylinder(knee, Vector3(0, -0.37, 0), 0.054, 0.085, skin)
 		# Shaped boots, folded cuffs, soles, and a few readable laces.
-		loft(knee, [Vector4(-0.55, 0.085, 0.15, 0.035), Vector4(-0.49, 0.09, 0.16, 0.034), Vector4(-0.43, 0.063, 0.076, 0), Vector4(-0.37, 0.073, 0.073, -0.005)], leather, 10)
-		oval(knee, Vector3(0, -0.535, 0.04), Vector3(0.185, 0.047, 0.32), leather.darkened(0.38))
-		loft(knee, [Vector4(-0.40, 0.073, 0.08, 0), Vector4(-0.35, 0.091, 0.09, 0)], leather.darkened(0.16), 8)
+		Detail.loft(knee, [Vector4(-0.55, 0.085, 0.15, 0.035), Vector4(-0.49, 0.09, 0.16, 0.034), Vector4(-0.43, 0.063, 0.076, 0), Vector4(-0.37, 0.073, 0.073, -0.005)], leather, 10)
+		Detail.oval(knee, Vector3(0, -0.535, 0.04), Vector3(0.185, 0.047, 0.32), leather.darkened(0.38))
+		Detail.loft(knee, [Vector4(-0.40, 0.073, 0.08, 0), Vector4(-0.35, 0.091, 0.09, 0)], leather.darkened(0.16), 8)
 		for n in range(3):
 			segment(knee, Vector3(-0.048, -0.46 + n * 0.027, 0.086), Vector3(0.048, -0.445 + n * 0.027, 0.086), 0.005, Color("c9ac76"))
 		# Cargo-pocket flap stays a large, simple accent.
 		box(leg, Vector3(side * 0.095, -0.19, 0.05), Vector3(0.035, 0.15, 0.14), trousers.darkened(0.08))
 	torso = joint(body, "Torso", Vector3(0, 1.02, 0))
-	loft(torso, [Vector4(-0.07, 0.22, 0.135, 0), Vector4(0.11, 0.20, 0.14, 0), Vector4(0.34, 0.26, 0.155, 0), Vector4(0.48, 0.24, 0.13, 0)], cream)
+	Detail.loft(torso, [Vector4(-0.07, 0.22, 0.135, 0), Vector4(0.11, 0.20, 0.14, 0), Vector4(0.34, 0.26, 0.155, 0), Vector4(0.48, 0.24, 0.13, 0)], cream, 32, 0.045)
 	# Shirt placket and open collar.
 	box(torso, Vector3(0, 0.27, 0.154), Vector3(0.032, 0.38, 0.013), cream.darkened(0.07))
 	for n in range(4):
-		oval(torso, Vector3(0, 0.15 + n * 0.063, 0.167), Vector3(0.012, 0.012, 0.008), leather)
+		Detail.oval(torso, Vector3(0, 0.15 + n * 0.063, 0.167), Vector3(0.012, 0.012, 0.008), leather)
 	for side in [-1.0, 1.0]:
 		var collar := box(torso, Vector3(side * 0.078, 0.455, 0.131), Vector3(0.088, 0.14, 0.025), cream.lightened(0.10))
 		collar.rotation.z = side * -0.34
 		var arm := joint(body, "LeftArm" if side < 0 else "RightArm", Vector3(side * 0.285, 1.46, 0))
 		arm.rotation.z = side * 0.10
 		arms.append(arm)
-		loft(arm, [Vector4(-0.28, 0.077, 0.084, 0), Vector4(-0.13, 0.095, 0.09, 0), Vector4(0.025, 0.076, 0.08, 0)], cream)
+		Detail.loft(arm, [Vector4(-0.28, 0.077, 0.084, 0), Vector4(-0.13, 0.095, 0.09, 0), Vector4(0.025, 0.076, 0.08, 0)], cream, 28, 0.06)
 		var elbow := joint(arm, "Elbow", Vector3(0, -0.28, 0))
 		forearms.append(elbow)
 		cylinder(elbow, Vector3(0, -0.01, 0), 0.084, 0.063, cream.darkened(0.10))
-		loft(elbow, [Vector4(-0.23, 0.043, 0.042, 0), Vector4(-0.10, 0.059, 0.052, 0), Vector4(0, 0.061, 0.057, 0)], skin)
+		Detail.loft(elbow, [Vector4(-0.23, 0.043, 0.042, 0), Vector4(-0.10, 0.059, 0.052, 0), Vector4(0, 0.061, 0.057, 0)], skin)
 		for n in range(3):
 			cylinder(elbow, Vector3(0, -0.195 + n * 0.015, 0), 0.047, 0.01, leather.darkened(0.18))
 		var hand := joint(elbow, "Hand", Vector3(0, -0.26, 0))
-		oval(hand, Vector3.ZERO, Vector3(0.095, 0.12, 0.055), skin)
+		Detail.oval(hand, Vector3.ZERO, Vector3(0.095, 0.12, 0.055), skin)
 		var fingers := joint(hand, "OpenFingers", Vector3.ZERO)
 		for n in range(4):
-			oval(fingers, Vector3(-0.032 + n * 0.021, -0.06, 0.01), Vector3(0.022, 0.065, 0.027), skin)
-		oval(fingers, Vector3(-side * 0.05, -0.012, 0.014), Vector3(0.036, 0.062, 0.034), skin)
+			Detail.oval(fingers, Vector3(-0.032 + n * 0.021, -0.06, 0.01), Vector3(0.022, 0.065, 0.027), skin)
+		Detail.oval(fingers, Vector3(-side * 0.05, -0.012, 0.014), Vector3(0.036, 0.062, 0.034), skin)
 		if side < 0:
 			left_hand = hand
 		else:
@@ -160,37 +161,42 @@ func rebuild(profile: Dictionary) -> void:
 			closed_right_fingers.hide()
 	# Layered sash follows the waist, and a loose tail reads clearly from behind.
 	for n in range(5):
-		var wrap := oval(body, Vector3(0, 1.005 + n * 0.019, 0.008), Vector3(0.47, 0.039, 0.32), sash.lightened(n * 0.015))
+		var wrap := Detail.oval(body, Vector3(0, 1.005 + n * 0.019, 0.008), Vector3(0.47, 0.039, 0.32), sash.lightened(n * 0.015))
 		wrap.rotation.z = -0.05 + n * 0.012
 	var tail := box(body, Vector3(-0.20, 0.83, 0.11), Vector3(0.105, 0.4, 0.025), sash)
 	tail.rotation.z = -0.22
 	segment(body, Vector3(-0.20, 1.00, 0.15), Vector3(0.20, 1.09, 0.15), 0.026, leather)
 	for side in [-1.0, 1.0]:
-		oval(body, Vector3(side * 0.24, 0.94, 0.06), Vector3(0.16, 0.20, 0.105), leather)
+		Detail.oval(body, Vector3(side * 0.24, 0.94, 0.06), Vector3(0.16, 0.20, 0.105), leather)
 		box(body, Vector3(side * 0.24, 0.985, 0.12), Vector3(0.15, 0.07, 0.024), leather.lightened(0.1))
-		oval(body, Vector3(side * 0.24, 0.97, 0.14), Vector3(0.022, 0.022, 0.01), Color("c8aa67"))
+		Detail.oval(body, Vector3(side * 0.24, 0.97, 0.14), Vector3(0.022, 0.022, 0.01), Color("c8aa67"))
 	segment(torso, Vector3(-0.21, 0.46, 0.15), Vector3(0.18, 0.02, 0.17), 0.025, leather)
 	segment(torso, Vector3(-0.21, 0.46, -0.16), Vector3(0.18, 0.02, -0.17), 0.025, leather)
 	cylinder(body, Vector3(0, 1.60, 0), 0.077, 0.19, skin)
 	head = joint(body, "Head", Vector3(0, 1.86, 0))
 	head.scale = [Vector3.ONE, Vector3(0.94, 1.06, 0.98), Vector3(1.08, 0.97, 1)][profile.face]
-	loft(head, [Vector4(-0.19, 0.064, 0.071, 0.032), Vector4(-0.13, 0.115, 0.106, 0.020), Vector4(-0.02, 0.16, 0.127, 0), Vector4(0.10, 0.158, 0.127, -0.004), Vector4(0.19, 0.11, 0.095, -0.02), Vector4(0.21, 0.025, 0.025, -0.02)], skin, 20)
+	Detail.loft(head, [Vector4(-0.174, 0.057, 0.066, 0.032), Vector4(-0.13, 0.115, 0.106, 0.020), Vector4(-0.02, 0.16, 0.127, 0), Vector4(0.10, 0.158, 0.127, -0.004), Vector4(0.19, 0.11, 0.095, -0.02), Vector4(0.21, 0.025, 0.025, -0.02)], skin, 20)
 	for side in [-1.0, 1.0]:
-		oval(head, Vector3(side * 0.164, -0.002, 0), Vector3(0.059, 0.096, 0.047), skin)
-		oval(head, Vector3(side * 0.167, -0.002, 0.022), Vector3(0.026, 0.058, 0.012), skin.darkened(0.17))
-		oval(head, Vector3(side * 0.073, 0.016, 0.117), Vector3(0.071, 0.051, 0.027), Color("f4ecd7"))
-		oval(head, Vector3(side * 0.072, 0.013, 0.134), Vector3(0.034, 0.043, 0.012), Color("614431"))
-		oval(head, Vector3(side * 0.072, 0.013, 0.140), Vector3(0.016, 0.030, 0.006), Color("292d29"))
-		oval(head, Vector3(side * 0.073 - 0.008, 0.023, 0.146), Vector3(0.010, 0.011, 0.005), Color("fff6db"))
-		var brow := oval(head, Vector3(side * 0.073, 0.065, 0.124), Vector3(0.080, 0.014, 0.016), hair)
-		brow.rotation.z = -side * 0.08
-	oval(head, Vector3(0, -0.035, 0.131), Vector3(0.043, 0.060, 0.058), skin.lightened(0.04))
-	oval(head, Vector3(0, -0.103, 0.115), Vector3(0.056, 0.009, 0.011), skin.darkened(0.32))
+		Detail.oval(head, Vector3(side * 0.157, -0.005, -0.002), Vector3(0.056, 0.086, 0.042), skin)
+		Detail.oval(head, Vector3(side * 0.169, -0.004, 0.017), Vector3(0.024, 0.053, 0.016), skin.darkened(0.14))
+		Detail.oval(head, Vector3(side * 0.070, 0.010, 0.116), Vector3(0.065, 0.043, 0.024), Color("eee6d5"))
+		Detail.oval(head, Vector3(side * 0.068, 0.008, 0.130), Vector3(0.031, 0.036, 0.012), Color("69452a"))
+		Detail.oval(head, Vector3(side * 0.068, 0.009, 0.136), Vector3(0.016, 0.025, 0.005), Color("24241d"))
+		Detail.oval(head, Vector3(side * 0.068 - 0.006, 0.017, 0.139), Vector3(0.007, 0.008, 0.004), Color("fff4da"))
+		Detail.strand(head, [Vector3(side * 0.037, 0.011, 0.123), Vector3(side * 0.070, 0.034, 0.128), Vector3(side * 0.103, 0.014, 0.111)], [0.002, 0.005, 0.001], hair.darkened(0.2), 0.7)
+		Detail.strand(head, [Vector3(side * 0.038, 0.003, 0.123), Vector3(side * 0.070, -0.013, 0.126), Vector3(side * 0.102, 0.008, 0.11)], [0.001, 0.004, 0.001], skin.darkened(0.10), 0.65)
+		Detail.strand(head, [Vector3(side * 0.038, 0.055, 0.118), Vector3(side * 0.067, 0.066, 0.122), Vector3(side * 0.105, 0.052, 0.104)], [0.007, 0.008, 0.002], hair, 0.45)
+	Detail.loft(head, [Vector4(-0.058, 0.021, 0.021, 0.142), Vector4(-0.032, 0.020, 0.025, 0.141), Vector4(0.011, 0.013, 0.012, 0.127), Vector4(0.054, 0.009, 0.004, 0.122)], skin, 24)
+	Detail.oval(head, Vector3(0, -0.045, 0.158), Vector3(0.032, 0.023, 0.025), skin.lightened(0.03))
+	for side in [-1.0, 1.0]:
+		Detail.oval(head, Vector3(side * 0.014, -0.055, 0.152), Vector3(0.009, 0.005, 0.005), skin.darkened(0.20))
+	Detail.strand(head, [Vector3(-0.028, -0.095, 0.132), Vector3(0, -0.100, 0.142), Vector3(0.029, -0.093, 0.132)], [0.001, 0.0025, 0.001], skin.darkened(0.35), 0.5)
+	Detail.strand(head, [Vector3(-0.022, -0.102, 0.133), Vector3(0, -0.106, 0.140), Vector3(0.022, -0.101, 0.133)], [0.001, 0.004, 0.001], skin.lerp(Color("b27662"), 0.18), 0.5)
 	_hair(profile.hair, hair, cloth)
 	_build_cape(cloth)
 	# Small background and keepsake details preserve customization without replacing the scout outfit.
 	var token_color: Color = [Color("bba372"), Color("9b684a"), Color("658a83"), Color("8894a0")][profile.background]
-	oval(torso, Vector3(-0.11, 0.40, 0.17), Vector3(0.032, 0.041, 0.013), token_color)
+	Detail.oval(torso, Vector3(-0.11, 0.40, 0.17), Vector3(0.032, 0.041, 0.013), token_color)
 	var token := joint(body, "Keepsake", Vector3(0.24, 0.87, 0.135))
 	if profile.keepsake == 1:
 		var compass := cylinder(token, Vector3.ZERO, 0.032, 0.016, Color("c8aa67"))
@@ -202,50 +208,77 @@ func rebuild(profile: Dictionary) -> void:
 		box(token, Vector3(0.004, 0, 0.017), Vector3(0.063, 0.095, 0.012), cream)
 		box(token, Vector3(0, 0, 0.027), Vector3(0.08, 0.017, 0.014), leather)
 	else:
-		oval(token, Vector3.ZERO, Vector3(0.043, 0.059, 0.022), leather.lightened(0.22))
+		Detail.oval(token, Vector3.ZERO, Vector3(0.043, 0.059, 0.022), leather.lightened(0.22))
 
 func _hair(style: int, color: Color, cloth: Color) -> void:
 	if style == 5: return
-	oval(head, Vector3(0, 0.115, -0.04), Vector3(0.34, 0.26, 0.29), color)
-	for i in range(7 if style != 1 else 3):
-		var x := -0.14 + i * (0.047 if style != 1 else 0.12)
-		var tuft := oval(head, Vector3(x, 0.13 + sin(i * 1.7) * 0.025, 0.095), Vector3(0.10, 0.15 if style != 1 else 0.07, 0.095), color.lightened((i % 3) * 0.025))
-		tuft.rotation.z = -0.47
+	Detail.oval(head, Vector3(0, 0.105, -0.046), Vector3(0.326, 0.259, 0.274), color)
+	# Swept locks follow the skull and taper to points, instead of spherical bangs.
+	for i in range(9 if style != 1 else 5):
+		var x := -0.142 + i * (0.035 if style != 1 else 0.069)
+		var y := 0.159 + sin(i * 0.38) * 0.05
+		var tip_y := 0.022 + i * 0.006 if style != 1 else 0.10
+		Detail.strand(head, [Vector3(x + 0.075, y + 0.018, -0.035), Vector3(x + 0.043, y + sin(i) * 0.015, 0.090), Vector3(x - 0.027, tip_y + 0.040 + sin(i * 1.8) * 0.02, 0.130), Vector3(x - 0.040, tip_y + sin(i * 1.8) * 0.024, 0.110)], [0.013, 0.047, 0.026, 0.001], color.lightened((i % 3) * 0.025), 0.25)
 	for side in [-1.0, 1.0]:
-		var lock := oval(head, Vector3(side * 0.14, 0.04, -0.03), Vector3(0.07, 0.19, 0.14), color)
-		lock.rotation.z = -side * 0.2
+		for i in range(4):
+			Detail.strand(head, [Vector3(side * 0.10, 0.18 - i * 0.023, -0.02 - i * 0.021), Vector3(side * 0.171, 0.06 - i * 0.015, -0.01 - i * 0.027), Vector3(side * (0.17 + i * 0.011), -0.03 - i * 0.02, 0.026 - i * 0.032)], [0.016, 0.033, 0.001], color.lightened((i % 2) * 0.035), 0.45)
 	if style in [0, 3]:
-		oval(head, Vector3(0, 0.14 if style == 0 else 0.27, -0.17), Vector3(0.16, 0.13, 0.18), color)
-		cylinder(head, Vector3(0, 0.17 if style == 0 else 0.24, -0.12), 0.043, 0.032, cloth)
+		var root := Vector3(0, 0.13 if style == 0 else 0.25, -0.17)
+		for i in range(6):
+			Detail.strand(head, [root, root + Vector3((i - 2.5) * 0.025, 0.055, -0.075), root + Vector3((i - 2.5) * 0.033, -0.055 + (i % 2) * 0.03, -0.13)], [0.021, 0.034, 0.001], color.lightened((i % 3) * 0.025), 0.6)
+		var tie := Detail.oval(head, root, Vector3(0.096, 0.049, 0.056), cloth.darkened(0.1))
+		tie.rotation.x = -0.4
 	if style in [2, 4]:
-		oval(head, Vector3(0, -0.10, -0.13), Vector3(0.31, 0.40, 0.15), color)
-		for side in [-1.0, 1.0]:
-			for i in range(5 if style == 4 else 1):
-				oval(head, Vector3(side * 0.15, -0.09 - i * 0.044, 0.0), Vector3(0.060, 0.075 if style == 4 else 0.29, 0.067), color)
+		for i in range(9):
+			var x := (i - 4) * 0.036
+			Detail.strand(head, [Vector3(x, 0.05, -0.12), Vector3(x * 1.15, -0.15, -0.15), Vector3(x * 1.05, -0.31, -0.10)], [0.033, 0.037, 0.002], color.lightened((i % 3) * 0.025), 0.5)
+		if style == 4:
+			for side in [-1.0, 1.0]:
+				for i in range(6):
+					Detail.oval(head, Vector3(side * (0.15 + sin(i * PI) * 0.01), -0.07 - i * 0.036, 0.0), Vector3(0.054, 0.056, 0.052), color.lightened((i % 2) * 0.03))
+
+func _cape_point(t: float, a: float) -> Vector3:
+	var spread := smoothstep(0, 0.42, t)
+	var width := lerpf(0.106, 0.37, spread) + 0.055 * t * t
+	var depth := lerpf(0.105, 0.17, spread) + 0.066 * t * t
+	var fold := sin(a * 8 + t * 0.7) * 0.017 * t + sin(a * 13 - t) * 0.005 * t
+	return Vector3(sin(a) * (width + fold), 0.12 - 0.35 * t + sin(a * 3) * 0.014 * t * t, cos(a) * (depth + fold))
 
 func _build_cape(color: Color) -> void:
 	cape = joint(body, "Cape", Vector3(0, 1.53, 0))
 	var surface := SurfaceTool.new()
 	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var rows := [Vector3(0.105, 0.105, 0.12), Vector3(0.29, 0.17, 0.03), Vector3(0.385, 0.235, -0.22)]
-	for row in range(2):
-		for col in range(24):
-			var vertices := []
-			for pair in [Vector2i(row, col), Vector2i(row + 1, col), Vector2i(row + 1, col + 1), Vector2i(row, col + 1)]:
-				var a := 0.30 + float(pair.y) / 24 * (TAU - 0.60)
-				var ring: Vector3 = rows[pair.x]
-				var fold := 1.0 + sin(a * 7) * 0.035
-				vertices.append(Vector3(sin(a) * ring.x * fold, ring.z + (sin(a * 3) * 0.02 if pair.x == 2 else 0.0), cos(a) * ring.y * fold))
-			for index in [0, 2, 1, 0, 3, 2]: surface.add_vertex(vertices[index])
-			if row == 1:
-				segment(cape, vertices[1] + Vector3(0, 0.015, 0), vertices[2] + Vector3(0, 0.015, 0), 0.007, Color("cccca5"))
+	for row in range(10):
+		for col in range(64):
+			for pair in [Vector2i(row, col), Vector2i(row + 1, col + 1), Vector2i(row + 1, col), Vector2i(row, col), Vector2i(row, col + 1), Vector2i(row + 1, col + 1)]:
+				var t: float = pair.x / 10.0
+				var a: float = 0.30 + pair.y / 64.0 * (TAU - 0.60)
+				surface.set_color(Color.WHITE.darkened(maxf(0, sin(a * 8 + t * 0.7)) * 0.10 * t))
+				surface.add_vertex(_cape_point(t, a))
+	surface.index()
 	surface.generate_normals()
-	var mesh := part(cape, surface.commit(), Vector3.ZERO, color)
+	var mesh := Detail.mesh_node(cape, surface.commit(), color)
 	mesh.material_override.cull_mode = BaseMaterial3D.CULL_DISABLED
-	oval(cape, Vector3(0, 0.055, -0.12), Vector3(0.28, 0.14, 0.22), color.darkened(0.06))
+	# Hem piping and spaced embroidered chevrons follow the cloth in three dimensions.
+	for i in range(32):
+		var a := 0.30 + i / 32.0 * (TAU - 0.60)
+		var b := 0.30 + (i + 1) / 32.0 * (TAU - 0.60)
+		segment(cape, _cape_point(0.96, a), _cape_point(0.96, b), 0.004, color.darkened(0.22))
+	for i in range(13):
+		var a := 0.42 + i / 12.0 * (TAU - 0.84)
+		var points := [_cape_point(0.88, a - 0.065), _cape_point(0.74, a), _cape_point(0.88, a + 0.065)]
+		for n in range(2):
+			for k in range(2):
+				points[k + n] += Vector3(points[k + n].x, 0, points[k + n].z).normalized() * 0.001
+			segment(cape, points[n], points[n + 1], 0.006, Color("d4cba3"))
+	# A hanging, folded hood gives the third-person back its characteristic shape.
+	var hood := Detail.loft(cape, [Vector4(-0.19, 0.016, 0.01, -0.241), Vector4(-0.11, 0.095, 0.025, -0.232), Vector4(0.01, 0.133, 0.05, -0.175), Vector4(0.13, 0.115, 0.062, -0.065)], color.darkened(0.09), 32, 0.08)
+	hood.name = "FoldedHood"
+	Detail.strand(cape, [Vector3(0, 0.11, -0.131), Vector3(0, 0, -0.224), Vector3(0, -0.18, -0.25)], [0.003, 0.003, 0.001], color.darkened(0.26), 0.8)
 	segment(cape, Vector3(-0.07, 0.08, 0.10), Vector3(0.07, 0.08, 0.10), 0.008, Color("a7824e"))
 	for side in [-1.0, 1.0]:
-		oval(cape, Vector3(side * 0.07, 0.08, 0.11), Vector3(0.03, 0.03, 0.012), Color("d7b870"))
+		var clasp := Detail.oval(cape, Vector3(side * 0.07, 0.08, 0.115), Vector3(0.031, 0.032, 0.012), Color("d7b870"))
+		clasp.material_override.roughness = 0.42
 
 static func gripping_fingers(parent: Node3D, skin: Color) -> Node3D:
 	var fingers := joint(parent, "ClosedFingers", Vector3.ZERO)
