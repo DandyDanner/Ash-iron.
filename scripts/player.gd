@@ -7,6 +7,8 @@ const Inventory = preload("res://scripts/inventory.gd")
 const InventoryPanel = preload("res://scripts/inventory_panel.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const REACH := 2.6
+@export var pickup_radius: float = 3.0
+@export_range(10.0, 90.0) var pickup_half_angle: float = 70.0
 const JUMP_GRACE := 0.1
 const JUMP_BUFFER := 0.12
 
@@ -166,18 +168,18 @@ func _physics_process(delta: float) -> void:
 				_show_feedback("Timber! Collect the fallen wood with E." if hit.collider.hits_left == 0 else "Good hit")
 	if collect_requested:
 		collect_requested = false
-		var target := _aim_target()
-		if not target.is_empty():
-			if target.collider.has_method("collect_into"):
-				var item: String = target.collider.item_id
-				var amount: int = target.collider.collect_into(inventory)
+		var target := _interaction_target()
+		if is_instance_valid(target):
+			if target.has_method("collect_into"):
+				var item: String = target.item_id
+				var amount: int = target.collect_into(inventory)
 				if amount > 0:
 					if item == "stone_axe":
 						equip_axe(true)
 					_show_feedback("+%d %s" % [amount, Inventory.ITEMS[item].name.to_lower()])
 				else:
 					_show_feedback("Backpack full • Press I to drop a stack or craft.")
-			elif target.collider == workbench:
+			elif target == workbench:
 				open_inventory()
 	feedback_time = maxf(0.0, feedback_time - delta)
 	_update_hud()
@@ -192,10 +194,51 @@ func _show_feedback(text: String) -> void:
 	feedback = text
 	feedback_time = 1.2
 
+func _interaction_target() -> Node3D:
+	# Precise aim takes priority, but gathering does not require looking down at a tiny collider.
+	var aimed := _aim_target()
+	if not aimed.is_empty() and aimed.collider == workbench:
+		return workbench
+	var forward := -camera.global_basis.z
+	forward.y = 0.0
+	if forward.length_squared() < 0.01:
+		forward = -global_basis.z
+	forward = forward.normalized()
+	var best: Node3D = null
+	var best_distance := INF
+	var candidates := get_tree().get_nodes_in_group("pickups")
+	candidates.append_array(get_tree().get_nodes_in_group("wood_bundles"))
+	for candidate in candidates:
+		if candidate.is_queued_for_deletion() or candidate.collected:
+			continue
+		var offset: Vector3 = candidate.global_position - global_position
+		if absf(offset.y) > 1.8:
+			continue
+		offset.y = 0.0
+		var distance := offset.length()
+		if distance > pickup_radius:
+			continue
+		# Anything at your feet is reachable; farther items use a broad horizontal cone.
+		if distance > 1.1 and forward.dot(offset.normalized()) < cos(deg_to_rad(pickup_half_angle)):
+			continue
+		var sight := PhysicsRayQueryParameters3D.create(camera.global_position, candidate.global_position + Vector3(0, 0.12, 0), 1, [get_rid()])
+		if not get_world_3d().direct_space_state.intersect_ray(sight).is_empty():
+			continue
+		if not aimed.is_empty() and aimed.collider == candidate:
+			return candidate
+		if distance < best_distance:
+			best = candidate
+			best_distance = distance
+	return best
+
 func _update_hud() -> void:
 	resource_label.text = "%s   /   PACK %d / 8" % ["STONE AXE" if axe_equipped else "EMPTY HANDS", inventory.used_slots()]
 	if feedback_time > 0.0:
 		prompt_label.text = feedback
+		return
+	var nearby := _interaction_target()
+	if is_instance_valid(nearby):
+		prompt_label.text = nearby.prompt()
 		return
 	var hit := _aim_target()
 	if not hit.is_empty() and hit.collider.has_method("prompt"):
@@ -204,7 +247,7 @@ func _update_hud() -> void:
 		else:
 			prompt_label.text = hit.collider.prompt()
 	elif not workbench.built:
-		prompt_label.text = "Look down for sticks and stones • E Gather • I Backpack"
+		prompt_label.text = "Walk near sticks and stones • E Gather • I Backpack"
 	elif inventory.count("stone_axe") == 0:
 		prompt_label.text = "Return to your workbench to craft a stone axe."
 	else:
