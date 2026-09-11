@@ -1,13 +1,16 @@
-"""Export optimized, vertex-colored skinned travelers from the preserved cycle 26 study.
-Source is never saved or changed. Output GLBs are driven by Godot's existing movement/tool rig.
+"""Export optimized, vertex-colored skinned travelers from their preserved Blender studies.
+Sources are never saved or changed. Optional -- --design=willow_scout exports only that model. Output GLBs are driven by Godot's existing movement/tool rig.
 """
 from pathlib import Path
-import bpy,math,json
+import bpy,math,json,sys
 from mathutils import Vector,Matrix
 R=Path(__file__).resolve().parents[2]
 OUT=R/'assets/characters';OUT.mkdir(parents=True,exist_ok=True)
 N=['WILLOW SCOUT','HEARTHLAND RANGER','RIDGE WAYFARER','EMBER FORAGER']
 SLUG=['willow_scout','hearthland_ranger','ridge_wayfarer','ember_forager']
+SOURCES=['cycle_30','cycle_26','cycle_26','cycle_26']
+ONLY=next((a.split('=',1)[1] for a in sys.argv if a.startswith('--design=')),None)
+if ONLY is not None and ONLY not in SLUG:raise ValueError('Unknown traveler: '+ONLY)
 LEG=('Canvas trouser','Rolled trouser','Exposed ankle','Shaped leather boot','Folded boot','Layered boot','Crossed flax','Canvas pocket','Pocket seam')
 ARM=('Gathered woven sleeve','Rolled fabric cuff','Sleeve underarm','Forearm','Leather wrist')
 CAPE=('Tailored shoulder cape','Closed asymmetric wayfarer poncho','Bound tailored cape','Cape opening','Poncho woven','Flat embroidered cape','Tailored cape','Hanging folded hood','Hood center')
@@ -43,12 +46,14 @@ def runtime_material(name,rough,metal=0):
  a=m.node_tree.nodes.new('ShaderNodeVertexColor');a.layer_name='GameColor';m.node_tree.links.new(a.outputs['Color'],p.inputs['Base Color']);m.use_backface_culling=False
  return m
 
-report=[]
+report=json.loads((OUT/'export_report.json').read_text()).get('models',[]) if ONLY and (OUT/'export_report.json').exists() else []
 for kind,name in enumerate(N):
- bpy.ops.wm.open_mainfile(filepath=str(R/'art/blender/cycles/cycle_26/characters.blend'))
+ if ONLY is not None and SLUG[kind]!=ONLY:continue
+ source_path=Path('art/blender/cycles')/SOURCES[kind]/'characters.blend'
+ bpy.ops.wm.open_mainfile(filepath=str(R/source_path))
  col=bpy.data.collections[name+' — authored study'];root=next(o for o in col.objects if o.type=='EMPTY');scale=Vector(root.scale)*1.14
  output=bpy.data.collections.new('GAME EXPORT');bpy.context.scene.collection.children.link(output)
- mats=[runtime_material('Fabric',.90),runtime_material('Skin',.67),runtime_material('Hair',.66),runtime_material('Brass',.4,.55),runtime_material('Eyes',.35)]
+ mats=[runtime_material('Fabric',.90),runtime_material('Skin',.57 if kind==0 else .67),runtime_material('Hair',.66),runtime_material('Brass',.4,.55),runtime_material('Eyes',.19 if kind==0 else .35)]
  groups={'Traveler':[],'LeftFingers':[],'RightFingers':[]};points=bones();exported=[]
  for source in list(col.objects):
   if source.type not in ['MESH','CURVE'] or source.name.startswith(OMIT):continue
@@ -62,7 +67,7 @@ for kind,name in enumerate(N):
   obj=bpy.data.objects.new(source.name+' game',md);output.objects.link(obj)
   bpy.context.view_layer.objects.active=obj;obj.select_set(True)
   triangles=sum(len(p.vertices)-2 for p in md.polygons)
-  limit=18000 if 'continuous facial planes' in source.name else (10000 if source.name.startswith(CAPE) else 5000)
+  limit=18000 if 'continuous facial planes' in source.name else (10000 if source.name.startswith(CAPE) or (kind==0 and 'fitted almond eye' in source.name) else 5000)
   if triangles>limit:
    dec=obj.modifiers.new('Game triangle budget','DECIMATE');dec.ratio=limit/triangles;bpy.ops.object.modifier_apply(modifier=dec.name);md=obj.data
   center=sum((v.co for v in md.vertices),Vector())/len(md.vertices)
@@ -110,6 +115,9 @@ for kind,name in enumerate(N):
  path=OUT/(SLUG[kind]+'.glb')
  bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_animations=False,export_skins=True,export_all_influences=False,export_def_bones=True,export_materials='EXPORT',export_attributes=False,export_yup=True)
  tri=sum(sum(len(p.vertices)-2 for p in o.data.polygons) for o in exported)
- report.append({'design':SLUG[kind],'triangles':tri,'bytes':path.stat().st_size,'bones':len(points),'scale':list(scale)})
+ report=[entry for entry in report if entry['design']!=SLUG[kind]]
+ report.append({'source':str(source_path),'design':SLUG[kind],'triangles':tri,'bytes':path.stat().st_size,'bones':len(points),'scale':list(scale)})
  print('PLAYABLE_EXPORTED',report[-1],flush=True)
-(OUT/'export_report.json').write_text(json.dumps({'source':'art/blender/cycles/cycle_26/characters.blend','models':report},indent=2)+'\n')
+report.sort(key=lambda entry:SLUG.index(entry['design']))
+for entry in report:entry.setdefault('source',str(Path('art/blender/cycles')/SOURCES[SLUG.index(entry['design'])]/'characters.blend'))
+(OUT/'export_report.json').write_text(json.dumps({'models':report},indent=2)+'\n')

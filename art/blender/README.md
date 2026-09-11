@@ -1,6 +1,6 @@
 # Character and wildlife modeling studio
 
-Open `cycles/cycle_26/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
+Open `cycles/cycle_30/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. The native source studies remain unrigged. Separate skinned exports of all four travelers are playable; Willow uses cycle 30 and the other travelers retain cycle 26. Wildlife studies remain offline.
 
 `ash_iron_character_studio.blend` remains the original baseline.
 
@@ -10,9 +10,9 @@ The original studio models are in separate named collections. Toggle the screen 
 
 ## Scope
 
-Build all four approved traveler designs and all four approved wildlife studies toward the approved illustrations, then assess actual front/side/back renders before replacing the playable models. Keep customization, equipment contacts, animation, and scale in mind. Do not change the world or combat while doing this art work.
+Current focus: improve Willow Scout against the approved sheet and review matched actual front/side/three-quarter renders. Preserve the other traveler and wildlife studies while establishing a stronger Willow model. Keep customization, equipment contacts, animation, and scale in mind. Do not change the world or combat while doing this art work.
 
-Save new authored versions under distinct names so this baseline remains available. The `.gdignore` keeps this entire source folder out of Godot’s asset importer. No scene currently loads these files. Finished approved GLBs will eventually go under `assets/` with explicit integration.
+Save new authored versions under distinct names so this baseline remains available. The `.gdignore` keeps this entire source folder out of Godot’s asset importer. No scene currently loads these files. Playable GLBs now live under `assets/characters/`; their exporter records each source version. The [focused review](../../docs/art/WILLOW_FOCUSED_REVIEW.md) documents Willow’s current improvements and fidelity gaps.
 
 ## Reproduce and verify
 

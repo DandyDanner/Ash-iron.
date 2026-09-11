@@ -1,6 +1,6 @@
 # Eight-model Blender review cycles
 
-These are actual Blender meshes and Cycles renders, authored locally with the versioned workflows under `tools/blender/`. They are **unrigged modeling studies**, not finished game assets. No runtime scene, world art, damage value, save format, or customization behavior changes in this work.
+These are actual Blender meshes and Cycles renders, authored locally with the versioned workflows under `tools/blender/`. They are **unrigged modeling studies**, not finished game assets. Cycles 1–26 were offline studies. Four travelers were subsequently integrated as separate skinned exports. Cycles 27–30 update only Willow Scout’s face/hair and its playable export; world art, balance, saves and selection behavior are unchanged.
 
 Dallon expanded the scope to Willow Scout, Hearthland Ranger, Ridge Wayfarer, Ember Forager, Bristleback Boar, Woodland Hog, Ridgeback Boar, and Meadow Buck. The three approved concept sheets are packed into each native file. The bear is deferred.
 
@@ -165,3 +165,9 @@ To reproduce the face milestone in a new output directory, run `Blender --backgr
 ## Remaining work before game integration
 
 The models need further face/hair/anatomy and garment shaping against the illustrations, retopology, UVs and baked game materials, a deforming skeleton and skin weights, animation and equipment-contact checks, customization mapping, and a tested import. Dense fur curves and Blender procedural shaders are study materials and will need a game-suitable conversion. This work does not certify concept fidelity, animated cloth clearance, or runtime performance.
+
+## Cycles 27–30 — focus on Willow Scout
+
+Rebuilt Willow’s face and hair over the preserved cycle 26 source, with matched before/after front, three-quarter, side and whole-body renders. Cycle 27 exposed excessive eye/nose projection and looping hair clumps. Cycle 28 softened the profile and hair but exposed inner-eye overlap and oversmoothed hair detail. Cycle 29 fixed eye clearance and restored restrained strand detail; cycle 30 rounded a hard chin edge. Native sources retain all eight studies, with identical fingerprints for 771 objects in the other seven models.
+
+See [the focused review](../../../docs/art/WILLOW_FOCUSED_REVIEW.md) for actual comparisons, reproduction and specific limits. The final Willow export is playable through the existing menu and rig. Facial planes and eyes are more defined, but the character remains a simplified stylized model; sculpted hair clumps, basic ears and the earlier rigid clothing/body shapes still fall well short of the illustration.
