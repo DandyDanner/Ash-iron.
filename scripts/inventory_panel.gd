@@ -115,7 +115,7 @@ func setup(owner_player: Node3D) -> void:
 		"stone_axe": {"name": "Stone axe", "short": "Stone axe", "output": "stone_axe", "amount": 1, "cost": Inventory.AXE_COST, "description": Inventory.ITEMS.stone_axe.description},
 		"chest": {"name": "Storage chest", "short": "Chest", "output": "chest", "amount": 1, "cost": Inventory.CHEST_COST, "description": "Place a chest to store supplies in twelve slots. Chests near the bench supply crafting materials."}
 	}
-	var short_names := {"stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks"}
+	var short_names := {"stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks", "furnace": "Furnace"}
 	for id in Inventory.RECIPES:
 		catalog[id] = Inventory.RECIPES[id].duplicate(true)
 		catalog[id].short = short_names.get(id, catalog[id].name)
@@ -197,7 +197,7 @@ func setup(owner_player: Node3D) -> void:
 	_select_recipe(selected_recipe)
 	message_label = _label(layout, "", 15, GOLD)
 	message_label.custom_minimum_size.y = 22
-	_label(layout, "E  Gather / bench / chest     •     I  Backpack     •     Your progress in the clearing is saved as you play.", 13, MUTED)
+	_label(layout, "E  Gather / bench / chest / furnace     •     I  Backpack     •     Your progress in the clearing is saved as you play.", 13, MUTED)
 	visible = false
 
 func _input(event: InputEvent) -> void:
@@ -244,8 +244,14 @@ func refresh() -> void:
 	drop_button.disabled = chosen.is_empty()
 	equip_button.disabled = not chosen.get("item", "") in Inventory.EQUIPPABLE
 	equip_button.text = "Put away" if not chosen.is_empty() and player.equipped_item == chosen.item else "Equip tool"
-	place_button.disabled = not chosen.get("item", "") in ["chest", "bench"]
-	place_button.text = "Place workbench here" if chosen.get("item", "") == "bench" else "Place chest here"
+	place_button.disabled = not chosen.get("item", "") in ["chest", "bench", "furnace"]
+	match chosen.get("item", ""):
+		"bench":
+			place_button.text = "Place workbench here"
+		"furnace":
+			place_button.text = "Place furnace here"
+		_:
+			place_button.text = "Place chest here"
 	detail.text = Inventory.ITEMS[chosen.item].description if not chosen.is_empty() else "Choose a slot to inspect an item. If your pack fills up, drop a stack on the ground to make room."
 	var connected: int = player.linked_chests().size()
 	pickup_bench_button.visible = is_instance_valid(player.workbench) and player.workbench.within_reach(player)

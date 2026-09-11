@@ -35,9 +35,9 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - Mouse — look / orbit the traveler while standing still
 - `V` — switch third person / first person; the choice is saved
 - `F11` — toggle full screen in a standalone game window (some Mac keyboards need Fn)
-- Left click — swing your equipped axe or pickaxe; thrust with a spear; with a bow, hold to draw and release to fire (while the mouse is captured)
+- Left click — swing your equipped axe, or your pickaxe at boulders and iron veins; thrust with a spear; with a bow, hold to draw and release to fire (while the mouse is captured)
 - Right click — cancel a bow draw without spending an arrow
-- `E` — gather sticks, loose stones, or wood; use a placed workbench; open a storage chest
+- `E` — gather sticks, loose stones, wood, or ore; use a placed workbench; open a storage chest; use a furnace
 - `I` — open or close your backpack and crafting panel
 - `Esc` — open the backpack and save controls; close an open panel
 - Click game window — capture mouse again
@@ -79,12 +79,13 @@ Every background now starts with **eight empty inventory slots and no tools**. Y
 4. At the built bench, spend **3 sticks + 2 stones** on **Craft & equip stone axe**. Starting from scratch, that is nine sticks and six stones total; gathering five stick piles and three stone piles is enough.
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
 6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
+7. Take your pickaxe to a rusty **iron vein**. Three sit at the edges of the clearing: north-east beyond the archery target, east past the first pine, and south-west of camp. Four strikes free four **iron ore**, and ordinary boulders sometimes shed a chunk as well. Back at the bench, spend **10 stones + 2 wood** on **Craft stone furnace**, place it like a chest, then press **E** at it to load ore and wood. Two ore and one wood become an **iron ingot** every six seconds while you do other things; take the ingots from the same panel, and pack the furnace up when it is empty. Ingots have no recipes yet: iron tools and weapons are the next milestone.
 
 You can have multiple workbenches. Stand close and press **E** to use a particular bench; opening **I** uses the nearest reachable one. Tool recipes still require a placed bench. **Pick up this workbench** returns it to an empty backpack slot so you can move camp; its connected chests stay in place with their contents. Hand crafting can use nearby linked stock while at a bench, but cannot draw from distant chests.
 
-Both benches and chests require clear, level ground beneath their whole footprint. Placement rejects obstacles, overlapping furniture, ledges, steep/uneven ground, and placing through walls. Failed crafting, placement, or packing never consumes the item or ingredients.
+Benches, chests, and furnaces require clear, level ground beneath their whole footprint. Placement rejects obstacles, overlapping furniture, ledges, steep/uneven ground, and placing through walls. Failed crafting, placement, or packing never consumes the item or ingredients.
 
-The **Craftables** icon grid shows all nine recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, and OWNED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
+The **Craftables** icon grid shows all ten recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, and OWNED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
 
 | Recipe | Materials | Use |
 | --- | --- | --- |
@@ -94,12 +95,13 @@ The **Craftables** icon grid shows all nine recipes. Hover an icon to see what i
 | Stone pickaxe | 3 sticks + 4 stones | Four swings break a boulder; each hit drops two loose stones to gather with E. |
 | Pine torch | 2 sticks + 1 wood | Hold for warm light. No fuel upkeep or fire damage in this prototype. |
 | Split wood into sticks | 1 wood | Produces 4 sticks for tools and camp supplies. |
+| Stone furnace | 10 stones + 2 wood | Placeable smelter. Two iron ore + one wood become one iron ingot every six seconds; it keeps working while you are away. |
 
 The spear, bow, and tools automatically take the first unused hotbar shortcut when equipped. Shortcuts point to items in your eight-slot backpack; they add no storage. A stored or dropped tool is shown dimmed until recovered. Assignments survive quitting and loading.
 
 The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
-Select a backpack slot to inspect an item, equip or put away a tool, or **Drop selected stack**. Dropped items can be recovered. Equipped tools still occupy their backpack slots. Axes chop pines; pickaxes mine boulders. Depleted boulders stay depleted after loading.
+Select a backpack slot to inspect an item, equip or put away a tool, or **Drop selected stack**. Dropped items can be recovered. Equipped tools still occupy their backpack slots. Axes chop pines; pickaxes mine boulders and iron veins. Depleted boulders and worked-out veins stay that way after loading.
 
 An **archery target** stands at the far right of the clearing, beyond the rocks. With a bow equipped and arrows in the backpack, hold left click for up to 0.85 seconds, then release. The HUD shows draw strength and arrow count. A quick tap does not shoot; right click, changing equipment, opening a panel, or losing window focus cancels the draw without spending ammunition. The target reports bullseye, inner ring, or target hit. Its practice hit counter resets on entering the clearing.
 
@@ -107,9 +109,9 @@ Each shot consumes one arrow, which becomes a recoverable pickup on impact. Arro
 
 Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point with your current inventory.
 
-**Your progress is kept.** Your health, the boar’s health and defeat, your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree and boulder damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
+**Your progress is kept.** Your health, the boar’s health and defeat, your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree, boulder, and iron vein damage, loose and dropped resources, every placed chest with its contents, and every furnace with its ore, wood, ingots, and smelting progress are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
 
-Save format 6 accepts existing format 1, 2, 3, 4, and 5 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. Format 5 stores every placed workbench with its position and rotation. An older built camp bench becomes a movable bench at its original location; an unbuilt worksite disappears without granting a free bench. Format 6 adds traveler and boar health; older saves keep their progress and gain a healthy boar and full traveler health. A defeated boar stays defeated, and its hide persists without duplicating. The added grove pines begin uncut and subsequently save like the original trees. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
+Save format 7 accepts existing format 1 through 6 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. Format 5 stores every placed workbench with its position and rotation. An older built camp bench becomes a movable bench at its original location; an unbuilt worksite disappears without granting a free bench. Format 6 adds traveler and boar health; older saves keep their progress and gain a healthy boar and full traveler health. A defeated boar stays defeated, and its hide persists without duplicating. Format 7 adds iron vein damage and placed furnaces; older saves start with fresh veins and no furnace. The added grove pines begin uncut and subsequently save like the original trees. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
 ## Stone spear and the Bristleback Boar
 
@@ -119,7 +121,7 @@ The first enemy is the **Bristleback Boar**, a russet animal with a dark mane an
 
 The boar has **60 health**: three spear hits (20 each) or three arrows (25 each) defeat it. Each charge deals 25 of your 100 health. Opening a panel or losing focus pauses its behavior. Defeat returns you to the starting camp with full health and all your belongings. Resting near that starting point restores health gradually after eight seconds without damage. This is an approachable first combat prototype, with no dropped death bag or stamina system yet.
 
-Defeating the boar leaves **one boar hide** to gather with E. It stacks to ten and can be stored or dropped; leather recipes will come later. The animal stays defeated after saving/loading; there is no respawn yet. The approved wildlife art direction and later progression are recorded in `docs/art/BRISTLEBACK.md`. The next progression milestone is **ore → smelter → ingots → an iron weapon upgrade**.
+Defeating the boar leaves **one boar hide** to gather with E. It stacks to ten and can be stored or dropped; leather recipes will come later. The animal stays defeated after saving/loading; there is no respawn yet. The approved wildlife art direction and later progression are recorded in `docs/art/BRISTLEBACK.md`. Ore, the furnace, and ingots are in; the next progression milestone is **an iron weapon upgrade** made from ingots.
 
 ## Verification
 
@@ -134,7 +136,7 @@ Use your Godot executable in these commands (fifteen suites):
 - `Godot --headless --path . --script res://tests/boar_test.gd` — warning, sidestep, charge/recovery, pause, walls, territory, actual spear/bow hits, one hide reward, player defeat/healing, persistence, and format 5 migration.
 - `Godot --headless --path . --script res://tests/spear_test.gd` — spear recipe and connected storage, full-pack failure, both camera views, single contact, reach/obstruction, cancellation, non-harvesting, hand/body clearance, hotbar, storage, save/load, and dropped recovery.
 - `Godot --headless --path . --script res://tests/placeable_workbench_test.gd` — hand crafting, placement/obstruction/overlap/slope checks, selected bench and linked storage, packing and relocation, multiple-bench snapshots, older saves, and dropped bench recovery.
-- `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — nine craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
+- `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — ten craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
 - `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation, tool/forearm clearance, axe cutting direction, upright bow and hand/string/arrow alignment, terrain collision, saved camera choice, and format 3 migration.
 - `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
 - `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
@@ -144,6 +146,7 @@ Use your Godot executable in these commands (fifteen suites):
 - `Godot --headless --path . --script res://tests/character_creation_test.gd` — character customization, isolated save round trip, world entry, and reopening.
 - `Godot --headless --path . --script res://tests/chest_storage_test.gd` — chest inventory rules and transfers, rejected save data, the chest recipe, the placement footprint check, opening with E, store/take, and packing an empty chest up.
 - `Godot --headless --path . --script res://tests/connected_storage_test.gd` — crafting across the backpack and chests near the bench: backpack first, distance limit, atomic failure, output in the backpack, the workbench prompt, panel totals, and persistence of chest stock.
+- `Godot --headless --path . --script res://tests/iron_furnace_test.gd` — iron veins that need a pickaxe and free four ore, the boulder ore chance, the furnace recipe and placement, opening with E, loading ore and wood, timed smelting with carried progress and stopping, taking ingots, persistence of furnaces and veins, format 6 saves, and packing up.
 - `Godot --headless --path . --script res://tests/save_load_test.gd` — malformed saves, a full snapshot round trip (pose, backpack, axe, bench, trees, pickups, dropped stacks, chests), no duplicated wood, checkpoints on closing panels, C keeping progress, Continue, and Start over.
 
 The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. The hotbar test accepts the same screenshot option. Every test uses isolated profile and save paths in the OS temporary folder through `tests/test_paths.gd`, so none touch your character or clearing. On restricted hosts, add `--log-file /absolute/writable/path.log`.

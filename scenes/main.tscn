@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
 [ext_resource type="Script" path="res://scripts/harvest_tree.gd" id="2_tree"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/world.gd" id="5_world"]
 
 [ext_resource type="Script" path="res://scripts/visual_clearing.gd" id="6_visual"]
+[ext_resource type="Script" path="res://scripts/iron_vein.gd" id="7_vein"]
 
 [sub_resource type="StandardMaterial3D" id="MatGround"]
 albedo_color = Color(0.32, 0.48, 0.25, 1)
@@ -57,6 +58,21 @@ script = ExtResource("4_boulder")
 position = Vector3(-6, 1.6, -4)
 script = ExtResource("4_boulder")
 dimensions = Vector3(2, 2.8, 2.4)
+
+[node name="IronVein1" type="StaticBody3D" parent="."]
+position = Vector3(14, 0.2, -13)
+rotation = Vector3(0, 0.4, 0)
+script = ExtResource("7_vein")
+
+[node name="IronVein2" type="StaticBody3D" parent="."]
+position = Vector3(-13, 0.2, 9)
+rotation = Vector3(0, 2.3, 0)
+script = ExtResource("7_vein")
+
+[node name="IronVein3" type="StaticBody3D" parent="."]
+position = Vector3(16, 0.2, 8)
+rotation = Vector3(0, -1.1, 0)
+script = ExtResource("7_vein")
 
 [node name="PracticePine" type="StaticBody3D" parent="."]
 position = Vector3(0, 0.2, 0)

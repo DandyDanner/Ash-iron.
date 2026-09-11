@@ -12,7 +12,8 @@ Two assistants work on this repository, one at a time: **Claude Code** (systems,
    ```
 
    You must be on `main`, clean, and even with `origin/main`. If the tree is dirty or the branch has diverged, stop and ask Dallon which side wins. Never `git reset --hard`, rebase, or force-push on your own.
-3. Confirm the commit identity (the machine's git config pins it for every DandyDanner repository):
+3. One assistant per working copy at a time. If files change underneath you that you did not edit, another session is active in the same folder: stop, tell Dallon, and move your own work to a separate `git worktree` on its own branch rather than editing side by side. Never revert files you did not change.
+4. Confirm the commit identity (the machine's git config pins it for every DandyDanner repository):
 
    ```
    git var GIT_AUTHOR_IDENT

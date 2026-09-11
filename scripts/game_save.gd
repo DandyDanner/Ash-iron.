@@ -1,9 +1,9 @@
 extends RefCounted
-## World progress: player, backpack, clearing resources, workbench, and chests.
+## World progress: player, backpack, clearing resources, workbenches, chests, veins, and furnaces.
 ## Character appearance lives in character_profile.gd; the two files never overwrite each other.
 
 const SAVE_PATH := "user://save.json"
-const VERSION := 6
+const VERSION := 7
 static var storage_path: String = SAVE_PATH
 
 static func exists(path: String = "") -> bool:
@@ -18,7 +18,7 @@ static func load_state(path: String = "") -> Dictionary:
 	if parser.parse(FileAccess.get_file_as_string(path)) != OK or not (parser.data is Dictionary):
 		return {}
 	var data: Dictionary = parser.data
-	if not int(data.get("version", 0)) in [1, 2, 3, 4, 5, VERSION]:
+	if not int(data.get("version", 0)) in range(1, VERSION + 1):
 		return {}
 	# Older saves keep all progress; the world supplies defaults for missing equipment, rocks, or airborne arrows.
 	return data

@@ -35,6 +35,23 @@ func _draw() -> void:
 				draw_rect(Rect2(center + Vector2(x - 3, -17), Vector2(6, 37)), Color("4a4640"))
 			draw_rect(Rect2(center + Vector2(-4, -8), Vector2(8, 9)), Color("c9b47a"))
 
+		"iron_ore":
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-24, 8), center + Vector2(-16, -12), center + Vector2(2, -20), center + Vector2(20, -8), center + Vector2(23, 12), center + Vector2(-2, 20)]), Color("5b524c"))
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-16, -12), center + Vector2(2, -20), center + Vector2(20, -8), center + Vector2(0, -1)]), Color("6e645c"))
+			for spot in [Vector2(-10, 4), Vector2(6, 8), Vector2(11, -6), Vector2(-3, -9)]:
+				draw_circle(center + spot, 4, Color("b8652d"))
+				draw_circle(center + spot + Vector2(-1, -1), 1.6, Color("e08a4a"))
+		"iron_ingot":
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-26, 4), center + Vector2(-18, -10), center + Vector2(22, -10), center + Vector2(26, 4)]), Color("8f9aa3"))
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-26, 4), center + Vector2(26, 4), center + Vector2(26, 14), center + Vector2(-26, 14)]), Color("5f6b75"))
+			draw_line(center + Vector2(-14, -6), center + Vector2(14, -6), Color("c9d2d8"), 2, true)
+		"furnace":
+			draw_rect(Rect2(center + Vector2(-24, -4), Vector2(48, 28)), Color("6d6f68"))
+			draw_rect(Rect2(center + Vector2(-26, 22), Vector2(52, 6)), Color("4d4b45"))
+			draw_rect(Rect2(center + Vector2(-24, -8), Vector2(48, 4)), Color("4d4b45"))
+			draw_rect(Rect2(center + Vector2(-8, -26), Vector2(14, 18)), Color("5d5f59"))
+			draw_rect(Rect2(center + Vector2(-9, 4), Vector2(18, 14)), Color("1e1a17"))
+			draw_circle(center + Vector2(0, 13), 5, Color("f0a24c"))
 		"boar_hide":
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-24, -20), center + Vector2(-8, -16), center + Vector2(10, -22), center + Vector2(23, -13), center + Vector2(16, 4), center + Vector2(22, 23), center + Vector2(0, 17), center + Vector2(-21, 25), center + Vector2(-16, 2)]), Color("9b6744"))
 			draw_line(center + Vector2(-3, -14), center + Vector2(3, 15), Color("cfb786"), 3, true)

@@ -13,6 +13,8 @@ const ViewRig = preload("res://scripts/view_rig.gd")
 const Bow = preload("res://scripts/starter_bow.gd")
 const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Hotbar = preload("res://scripts/hotbar.gd")
+const Furnace = preload("res://scripts/furnace.gd")
+const FurnacePanel = preload("res://scripts/furnace_panel.gd")
 const REACH := 2.6
 @export var pickup_radius: float = 3.0
 @export_range(10.0, 90.0) var pickup_half_angle: float = 70.0
@@ -57,6 +59,8 @@ var feedback := ""
 var spawn_position: Vector3
 var storage_panel: Control
 var open_chest: Node3D
+var furnace_panel: Control
+var open_furnace_node: Node3D
 var save_label: Label
 var world: Node
 
@@ -99,6 +103,9 @@ func _ready() -> void:
 	storage_panel = StoragePanel.new()
 	hud.add_child(storage_panel)
 	storage_panel.setup(self)
+	furnace_panel = FurnacePanel.new()
+	hud.add_child(furnace_panel)
+	furnace_panel.setup(self)
 	save_label = _label(hud, Vector2.ZERO, 14)
 	save_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	save_label.offset_left = -420
@@ -128,7 +135,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		var fullscreen := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if fullscreen else DisplayServer.WINDOW_MODE_FULLSCREEN)
 		return
-	if inventory_panel.visible or storage_panel.visible:
+	if inventory_panel.visible or storage_panel.visible or furnace_panel.visible:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_V:
@@ -258,7 +265,10 @@ func _physics_process(delta: float) -> void:
 			if hit.collider.mine(hit.position):
 				axe.impact.play()
 				_progress_changed()
-				_show_feedback("Boulder broken! E to gather stones." if hit.collider.hits_left == 0 else "Stone chipped")
+				if hit.collider.has_method("mined_message"):
+					_show_feedback(hit.collider.mined_message())
+				else:
+					_show_feedback("Boulder broken! E to gather stones." if hit.collider.hits_left == 0 else "Stone chipped")
 	if collect_requested:
 		collect_requested = false
 		var target := _interaction_target()
@@ -276,6 +286,8 @@ func _physics_process(delta: float) -> void:
 				open_inventory(target)
 			elif target.is_in_group("chests"):
 				open_storage(target)
+			elif target.is_in_group("furnaces"):
+				open_furnace(target)
 	feedback_time = maxf(0.0, feedback_time - delta)
 	_update_hud()
 
@@ -317,7 +329,7 @@ func _show_feedback(text: String) -> void:
 func _interaction_target() -> Node3D:
 	# Precise aim takes priority, but gathering does not require looking down at a tiny collider.
 	var aimed := _aim_target()
-	if not aimed.is_empty() and (aimed.collider.is_in_group("workbenches") or aimed.collider.is_in_group("chests")):
+	if not aimed.is_empty() and (aimed.collider.is_in_group("workbenches") or aimed.collider.is_in_group("chests") or aimed.collider.is_in_group("furnaces")):
 		return aimed.collider
 	var forward := -camera.global_basis.z
 	forward.y = 0.0
@@ -402,6 +414,10 @@ func _update_hud() -> void:
 		prompt_label.text = "Open your backpack [I] to place your storage chest."
 	elif get_tree().get_nodes_in_group("chests").is_empty() and inventory.can_afford(Inventory.CHEST_COST):
 		prompt_label.text = "Return to your workbench to craft a storage chest."
+	elif inventory.count("furnace") > 0:
+		prompt_label.text = "Open your backpack [I] to place your furnace."
+	elif inventory.count("iron_ore") > 0 and get_tree().get_nodes_in_group("furnaces").is_empty():
+		prompt_label.text = "Iron ore needs a furnace • Craft one at your workbench (10 stones + 2 wood)."
 	else:
 		prompt_label.text = "Aim at a nearby pine to chop • I Backpack"
 
@@ -426,6 +442,16 @@ func close_storage() -> void:
 	if is_instance_valid(open_chest):
 		open_chest.set_open(false)
 	open_chest = null
+	_leave_menu()
+
+func open_furnace(furnace: Node3D) -> void:
+	_enter_menu()
+	open_furnace_node = furnace
+	furnace_panel.open(furnace)
+
+func close_furnace() -> void:
+	furnace_panel.hide()
+	open_furnace_node = null
 	_leave_menu()
 
 func _enter_menu() -> void:
@@ -463,6 +489,8 @@ func _inventory_changed() -> void:
 		inventory_panel.refresh()
 	if storage_panel.visible:
 		storage_panel.refresh()
+	if furnace_panel.visible:
+		furnace_panel.refresh()
 	_progress_changed()
 
 func equip_axe(equipped: bool) -> void:
@@ -711,7 +739,13 @@ func _storage_note(pack_before: Dictionary, cost: Dictionary) -> String:
 func place_selected(index: int) -> String:
 	if index < 0 or index >= Inventory.CAPACITY:
 		return "Select a workbench or chest first."
-	return place_workbench(index) if inventory.slots[index].get("item", "") == "bench" else place_chest(index)
+	match inventory.slots[index].get("item", ""):
+		"bench":
+			return place_workbench(index)
+		"furnace":
+			return place_furnace(index)
+		_:
+			return place_chest(index)
 
 func _placement_spot(dimensions: Vector3, distance: float) -> Dictionary:
 	var ahead := global_position - global_basis.z * distance
@@ -734,10 +768,10 @@ func _placement_spot(dimensions: Vector3, distance: float) -> Dictionary:
 	# Newly placed bodies may not enter the physics broadphase until the next tick.
 	# Compare furniture footprints too, preventing two placements in the same frame.
 	var polygon := _furniture_footprint(spot, rotation_basis, dimensions + Vector3(0.1, 0, 0.1))
-	for furniture in get_tree().get_nodes_in_group("workbenches") + get_tree().get_nodes_in_group("chests"):
+	for furniture in get_tree().get_nodes_in_group("workbenches") + get_tree().get_nodes_in_group("chests") + get_tree().get_nodes_in_group("furnaces"):
 		if furniture.is_queued_for_deletion():
 			continue
-		var other_size := Vector3(1.9, 1.05, 1.0) if furniture.is_in_group("workbenches") else Vector3(0.92, 0.62, 0.58)
+		var other_size := _furniture_size(furniture)
 		if spot.y + dimensions.y < furniture.global_position.y or furniture.global_position.y + other_size.y < spot.y:
 			continue
 		var other := _furniture_footprint(furniture.global_position, furniture.global_basis, other_size)
@@ -757,6 +791,13 @@ func _placement_spot(dimensions: Vector3, distance: float) -> Dictionary:
 	if not state.intersect_shape(footprint, 1).is_empty():
 		return {"error": "No room there. Find a clearer spot."}
 	return {"position": spot}
+
+static func _furniture_size(furniture: Node3D) -> Vector3:
+	if furniture.is_in_group("workbenches"):
+		return Vector3(1.9, 1.05, 1.0)
+	if furniture.is_in_group("furnaces"):
+		return Furnace.SIZE
+	return Vector3(0.92, 0.62, 0.58)
 
 static func _furniture_footprint(spot: Vector3, rotation_basis: Basis, dimensions: Vector3) -> PackedVector2Array:
 	var polygon := PackedVector2Array()
@@ -805,6 +846,33 @@ func pickup_workbench(bench: Node3D) -> String:
 	active_bench = null
 	_progress_changed()
 	return "Workbench packed up. Select it in your backpack to place it again."
+
+func place_furnace(index: int) -> String:
+	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "furnace":
+		return "Select the furnace in your backpack first."
+	var placement := _placement_spot(Furnace.SIZE, 1.9)
+	if placement.has("error"):
+		return placement.error
+	inventory.take_slot(index)
+	var furnace := Furnace.new()
+	get_parent().add_child(furnace)
+	furnace.global_position = placement.position
+	furnace.rotation.y = rotation.y
+	_progress_changed()
+	return "Furnace placed. Walk up to it and press E to load iron ore and wood."
+
+func pickup_furnace(furnace: Node3D) -> String:
+	if not is_instance_valid(furnace) or furnace.is_queued_for_deletion():
+		return "That furnace is gone."
+	if not furnace.is_empty():
+		return "Empty the furnace before picking it up."
+	if inventory.add("furnace", 1) != 1:
+		return "Your backpack is full. Make room for the furnace first."
+	furnace.queue_free()
+	if furnace_panel.visible:
+		close_furnace()
+	_progress_changed()
+	return "Furnace packed up."
 
 func pickup_chest(chest: Node3D) -> String:
 	if not is_instance_valid(chest):

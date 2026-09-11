@@ -8,6 +8,7 @@ const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
 const Boar = preload("res://scripts/bristleback.gd")
 const Bench = preload("res://scripts/workbench.gd")
+const Furnace = preload("res://scripts/furnace.gd")
 const AUTOSAVE_INTERVAL := 15.0
 const DIRTY_DELAY := 1.0
 var boar: Node3D
@@ -90,6 +91,13 @@ func to_data() -> Dictionary:
 	var boulders := []
 	for rock in get_tree().get_nodes_in_group("mineable_rocks"):
 		boulders.append({"name": rock.name, "hits_left": rock.hits_left})
+	var veins := []
+	for vein in get_tree().get_nodes_in_group("iron_veins"):
+		veins.append({"name": vein.name, "hits_left": vein.hits_left})
+	var furnaces := []
+	for furnace in get_tree().get_nodes_in_group("furnaces"):
+		if not furnace.is_queued_for_deletion():
+			furnaces.append(furnace.to_data())
 	var arrows := []
 	for arrow in get_tree().get_nodes_in_group("flying_arrows"):
 		if not arrow.is_queued_for_deletion() and not arrow.landed:
@@ -98,6 +106,8 @@ func to_data() -> Dictionary:
 		"boar": boar.to_data(),
 		"arrows": arrows,
 		"boulders": boulders,
+		"veins": veins,
+		"furnaces": furnaces,
 		"player": {
 			"x": player.global_position.x, "y": player.global_position.y, "z": player.global_position.z,
 			"yaw": player.rotation.y, "pitch": player.camera.rotation.x,
@@ -168,6 +178,16 @@ func _apply(data: Dictionary) -> void:
 		for entry in _list(data.get("boulders")):
 			if str(_dict(entry).get("name", "")) == str(rock.name):
 				rock.restore(int(_num(_dict(entry).get("hits_left"), 4.0)))
+	for vein in get_tree().get_nodes_in_group("iron_veins"):
+		for entry in _list(data.get("veins")):
+			if str(_dict(entry).get("name", "")) == str(vein.name):
+				vein.restore(int(_num(_dict(entry).get("hits_left"), float(vein.MAX_HITS))))
+	for entry in _list(data.get("furnaces")):
+		var furnace := Furnace.new()
+		add_child(furnace)
+		furnace.global_position = _vec(_dict(entry), Vector3.ZERO)
+		furnace.rotation.y = _num(_dict(entry).get("yaw"), 0.0)
+		furnace.restore(_dict(entry))
 	var saved := _dict(data.get("player"))
 	boar.restore(_dict(data.get("boar")))
 	if player:

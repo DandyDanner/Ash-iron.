@@ -60,11 +60,11 @@ Goal: walk out, collect one thing, bring it home.
 ## Phase 3 — First expedition loop
 
 - [x] Loose stone gathering
-- [ ] Iron ore
+- [x] Iron ore (three surface veins, four strikes each, plus a sporadic chunk from boulders)
 - [ ] Weight/encumbrance stages
 - [x] Basic backpack (slot capacity; weight and upgrades remain later work)
-- [ ] Furnace
-- [ ] Ore smelting into ingots
+- [x] Furnace (10 stones + 2 wood; craft at the bench, place anywhere level, load with E)
+- [x] Ore smelting into ingots (two ore + one wood per ingot, six seconds each, runs unattended)
 - [ ] Craft one meaningful upgrade
 - [x] Save/load (automatic snapshots, Continue / Start over, explicit Save & Quit with failure handling, migration of older saves)
 

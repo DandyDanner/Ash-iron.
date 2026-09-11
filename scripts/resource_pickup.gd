@@ -67,6 +67,18 @@ func _ready() -> void:
 			Model.box(self, Vector3(0, 0.16, 0), Vector3(0.60, 0.09, 0.34), Color("b18a57"))
 			for x in [-0.20, 0.20]:
 				Model.box(self, Vector3(x, 0.07, 0), Vector3(0.06, 0.14, 0.26), Color("795a3d"))
+		"iron_ore":
+			Model.oval(self, Vector3(-0.06, 0.11, 0), Vector3(0.32, 0.22, 0.26), Color("5b524c"))
+			Model.oval(self, Vector3(0.14, 0.08, 0.1), Vector3(0.2, 0.15, 0.18), Color("6e645c"))
+			for i in range(4):
+				Model.oval(self, Vector3(-0.1 + i * 0.07, 0.17 + (i % 2) * 0.04, -0.04 + (i % 2) * 0.1), Vector3(0.07, 0.04, 0.06), Color("b8652d").lightened((i % 2) * 0.12))
+		"iron_ingot":
+			for i in range(2):
+				Model.box(self, Vector3((i - 0.5) * 0.16, 0.05, 0), Vector3(0.12, 0.08, 0.34), Color("7f8a93").lightened(i * 0.05))
+		"furnace":
+			Model.box(self, Vector3(0, 0.12, 0), Vector3(0.36, 0.22, 0.36), Color("6d6f68"))
+			Model.box(self, Vector3(0, 0.30, -0.08), Vector3(0.14, 0.14, 0.14), Color("5d5f59"))
+			Model.box(self, Vector3(0, 0.1, 0.185), Vector3(0.14, 0.09, 0.02), Color("1e1a17"))
 		"chest":
 			Model.box(self, Vector3(0, 0.14, 0), Vector3(0.42, 0.24, 0.26), Color("8b6a44"))
 			Model.box(self, Vector3(0, 0.27, 0), Vector3(0.44, 0.05, 0.28), Color("9a7750"))
