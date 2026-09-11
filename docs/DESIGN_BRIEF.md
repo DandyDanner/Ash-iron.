@@ -33,6 +33,8 @@ Danger should not be perfectly linear. Safer zones can contain optional high-ris
 
 ## Crafting and resources
 
+Approved material progression: **Stone → Copper → Bronze → Iron → Steel**. Progress should reflect learning new crafts: shaping/lashing, smelting/casting, alloying, forging and refining. The [craftsman progression plan](CRAFTSMAN_PROGRESSION.md) describes the proposed stages and next stone/copper slice; current prototype recipes have not yet been reorganized.
+
 Metals are gathered as ore and must be processed.
 
 Example: **Iron ore → fuel + furnace → iron ingots → forged components/equipment**

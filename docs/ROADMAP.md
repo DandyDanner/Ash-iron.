@@ -72,9 +72,22 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Craft one meaningful upgrade: Bellmaw hide + wood/sticks → Explorer Pack
 - [x] Save/load (automatic snapshots, Continue / Start over, explicit Save & Quit with failure handling, migration of older saves)
 
+## Approved crafting direction — September 11
+
+**Stone → Copper → Bronze → Iron → Steel** is the approved target. See [Craftsman progression](CRAFTSMAN_PROGRESSION.md). Completed prototype checkboxes above describe the current build, including its early iron furnace; they do not mean this new progression is implemented.
+
+- [x] Agree on the five material stages
+- [ ] Inventory-crafted stone axe, pickaxe and spear; clear station requirements for other recipes
+- [ ] Copper source, primitive smelting, first copper item and fittings for an improved crafting station
+- [ ] Preserve existing iron, furnace contents/queues and saved progress when introducing the new order
+- [ ] Playtest the fresh stone/copper loop with eight inventory slots before adding later stages
+- [ ] Tin discovery and bronze alloying/casting
+- [ ] Iron forging and workshop capability
+- [ ] Steel refinement, heat treatment and specialized tools
+
 ## Phase 4 — Danger
 
-Current order: spear and Bristleback Boar → ore/furnace → one strange creature at Echo Hollow → Explorer Pack. Iron equipment remains next in the metal chain. Dallon approved a small outer excursion on September 11; larger biomes and a full enemy roster remain deferred.
+Current order: spear and Bristleback Boar → ore/furnace → one strange creature at Echo Hollow → Explorer Pack. The next crafting work is the stone/copper foundation above; iron equipment comes later in the approved material order. Dallon approved a small outer excursion on September 11; larger biomes and a full enemy roster remain deferred.
 
 - [x] Craftable stone spear, forward thrust, hotbar/save support, and practice-target melee hits
 
