@@ -42,7 +42,8 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Gather loose sticks and stones without tools
 - [x] Build a simple bench at the camp worksite
 - [x] Craft the first stone axe from gathered materials
-- [ ] Home/workshop drop-off or connected storage
+- [x] Placeable storage chest at camp (twelve slots; store, take, pick up and move)
+- [ ] Crafting pulls from connected home storage
 
 ## Phase 3 — First expedition loop
 
@@ -53,7 +54,7 @@ Goal: walk out, collect one thing, bring it home.
 - [ ] Furnace
 - [ ] Ore smelting into ingots
 - [ ] Craft one meaningful upgrade
-- [ ] Save/load
+- [x] Save/load (automatic snapshot of the clearing; Continue / Start over on the opening screen)
 
 ## Phase 4 — Danger
 

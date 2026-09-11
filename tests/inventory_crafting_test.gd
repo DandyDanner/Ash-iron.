@@ -1,12 +1,16 @@
 extends SceneTree
 const Inventory = preload("res://scripts/inventory.gd")
 const Profile = preload("res://scripts/character_profile.gd")
+const GameSave = preload("res://scripts/game_save.gd")
 const Bundle = preload("res://scripts/wood_bundle.gd")
 var failures := 0
 var screenshot_dir := ""
 
 func _initialize() -> void:
 	Profile.storage_path = "user://unused_inventory_test.json"
+	# World progress is isolated too: entering the clearing must never read or write the player's real save.
+	GameSave.storage_path = "user://unused_inventory_crafting_test_save.json"
+	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):
 			screenshot_dir = arg.trim_prefix("--screenshots=")
@@ -151,5 +155,6 @@ func run() -> void:
 	player.camera.look_at(player.workbench.global_position + Vector3(0, 0.85, 0))
 	await ticks()
 	await capture("first-workbench.png")
+	GameSave.clear()
 	print("INVENTORY + CRAFTING: %s" % ("PASS — eight slots, stacking, full/partial pickups, recipe transactions, empty start, gathering, bench, axe, equip/drop/recover" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)

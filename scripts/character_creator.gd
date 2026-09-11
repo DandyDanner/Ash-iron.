@@ -1,6 +1,7 @@
 extends Control
 const Profile = preload("res://scripts/character_profile.gd")
 const Traveler = preload("res://scripts/traveler_model.gd")
+const GameSave = preload("res://scripts/game_save.gd")
 const INK := Color("eee4cd")
 const MUTED := Color("a6b4a6")
 const GOLD := Color("d4b372")
@@ -16,6 +17,9 @@ var keepsake_buttons: Array[Button] = []
 var choices: Dictionary = {}
 var swatches: Dictionary = {}
 var stage: SubViewport
+var begin_button: Button
+var start_over_button: Button
+var confirm_start_over := false
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
@@ -130,22 +134,28 @@ func _ready() -> void:
 	var footer := HBoxContainer.new()
 	footer.add_theme_constant_override("separation", 16)
 	layout.add_child(footer)
-	var hint := label(footer, "Your appearance is yours to change.\nPress C in the test area to return here.", 13, MUTED)
+	var hint := label(footer, "Your appearance is yours to change.\nPress C in the clearing to return here. Your progress out there is kept.", 13, MUTED)
 	hint.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	error_label = label(footer, "", 13, Color("f0a18c"))
 	error_label.custom_minimum_size.x = 150
 	error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	var begin := Button.new()
-	begin.name = "BeginJourney"
-	begin.text = "Begin your journey   →" if profile.name.is_empty() else "Save & enter the clearing   →"
-	begin.custom_minimum_size = Vector2(285, 48)
-	begin.add_theme_stylebox_override("normal", _style(GOLD, GOLD))
-	begin.add_theme_stylebox_override("hover", _style(GOLD.lightened(0.12), GOLD))
-	begin.add_theme_color_override("font_color", Color("18251f"))
-	begin.add_theme_color_override("font_hover_color", Color("18251f"))
-	begin.pressed.connect(_begin)
-	footer.add_child(begin)
+	start_over_button = Button.new()
+	start_over_button.name = "StartOver"
+	start_over_button.custom_minimum_size = Vector2(190, 48)
+	start_over_button.tooltip_text = "Erase your saved clearing and begin again with empty hands. Your traveler is kept."
+	start_over_button.pressed.connect(_start_over)
+	footer.add_child(start_over_button)
+	begin_button = Button.new()
+	begin_button.name = "BeginJourney"
+	begin_button.custom_minimum_size = Vector2(285, 48)
+	begin_button.add_theme_stylebox_override("normal", _style(GOLD, GOLD))
+	begin_button.add_theme_stylebox_override("hover", _style(GOLD.lightened(0.12), GOLD))
+	begin_button.add_theme_color_override("font_color", Color("18251f"))
+	begin_button.add_theme_color_override("font_hover_color", Color("18251f"))
+	begin_button.pressed.connect(_begin)
+	footer.add_child(begin_button)
 	_refresh()
+	_refresh_journey()
 
 func _style(fill: Color, border: Color) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -235,6 +245,22 @@ func _refresh() -> void:
 			swatches[key][i].set_pressed_no_signal(i == profile[key])
 			swatches[key][i].text = "✓" if i == profile[key] else ""
 	traveler.rebuild(profile)
+
+func _refresh_journey() -> void:
+	var saved := GameSave.exists()
+	start_over_button.visible = saved
+	start_over_button.text = "Really start over?" if confirm_start_over else "Start over"
+	if saved:
+		begin_button.text = "Continue your journey   →"
+	else:
+		begin_button.text = "Begin your journey   →" if profile.name.is_empty() else "Save & enter the clearing   →"
+
+func _start_over() -> void:
+	# Two clicks: the first asks, the second erases world progress. The traveler is kept.
+	if confirm_start_over:
+		GameSave.clear()
+	confirm_start_over = not confirm_start_over and GameSave.exists()
+	_refresh_journey()
 
 func _begin() -> void:
 	profile = Profile.clean(profile)

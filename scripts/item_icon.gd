@@ -20,3 +20,9 @@ func _draw() -> void:
 			draw_line(center + Vector2(-9, 24), center + Vector2(8, -22), Color("b8915d"), 6, true)
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-18, -21), center + Vector2(14, -18), center + Vector2(10, -1), center + Vector2(-22, -7)]), Color("9dab9e"))
 			draw_line(center + Vector2(3, -19), center + Vector2(8, -2), Color("ceba87"), 4, true)
+		"chest":
+			draw_rect(Rect2(center + Vector2(-24, -6), Vector2(48, 26)), Color("8b6a44"))
+			draw_rect(Rect2(center + Vector2(-25, -17), Vector2(50, 12)), Color("9a7750"))
+			for x in [-14.0, 14.0]:
+				draw_rect(Rect2(center + Vector2(x - 3, -17), Vector2(6, 37)), Color("4a4640"))
+			draw_rect(Rect2(center + Vector2(-4, -8), Vector2(8, 9)), Color("c9b47a"))

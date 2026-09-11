@@ -20,7 +20,7 @@ func _ready() -> void:
 		log_piece.rotation.x = PI / 2
 	Model.box(self, Vector3(0, 0.11, 0), Vector3(0.74, 0.26, 0.06), Color("c5ab73"))
 	marker = Label3D.new()
-	marker.text = "5 wood"
+	marker.text = "%d wood" % amount
 	marker.position.y = 0.55
 	marker.font_size = 48
 	marker.pixel_size = 0.0015

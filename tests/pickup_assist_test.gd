@@ -1,10 +1,14 @@
 extends SceneTree
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const Profile = preload("res://scripts/character_profile.gd")
+const GameSave = preload("res://scripts/game_save.gd")
 var failures := 0
 
 func _initialize() -> void:
 	Profile.storage_path = "user://unused_pickup_test.json"
+	# World progress is isolated too: entering the clearing must never read or write the player's real save.
+	GameSave.storage_path = "user://unused_pickup_assist_test_save.json"
+	GameSave.clear()
 	call_deferred("run")
 
 func check(condition: bool, message: String) -> void:
@@ -63,5 +67,6 @@ func run() -> void:
 	player._unhandled_input(event)
 	await ticks()
 	check(player.inventory.count("stick") == 2, "E did not collect the assisted target")
+	GameSave.clear()
 	print("PICKUP ASSIST: %s" % ("PASS — broad aim, level view, feet, distance limit, rear exclusion, obstacles, prompt, and E collection" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)

@@ -32,11 +32,12 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `Space` — jump
 - Mouse — look
 - Left click — swing your crafted and equipped axe (while the mouse is captured)
-- `E` — gather sticks, loose stones, or wood; use the camp worksite or bench
+- `E` — gather sticks, loose stones, or wood; use the camp worksite or bench; open a storage chest
 - `I` — open or close your backpack and crafting panel
 - `Esc` — release mouse
 - Click game window — capture mouse again
-- `C` — return to character creation (re-entering resets the test clearing)
+- `C` — return to character creation (your progress is saved first)
+- Progress in the clearing saves itself; **Save game** in the backpack saves on demand
 
 ## Run it
 
@@ -58,6 +59,7 @@ Every background now starts with **eight empty inventory slots and no tools**. Y
 3. Collect **6 sticks + 4 stones**, then approach the marked **Camp Worksite**, ahead and left of the starting point. Press **E**, or open **I** while standing nearby, and choose **Build simple bench**.
 4. At the built bench, spend **3 sticks + 2 stones** on **Craft & equip stone axe**. Starting from scratch, that is nine sticks and six stones total; gathering five stick piles and three stone piles is enough.
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
+6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved.
 
 The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
@@ -65,7 +67,7 @@ Select a backpack slot to inspect an item, equip or put away the axe, or **Drop 
 
 Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point with your current inventory.
 
-**Prototype persistence:** inventory, dropped items, harvested resources, and the workbench reset when restarting the clearing or returning through character creation. Your saved character appearance is preserved. Gameplay save/load and connected home storage remain future milestones.
+**Your progress is kept.** Your position and view, backpack, equipped axe, the workbench, tree damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Crafting straight from chest contents is a later milestone.
 
 ## Verification
 
@@ -74,8 +76,10 @@ Use your Godot executable in these commands:
 - `Godot --headless --path . --script res://tests/inventory_crafting_test.gd` — slot limits, stacking, partial pickups, atomic crafting, empty-handed start, gathering, workbench, axe, equip/drop/recover.
 - `Godot --headless --path . --script res://tests/jump_axe_test.gd` — jumping, landing, axe reach and obstruction, cooldown, felling, wood pickup, mouse resume, and fall recovery after obtaining an axe.
 - `Godot --headless --path . --script res://tests/character_creation_test.gd` — character customization, isolated save round trip, world entry, and reopening.
+- `Godot --headless --path . --script res://tests/chest_storage_test.gd` — chest inventory rules and transfers, rejected save data, the chest recipe, the placement footprint check, opening with E, store/take, and packing an empty chest up.
+- `Godot --headless --path . --script res://tests/save_load_test.gd` — malformed saves, a full snapshot round trip (pose, backpack, axe, bench, trees, pickups, dropped stacks, chests), no duplicated wood, checkpoints on closing panels, C keeping progress, Continue, and Start over.
 
-The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. Tests use separate profile paths and do not overwrite your character.
+The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. Every test uses its own profile and save paths, so none of them touch your character or your clearing.
 
 ## First milestone
 

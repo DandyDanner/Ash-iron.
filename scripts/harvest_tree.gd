@@ -34,16 +34,7 @@ func chop(hit_position: Vector3) -> bool:
 		response.kill()
 	response = create_tween()
 	if hits_left == 0:
-		# The fall is visual only; the stump remains solid and cannot grant more wood.
-		trunk_collision.set_deferred("disabled", true)
-		Model.cylinder(self, Vector3(0, 0.15, 0), 0.4, 0.3, Color("b18d5e"))
-		var stump := CollisionShape3D.new()
-		var stump_shape := CylinderShape3D.new()
-		stump_shape.radius = 0.4
-		stump_shape.height = 0.3
-		stump.shape = stump_shape
-		stump.position.y = 0.15
-		add_child(stump)
+		_leave_stump()
 		response.tween_property(crown, "rotation:x", -PI / 2, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		response.tween_callback(_drop_wood)
 		response.tween_interval(1.0)
@@ -54,10 +45,31 @@ func chop(hit_position: Vector3) -> bool:
 		response.tween_property(crown, "rotation:z", 0.0, 0.14)
 	return true
 
+func restore(hits: int) -> void:
+	## Loaded from a save: no chips, no fall animation, and never a second wood bundle.
+	hits_left = clampi(hits, 0, MAX_HITS)
+	if hits_left == 0:
+		_leave_stump()
+		crown.queue_free()
+
+func _leave_stump() -> void:
+	# The fall is visual only; the stump remains solid and cannot grant more wood.
+	trunk_collision.set_deferred("disabled", true)
+	Model.cylinder(self, Vector3(0, 0.15, 0), 0.4, 0.3, Color("b18d5e"))
+	var stump := CollisionShape3D.new()
+	var stump_shape := CylinderShape3D.new()
+	stump_shape.radius = 0.4
+	stump_shape.height = 0.3
+	stump.shape = stump_shape
+	stump.position.y = 0.15
+	add_child(stump)
+
 func _drop_wood() -> void:
 	var bundle := Bundle.new()
 	bundle.position = position + Vector3(0, 0.18, 1.0)
 	get_parent().add_child(bundle)
+	if get_parent().has_method("mark_dirty"):
+		get_parent().mark_dirty()
 
 func _chips(hit_position: Vector3) -> void:
 	for i in range(7):

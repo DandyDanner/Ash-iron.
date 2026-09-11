@@ -1,11 +1,15 @@
 extends SceneTree
 const Profile = preload("res://scripts/character_profile.gd")
+const GameSave = preload("res://scripts/game_save.gd")
 var failures := 0
 var screenshot_dir := ""
 
 func _initialize() -> void:
 	# Never load or change the player's actual saved character during verification.
 	Profile.storage_path = "user://unused_jump_axe_test.json"
+	# World progress is isolated too: entering the clearing must never read or write the player's real save.
+	GameSave.storage_path = "user://unused_jump_axe_test_save.json"
+	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):
 			screenshot_dir = arg.trim_prefix("--screenshots=")
@@ -109,5 +113,6 @@ func run() -> void:
 	player.position.y = -20
 	await ticks(6)
 	check(player.position.distance_to(player.spawn_position) < 0.1 and player.wood == 5, "Falling off the clearing did not recover safely")
+	GameSave.clear()
 	print("JUMP + AXE: %s" % ("PASS — jump/landing, no double jump, range, obstruction, cooldown, felling, pickup, resume click, and fall recovery" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)

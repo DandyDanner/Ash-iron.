@@ -1,5 +1,6 @@
 extends SceneTree
 const Profile = preload("res://scripts/character_profile.gd")
+const GameSave = preload("res://scripts/game_save.gd")
 var failures := 0
 var screenshot_dir := ""
 
@@ -10,6 +11,9 @@ func check(condition: bool, message: String) -> void:
 
 func _initialize() -> void:
 	Profile.storage_path = "user://character_test_%s.json" % Time.get_ticks_usec()
+	# World progress is isolated too: entering the clearing must never read or write the player's real save.
+	GameSave.storage_path = "user://unused_character_creation_test_save.json"
+	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):
 			screenshot_dir = arg.trim_prefix("--screenshots=")
@@ -76,5 +80,6 @@ func run() -> void:
 	check(current_scene.profile == Profile.clean(expected), "Reopening the creator lost saved choices")
 	check(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "Creator did not release mouse")
 	DirAccess.remove_absolute(Profile.storage_path)
+	GameSave.clear()
 	print("CHARACTER CREATION: %s" % ("PASS — all appearances, background preservation, save round trip, world entry, and reopening" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)

@@ -6,6 +6,8 @@ const Axe = preload("res://scripts/starter_axe.gd")
 const Inventory = preload("res://scripts/inventory.gd")
 const InventoryPanel = preload("res://scripts/inventory_panel.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
+const StoragePanel = preload("res://scripts/storage_panel.gd")
+const Chest = preload("res://scripts/storage_chest.gd")
 const REACH := 2.6
 @export var pickup_radius: float = 3.0
 @export_range(10.0, 90.0) var pickup_half_angle: float = 70.0
@@ -36,6 +38,10 @@ var collect_requested := false
 var feedback_time := 0.0
 var feedback := ""
 var spawn_position: Vector3
+var storage_panel: Control
+var open_chest: Node3D
+var save_label: Label
+var world: Node
 
 func _ready() -> void:
 	spawn_position = global_position
@@ -45,7 +51,7 @@ func _ready() -> void:
 	var hud := CanvasLayer.new()
 	add_child(hud)
 	identity_label = _label(hud, Vector2(24, 20), 17)
-	identity_label.text = "%s · %s\nKeepsake: %s\n\nWASD Move · Shift Sprint · Space Jump\nE Gather / bench · I Backpack / craft\nLeft click Use axe · C Character · Esc Release mouse" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
+	identity_label.text = "%s · %s\nKeepsake: %s\n\nWASD Move · Shift Sprint · Space Jump\nE Gather / bench / chest · I Backpack / craft\nLeft click Use axe · C Character · Esc Release mouse" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
 	resource_label = _label(hud, Vector2(24, 175), 22)
 	resource_label.add_theme_color_override("font_color", Color("f4d79a"))
 	prompt_label = _label(hud, Vector2.ZERO, 21)
@@ -67,6 +73,19 @@ func _ready() -> void:
 	inventory_panel = InventoryPanel.new()
 	hud.add_child(inventory_panel)
 	inventory_panel.setup(self)
+	storage_panel = StoragePanel.new()
+	hud.add_child(storage_panel)
+	storage_panel.setup(self)
+	save_label = _label(hud, Vector2.ZERO, 14)
+	save_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	save_label.offset_left = -420
+	save_label.offset_right = -24
+	save_label.offset_top = 20
+	save_label.offset_bottom = 44
+	save_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	save_label.add_theme_color_override("font_color", Color("cfd6c2"))
+	save_label.text = "Your progress here is saved as you play"
+	world = get_parent() if get_parent() != null and get_parent().has_method("save_game") else null
 	inventory.changed.connect(_inventory_changed)
 	_update_hud()
 
@@ -82,13 +101,15 @@ func _label(parent: Node, pos: Vector2, font_size: int) -> Label:
 	return label
 
 func _unhandled_input(event: InputEvent) -> void:
-	if inventory_panel.visible:
+	if inventory_panel.visible or storage_panel.visible:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.physical_keycode == KEY_I:
 			open_inventory()
 			return
 		if event.physical_keycode == KEY_C:
+			if world:
+				world.save_game()
 			get_tree().change_scene_to_file("res://scenes/character_creator.tscn")
 			return
 		if event.keycode == KEY_ESCAPE:
@@ -165,6 +186,7 @@ func _physics_process(delta: float) -> void:
 		if not hit.is_empty() and hit.collider.has_method("chop"):
 			if hit.collider.chop(hit.position):
 				axe.impact.play()
+				_progress_changed()
 				_show_feedback("Timber! Collect the fallen wood with E." if hit.collider.hits_left == 0 else "Good hit")
 	if collect_requested:
 		collect_requested = false
@@ -181,6 +203,8 @@ func _physics_process(delta: float) -> void:
 					_show_feedback("Backpack full • Press I to drop a stack or craft.")
 			elif target == workbench:
 				open_inventory()
+			elif target.is_in_group("chests"):
+				open_storage(target)
 	feedback_time = maxf(0.0, feedback_time - delta)
 	_update_hud()
 
@@ -197,8 +221,8 @@ func _show_feedback(text: String) -> void:
 func _interaction_target() -> Node3D:
 	# Precise aim takes priority, but gathering does not require looking down at a tiny collider.
 	var aimed := _aim_target()
-	if not aimed.is_empty() and aimed.collider == workbench:
-		return workbench
+	if not aimed.is_empty() and (aimed.collider == workbench or aimed.collider.is_in_group("chests")):
+		return aimed.collider
 	var forward := -camera.global_basis.z
 	forward.y = 0.0
 	if forward.length_squared() < 0.01:
@@ -250,26 +274,54 @@ func _update_hud() -> void:
 		prompt_label.text = "Walk near sticks and stones • E Gather • I Backpack"
 	elif inventory.count("stone_axe") == 0:
 		prompt_label.text = "Return to your workbench to craft a stone axe."
+	elif inventory.count("chest") > 0:
+		prompt_label.text = "Open your backpack [I] to place your storage chest."
+	elif get_tree().get_nodes_in_group("chests").is_empty() and inventory.can_afford(Inventory.CHEST_COST):
+		prompt_label.text = "Return to your workbench to craft a storage chest."
 	else:
 		prompt_label.text = "Aim at a nearby pine to chop • I Backpack"
 
 func open_inventory() -> void:
+	_enter_menu()
+	inventory_panel.show_pack()
+
+func close_inventory() -> void:
+	inventory_panel.hide()
+	_leave_menu()
+
+func open_storage(chest: Node3D) -> void:
+	_enter_menu()
+	open_chest = chest
+	chest.set_open(true)
+	storage_panel.open(chest)
+
+func close_storage() -> void:
+	storage_panel.hide()
+	if is_instance_valid(open_chest):
+		open_chest.set_open(false)
+	open_chest = null
+	_leave_menu()
+
+func _enter_menu() -> void:
 	_capture_controls(false)
 	_cancel_actions()
 	identity_label.hide()
 	resource_label.hide()
 	prompt_label.hide()
+	save_label.hide()
 	get_parent().get_node("HUD/Crosshair").hide()
-	inventory_panel.show_pack()
 
-func close_inventory() -> void:
-	inventory_panel.hide()
+func _leave_menu() -> void:
 	identity_label.show()
 	resource_label.show()
 	prompt_label.show()
+	save_label.show()
 	get_parent().get_node("HUD/Crosshair").show()
 	_capture_controls(true)
 	_update_hud()
+	# Closing a panel is a natural checkpoint.
+	if world:
+		world.save_game()
 
 func _inventory_changed() -> void:
 	if inventory.count("stone_axe") == 0:
@@ -278,6 +330,9 @@ func _inventory_changed() -> void:
 	_update_hud()
 	if inventory_panel.visible:
 		inventory_panel.refresh()
+	if storage_panel.visible:
+		storage_panel.refresh()
+	_progress_changed()
 
 func equip_axe(equipped: bool) -> void:
 	axe_equipped = equipped and inventory.count("stone_axe") > 0
@@ -343,4 +398,78 @@ func drop_slot(index: int) -> String:
 	pickup.amount = stack.amount
 	get_parent().add_child(pickup)
 	pickup.global_position = ground.position + Vector3(0, 0.035, 0)
+	_progress_changed()
 	return "Dropped %d %s. You can pick it up again." % [stack.amount, Inventory.ITEMS[stack.item].name.to_lower()]
+
+func _progress_changed() -> void:
+	if world:
+		world.mark_dirty()
+
+func note_saved(result: Error) -> void:
+	if result == OK:
+		save_label.text = "Saved  %s" % Time.get_time_string_from_system()
+	else:
+		save_label.text = "Couldn't save progress (%s)" % error_string(result)
+
+func save_game_now() -> String:
+	if world == null:
+		return "Saving isn't available here."
+	return "Progress saved." if world.save_game() == OK else "Couldn't save. Check that the game can write to its user folder."
+
+func chest_requirement() -> String:
+	if not workbench.built:
+		return "Build the simple bench first."
+	if not workbench.within_reach(self):
+		return "Stand close to your workbench."
+	if not inventory.can_afford(Inventory.CHEST_COST):
+		return "Chop a pine for wood, then bring 5 wood and 2 sticks."
+	if not inventory.can_craft(Inventory.CHEST_COST, "chest"):
+		return "Make room for the chest: drop one stack."
+	return ""
+
+func craft_chest() -> String:
+	var reason := chest_requirement()
+	if not reason.is_empty():
+		return reason
+	if not inventory.craft(Inventory.CHEST_COST, "chest"):
+		return "Couldn't craft: check materials and backpack space."
+	return "Storage chest crafted. Select it and choose Place chest here."
+
+func place_chest(index: int) -> String:
+	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "chest":
+		return "Select the chest in your backpack first."
+	# Same horizontal facing rule as dropping, a little farther out so the lid has room to open.
+	var ahead := global_position - global_basis.z * 1.7
+	var query := PhysicsRayQueryParameters3D.create(ahead + Vector3.UP, ahead + Vector3.DOWN * 4, 1, [get_rid()])
+	var ground := get_world_3d().direct_space_state.intersect_ray(query)
+	if ground.is_empty() or ground.normal.y < 0.7:
+		return "Face level ground before placing the chest."
+	var footprint := PhysicsShapeQueryParameters3D.new()
+	var box := BoxShape3D.new()
+	box.size = Vector3(0.8, 0.5, 0.45)
+	footprint.shape = box
+	footprint.transform = Transform3D(Basis(Vector3.UP, rotation.y), ground.position + Vector3(0, 0.34, 0))
+	footprint.collision_mask = 3
+	footprint.collide_with_areas = true
+	footprint.exclude = [get_rid()]
+	if not get_world_3d().direct_space_state.intersect_shape(footprint, 1).is_empty():
+		return "No room there. Find a clearer spot."
+	inventory.take_slot(index)
+	var chest := Chest.new()
+	get_parent().add_child(chest)
+	chest.global_position = ground.position
+	chest.rotation.y = rotation.y
+	_progress_changed()
+	return "Chest placed. Walk up to it and press E to store items."
+
+func pickup_chest(chest: Node3D) -> String:
+	if not is_instance_valid(chest):
+		return "That chest is gone."
+	if not chest.storage.is_empty():
+		return "Empty the chest before picking it up."
+	if inventory.add("chest", 1) != 1:
+		return "Your backpack is full. Make room for the chest first."
+	chest.queue_free()
+	close_storage()
+	_progress_changed()
+	return "Chest packed up."
