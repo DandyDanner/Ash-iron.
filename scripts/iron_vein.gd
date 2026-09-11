@@ -2,16 +2,17 @@ extends StaticBody3D
 ## A surface outcrop of iron ore. Strike it with a stone pickaxe; each hit frees one chunk of ore.
 const Model = preload("res://scripts/traveler_model.gd")
 const MAX_HITS := 4
+var ore_id := "iron_ore"
 var hits_left := MAX_HITS
 var art: Node3D
 var collision: CollisionShape3D
 
 func _ready() -> void:
-	add_to_group("iron_veins")
+	add_to_group("iron_veins" if ore_id == "iron_ore" else "copper_veins")
 	art = Node3D.new()
 	add_child(art)
 	var rock := Color("6a4f42")
-	var rust := Color("c8602a")
+	var rust := Color("c8602a") if ore_id == "iron_ore" else Color("5da895")
 	Model.oval(art, Vector3(0, 0.45, 0), Vector3(1.7, 1.0, 1.4), rock)
 	Model.oval(art, Vector3(0.5, 0.35, 0.3), Vector3(1.0, 0.7, 0.9), rock.lightened(0.06))
 	Model.oval(art, Vector3(-0.45, 0.3, -0.35), Vector3(0.9, 0.65, 0.8), rock.darkened(0.08))
@@ -33,10 +34,10 @@ func _ready() -> void:
 	add_child(collision)
 
 func prompt() -> String:
-	return "Stone pickaxe • Left click to mine iron (%d / %d)" % [MAX_HITS - hits_left, MAX_HITS] if hits_left > 0 else "Worked-out iron vein"
+	return "Stone pickaxe • Left click to mine %s (%d / %d)" % [ore_id.trim_suffix("_ore"), MAX_HITS - hits_left, MAX_HITS] if hits_left > 0 else "Worked-out %s vein" % ore_id.trim_suffix("_ore")
 
 func mined_message() -> String:
-	return "Vein worked out • E to gather the ore." if hits_left == 0 else "Iron ore chipped loose"
+	return "Vein worked out • E to gather the ore." if hits_left == 0 else "Copper ore chipped loose" if ore_id == "copper_ore" else "Iron ore chipped loose"
 
 func mine(hit_position: Vector3) -> bool:
 	if hits_left <= 0:
@@ -48,7 +49,7 @@ func mine(hit_position: Vector3) -> bool:
 	outward = outward.normalized() if outward.length_squared() > 0.001 else Vector3.FORWARD
 	var spot := global_position + outward * 1.35 + Vector3(cos(hits_left * 2.1), 0, sin(hits_left * 2.1)) * 0.3
 	var pickup := preload("res://scripts/resource_pickup.gd").new()
-	pickup.item_id = "iron_ore"
+	pickup.item_id = ore_id
 	pickup.amount = 1
 	get_parent().add_child(pickup)
 	pickup.global_position = spot + Vector3.UP * 0.3

@@ -54,6 +54,20 @@ func run() -> void:
 		var query := PhysicsRayQueryParameters3D.create(Vector3(p.x, 8, p.y), Vector3(p.x,-2,p.y), 1, [bell.get_rid(), player.get_rid()])
 		var ground: Dictionary = current_scene.get_world_3d().direct_space_state.intersect_ray(query)
 		check(not ground.is_empty() and absf(ground.position.y - Terrain.terrain_height(p.x,p.y)) < 0.2, "Trail has a missing or obstructed floor at %s" % p)
+	# The new outer band between the old 4.5 m boundary and 6 m must actually deal damage.
+	bell.set_physics_process(false)
+	reset(player, bell)
+	player.global_position = Bell.HOME + Vector3(0, 0.9, 5.5)
+	await ticks()
+	bell._boom()
+	check(player.health == 100 - Bell.BOOM_DAMAGE, "Expanded boom missed the new outer band")
+	player.health = 100
+	player.damage_grace = 0
+	player.global_position = Bell.HOME + Vector3(0, 0.9, 6.2)
+	await ticks()
+	bell._boom()
+	check(player.health == 100, "Boom hit beyond its visible 6 m boundary")
+	bell.set_physics_process(true)
 	reset(player, bell)
 	await ticks(15)
 	check(bell.state == "warn" and player.health == 100 and bell.art.throat.scale.y > 1, "Throat warning missing or caused early damage")

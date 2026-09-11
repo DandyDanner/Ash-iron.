@@ -74,12 +74,12 @@ Goal: walk out, collect one thing, bring it home.
 
 ## Approved crafting direction — September 11
 
-**Stone → Copper → Bronze → Iron → Steel** is the approved target. See [Craftsman progression](CRAFTSMAN_PROGRESSION.md). Completed prototype checkboxes above describe the current build, including its early iron furnace; they do not mean this new progression is implemented.
+**Stone → Copper → Bronze → Iron → Steel** is the approved target. See [Craftsman progression](CRAFTSMAN_PROGRESSION.md). Stone/copper and earned workshop unlocks are now playable. The original iron-furnace prototype remains compatible; bronze, iron equipment and steel are future work.
 
 - [x] Agree on the five material stages
-- [ ] Inventory-crafted stone axe, pickaxe and spear; clear station requirements for other recipes
-- [ ] Copper source, primitive smelting, first copper item and fittings for an improved crafting station
-- [ ] Preserve existing iron, furnace contents/queues and saved progress when introducing the new order
+- [x] Inventory-crafted stone axe, pickaxe and spear; clear station requirements for other recipes
+- [x] Copper source, primitive smelting, first copper item and fittings for an improved crafting station
+- [x] Preserve existing iron, furnace contents/queues and saved progress when introducing the new order
 - [ ] Playtest the fresh stone/copper loop with eight inventory slots before adding later stages
 - [ ] Tin discovery and bronze alloying/casting
 - [ ] Iron forging and workshop capability
@@ -88,14 +88,15 @@ Goal: walk out, collect one thing, bring it home.
 
 ## Phase 4 — Danger
 
-Current order: spear and Bristleback Boar → ore/furnace → one strange creature at Echo Hollow → Explorer Pack. The next crafting work is the stone/copper foundation above; iron equipment comes later in the approved material order. Dallon approved a small outer excursion on September 11; larger biomes and a full enemy roster remain deferred.
+Current order: spear and Bristleback Boar → ore/furnace → one strange creature at Echo Hollow → Explorer Pack. The stone/copper foundation above is playable; playtest it before adding tin/bronze and later iron equipment. Dallon approved a small outer excursion on September 11; larger biomes and a full enemy roster remain deferred.
 
 - [x] Craftable stone spear, forward thrust, hotbar/save support, and practice-target melee hits
 
 - [x] First animal/enemy: territorial Bristleback Boar, warning, straight charge, recovery, and one hide reward
 - [x] Player/enemy health, safe camp recovery, and defeat returning the player with inventory intact
 - [x] Bellmaw: warned radial boom, distance/cover counterplay, recovery, one saved hide reward per defeat
-- [x] Double Bellmaw body dimensions, matching collision/obstacle clearance and raised cues; keep the warning ring at the actual 4.5 m radius
+- [x] Double Bellmaw body dimensions, matching collision/obstacle clearance and raised cues; warning ring now expanded to the actual 6 m blast radius
+- [x] Expand Bellmaw boom from 4.5 to 6 m, with matched warning ring and approach trigger
 - [x] More dangerous Bellmaw: 160 health, guarded hide, 34-damage boom, faster pursuit and shorter recovery
 - [x] Both enemies respawn after 120 active seconds, away from the player and only into clear space; timer persists
 - [x] Echo Hollow trail, marked warning, cover rocks, harvestable pines and Old Lookout iron vein

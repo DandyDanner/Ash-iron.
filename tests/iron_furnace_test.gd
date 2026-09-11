@@ -143,6 +143,7 @@ func run() -> void:
 	await face(player, Vector3(12, 1.1, 12), 0.0)
 	check(player.place_selected(slot_of(player.inventory, "furnace")).begins_with("Furnace placed") and player.inventory.count("furnace") == 0 and get_nodes_in_group("furnaces").size() == 1, "Furnace placement on open ground failed")
 	var furnace: Node3D = get_nodes_in_group("furnaces")[0]
+	check(furnace.select_metal("iron"), "Cannot select iron compatibility mode in an empty furnace")
 	check(furnace.global_position.distance_to(Vector3(12, 0.2, 10.1)) < 0.05, "Furnace landed in the wrong place: %s" % furnace.global_position)
 	player.inventory.add("chest", 1)
 	check(not player.place_chest(slot_of(player.inventory, "chest")).begins_with("Chest placed"), "A chest was placed over the furnace")

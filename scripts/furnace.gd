@@ -8,6 +8,7 @@ const CHEST_RANGE := 8.0
 const Inventory = preload("res://scripts/inventory.gd")
 const CAPACITY := 10
 const SIZE := Vector3(1.0, 1.3, 1.0)
+var metal := "iron" # Old placed furnaces and test fixtures keep their contents. New placement selects copper.
 var auto_feed := true
 var ore := 0
 var fuel := 0
@@ -78,6 +79,8 @@ func advance(delta: float) -> void:
 	if not is_burning():
 		progress = 0.0
 	if finished > 0:
+		if metal == "copper" and get_parent().get("player") != null:
+			get_parent().player.earn_craft_step("copper_smelted")
 		_notify()
 	_refresh_fire()
 
@@ -100,17 +103,17 @@ func prompt() -> String:
 		return "E  •  Use furnace   (smelting: %d ore, %d wood, %d ingot%s ready)" % [ore, fuel, ingots, "" if ingots == 1 else "s"]
 	if ingots > 0:
 		return "E  •  Use furnace   (%d ingot%s ready)" % [ingots, "" if ingots == 1 else "s"]
-	return "E  •  Use furnace   (cold: needs iron ore and wood)"
+	return "E  •  Use furnace   (cold: needs %s ore and wood)" % metal
 
 func load_item(inventory: RefCounted, item: String, wanted: int = CAPACITY) -> int:
 	## Moves ore or wood from an inventory into the furnace and returns how many were moved.
-	if not item in ["iron_ore", "wood"]:
+	if not item in [ore_item(), "wood"]:
 		return 0
-	var room := CAPACITY - (ore if item == "iron_ore" else fuel)
+	var room := CAPACITY - (ore if item == ore_item() else fuel)
 	var amount := mini(mini(room, inventory.count(item)), wanted)
 	if amount <= 0 or not inventory.craft({item: amount}):
 		return 0
-	if item == "iron_ore":
+	if item == ore_item():
 		ore += amount
 	else:
 		fuel += amount
@@ -119,7 +122,7 @@ func load_item(inventory: RefCounted, item: String, wanted: int = CAPACITY) -> i
 	return amount
 
 func take_ingots(inventory: RefCounted) -> int:
-	var received: int = inventory.add("iron_ingot", ingots)
+	var received: int = inventory.add(metal + "_ingot", ingots)
 	ingots -= received
 	if received > 0:
 		_notify()
@@ -130,9 +133,10 @@ func is_empty() -> bool:
 	return ore == 0 and fuel == 0 and ingots == 0
 
 func to_data() -> Dictionary:
-	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y, "ore": ore, "fuel": fuel, "ingots": ingots, "progress": progress, "auto_feed": auto_feed}
+	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y, "metal": metal, "ore": ore, "fuel": fuel, "ingots": ingots, "progress": progress, "auto_feed": auto_feed}
 
 func restore(data: Dictionary) -> void:
+	metal = "copper" if data.get("metal") == "copper" else "iron"
 	auto_feed = data.get("auto_feed", true) != false
 	ore = clampi(int(_num(data.get("ore"))), 0, CAPACITY)
 	fuel = clampi(int(_num(data.get("fuel"))), 0, CAPACITY)
@@ -161,11 +165,11 @@ func refill_from_chests() -> void:
 	# Reserve only the next complete batch. Never drain wood when there is no ore, or hoard stock.
 	if not auto_feed or ingots >= CAPACITY: return
 	var cost := {}
-	if ore < ORE_PER_INGOT: cost.iron_ore = ORE_PER_INGOT - ore
+	if ore < ORE_PER_INGOT: cost[ore_item()] = ORE_PER_INGOT - ore
 	if fuel < FUEL_PER_INGOT: cost.wood = FUEL_PER_INGOT - fuel
 	if cost.is_empty(): return
 	if Inventory.craft_across(sources(), cost):
-		ore += int(cost.get("iron_ore", 0))
+		ore += int(cost.get(ore_item(), 0))
 		fuel += int(cost.get("wood", 0))
 		_notify()
 
@@ -177,3 +181,22 @@ func load_from_sources(backpack: RefCounted, item: String) -> int:
 func set_auto_feed(enabled: bool) -> void:
 	auto_feed = enabled
 	_notify()
+
+func ore_item() -> String:
+	return metal + "_ore"
+
+func select_metal(next: String) -> bool:
+	if next not in ["copper", "iron"] or ore > 0 or ingots > 0: return false
+	metal = next
+	progress = 0
+	_notify()
+	return true
+
+func return_ore(inventory: RefCounted) -> int:
+	var received: int = inventory.add(ore_item(), ore)
+	ore -= received
+	if received > 0:
+		if ore == 0: progress = 0
+		_notify()
+		_refresh_fire()
+	return received

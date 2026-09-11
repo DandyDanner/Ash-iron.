@@ -3,6 +3,7 @@ const Model = preload("res://scripts/traveler_model.gd")
 const USE_DISTANCE := 3.2
 const STORAGE_RANGE := 8.0
 var built := false
+var copperworking := false
 var art: Node3D
 var sign_label: Label3D
 var collision: CollisionShape3D
@@ -70,6 +71,14 @@ func build() -> bool:
 	collision.shape = shape
 	collision.position.y = 0.525
 	return true
+
+func show_copperworking() -> void:
+	if copperworking: return
+	copperworking = true
+	sign_label.text = "COPPERWORKING BENCH\nE • Craft tools"
+	for x in [-0.78, 0.78]:
+		Model.box(art, Vector3(x, 1.025, 0), Vector3(0.11, 0.035, 0.95), Color("bd784b"))
+	Model.box(art, Vector3(0.15, 1.09, -0.2), Vector3(0.36, 0.14, 0.24), Color("c98752"))
 
 func to_data() -> Dictionary:
 	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y}

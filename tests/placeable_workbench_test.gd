@@ -54,6 +54,7 @@ func obstacle(spot: Vector3, dimensions: Vector3) -> StaticBody3D:
 func run() -> void:
 	var player := await enter()
 	check(get_nodes_in_group("workbenches").is_empty() and not is_instance_valid(player.workbench), "Fresh game still has a fixed worksite")
+	player.crafting.earn("stone_axe") # This suite isolates furniture placement after learning basic tools.
 	player.global_position = Vector3(12, 1.1, 12)
 	player.rotation = Vector3.ZERO
 	player.camera.rotation.x = -1.3
@@ -66,7 +67,7 @@ func run() -> void:
 	player.inventory.add("stick", 9)
 	player.inventory.add("stone", 6)
 	check(player.craft_bench().begins_with("Workbench crafted") and player.inventory.count("bench") == 1 and player.inventory.count("stick") == 3 and player.inventory.count("stone") == 2, "Hand crafting failed away from camp or used the wrong cost")
-	check(not player.axe_requirement().is_empty(), "Carrying a bench allowed tool crafting before placement")
+	check(player.axe_requirement().is_empty(), "Stone axe handcrafting unexpectedly requires placement")
 	# Invalid selection, no ground, obstacles, and uneven surfaces all preserve the item.
 	check(player.place_workbench(-1).begins_with("Select"), "Invalid inventory selection placed a bench")
 	player.global_position = Vector3(100, 1.1, 100)
@@ -165,6 +166,7 @@ func run() -> void:
 	check(get_nodes_in_group("workbenches").is_empty(), "Unbuilt legacy worksite granted a free bench")
 	# A crafted bench can also be dropped and recovered using the existing item flow.
 	player.inventory.add("bench", 1)
+	player.crafting.earn("stone_axe") # This suite isolates furniture placement after learning basic tools.
 	player.global_position = Vector3(12, 1.1, 12)
 	player.rotation = Vector3.ZERO
 	await ticks()

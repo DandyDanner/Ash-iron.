@@ -37,6 +37,13 @@ func _ready() -> void:
 	bellmaw.name = "Bellmaw"
 	bellmaw.position = Bellmaw.HOME
 	add_child(bellmaw)
+	for i in range(3):
+		var spot: Vector2 = [Vector2(-12, -8), Vector2(8, -18), Vector2(-15, 8)][i]
+		var vein := preload("res://scripts/iron_vein.gd").new()
+		vein.ore_id = "copper_ore"
+		vein.name = "CopperVein%d" % (i + 1)
+		vein.position = Vector3(spot.x, preload("res://scripts/visual_clearing.gd").terrain_height(spot.x, spot.y), spot.y)
+		add_child(vein)
 	var data := GameSave.load_state()
 	if not data.is_empty():
 		_apply(data)
@@ -102,7 +109,7 @@ func to_data() -> Dictionary:
 	for rock in get_tree().get_nodes_in_group("mineable_rocks"):
 		boulders.append({"name": rock.name, "hits_left": rock.hits_left})
 	var veins := []
-	for vein in get_tree().get_nodes_in_group("iron_veins"):
+	for vein in get_tree().get_nodes_in_group("iron_veins") + get_tree().get_nodes_in_group("copper_veins"):
 		veins.append({"name": vein.name, "hits_left": vein.hits_left})
 	var furnaces := []
 	for furnace in get_tree().get_nodes_in_group("furnaces"):
@@ -125,7 +132,7 @@ func to_data() -> Dictionary:
 			"explorer_pack": player.inventory.slots.size() == Inventory.EXPLORER_CAPACITY,
 			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped,
 			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate(),
-			"third_person": player.view_rig.third_person, "health": player.health, "stamina": player.stamina.to_data()
+			"crafting": player.crafting.to_data(), "third_person": player.view_rig.third_person, "health": player.health, "stamina": player.stamina.to_data()
 		},
 		"workbenches": workbenches,
 		"trees": trees, "pickups": pickups, "bundles": bundles, "chests": chests
@@ -190,7 +197,7 @@ func _apply(data: Dictionary) -> void:
 		for entry in _list(data.get("boulders")):
 			if str(_dict(entry).get("name", "")) == str(rock.name):
 				rock.restore(int(_num(_dict(entry).get("hits_left"), 4.0)))
-	for vein in get_tree().get_nodes_in_group("iron_veins"):
+	for vein in get_tree().get_nodes_in_group("iron_veins") + get_tree().get_nodes_in_group("copper_veins"):
 		for entry in _list(data.get("veins")):
 			if str(_dict(entry).get("name", "")) == str(vein.name):
 				vein.restore(int(_num(_dict(entry).get("hits_left"), float(vein.MAX_HITS))))
@@ -214,6 +221,13 @@ func _apply(data: Dictionary) -> void:
 			player.inventory.expand_backpack()
 		player.inventory.restore(saved.get("slots", []))
 		player.restore_equipment(saved)
+		var legacy := int(_num(data.get("version"), GameSave.VERSION)) < 11
+		player.crafting.restore(saved.get("crafting"), legacy)
+		if legacy:
+			if not get_tree().get_nodes_in_group("workbenches").is_empty(): player.crafting.earn("bench_placed")
+			if not get_tree().get_nodes_in_group("furnaces").is_empty(): player.crafting.earn("furnace_placed")
+		if player.crafting.has("copperworking"):
+			for bench in get_tree().get_nodes_in_group("workbenches"): bench.show_copperworking()
 		var spot := _vec(saved, player.global_position)
 		if spot.y > -10.0:
 			player.global_position = spot

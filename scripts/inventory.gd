@@ -8,6 +8,11 @@ const CAPACITY := 8
 const EXPLORER_CAPACITY := 12
 const CHEST_CAPACITY := 12
 const ITEMS := {
+	"copper_ore": {"name": "Copper ore", "stack": 10, "description": "Green-flecked ore from copper outcrops around the clearing. Select Copper in a furnace: two ore and one wood make an ingot."},
+	"copper_ingot": {"name": "Copper ingot", "stack": 10, "description": "Your first cast metal. Make fittings, improve your bench, then craft a copper axe."},
+	"copper_fittings": {"name": "Copper fittings", "stack": 10, "description": "Cast brackets and fasteners for the Copperworking kit."},
+	"copperworking": {"name": "Copperworking kit", "stack": 1, "description": "Permanently equips your workbenches for copper tools. Unlocks the copper axe and uses no backpack slot."},
+	"copper_axe": {"name": "Copper axe", "stack": 1, "description": "A cast copper axe: two chops per pine and 14 base melee damage. Made at a bench with the Copperworking kit."},
 	"bellmaw_hide": {"name": "Bellmaw hide", "stack": 10, "description": "Supple, strong hide from the Bellmaw at Echo Hollow. Bring it to a workbench for an Explorer Pack."},
 	"explorer_pack": {"name": "Explorer Pack", "stack": 1, "description": "A permanent backpack upgrade from eight to twelve slots. Crafted and fitted at your workbench; uses no inventory slot."},
 	"boar_hide": {"name": "Boar hide", "stack": 10, "description": "A hide from a Bristleback. Keep it for future leather equipment; no hide recipes yet."},
@@ -23,19 +28,22 @@ const ITEMS := {
 	"arrow": {"name": "Arrows", "stack": 10, "description": "Stone-tipped ammunition. Each shot uses one arrow; recover landed arrows with E."},
 	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips. Chests near the bench feed its recipes."},
 	"iron_ore": {"name": "Iron ore", "stack": 10, "description": "Rusty chunks chipped from an iron vein, or a lucky find inside a boulder. Smelt two with one wood in a furnace to make an ingot."},
-	"iron_ingot": {"name": "Iron ingot", "stack": 10, "description": "Refined iron from the furnace. The first real metal; iron tools and weapons are the next milestone."},
-	"furnace": {"name": "Stone furnace", "stack": 1, "description": "A squat stone furnace. Select it and choose Place furnace here on clear ground, then load iron ore and wood with E or use chests within eight meters. It smelts on its own."}
+	"iron_ingot": {"name": "Iron ingot", "stack": 10, "description": "Refined iron from the furnace. Preserved ironworking prototype material. New progression begins with copper; iron equipment is a later stage."},
+	"furnace": {"name": "Stone furnace", "stack": 1, "description": "A squat stone furnace. Select it and choose Place furnace here on clear ground, then select Copper or Iron and load ore and wood with E or use chests within eight meters. It smelts on its own."}
 }
-const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch", "bow", "stone_spear"]
+const EQUIPPABLE := ["copper_axe", "stone_axe", "stone_pickaxe", "torch", "bow", "stone_spear"]
 const RECIPES := {
+	"copper_fittings": {"name": "Copper fittings", "cost": {"copper_ingot": 1}, "output": "copper_fittings", "amount": 2, "description": "Cast one copper ingot into two fittings for the Copperworking kit."},
+	"copperworking": {"name": "Copperworking kit", "cost": {"copper_fittings": 2, "wood": 2, "stone": 2}, "output": "copperworking", "amount": 1, "upgrade": true, "description": "Fit a permanent copperworking kit: unlocks copper axes at every bench you use. No empty slot needed."},
+	"copper_axe": {"name": "Copper axe", "cost": {"copper_ingot": 3, "stick": 2}, "output": "copper_axe", "amount": 1, "description": "Two chops fell a pine. Deals 14 melee damage, compared with the stone axe’s 10; spear remains 20."},
 	"explorer_pack": {"name": "Explorer Pack", "cost": {"bellmaw_hide": 1, "wood": 2, "stick": 4}, "output": "explorer_pack", "amount": 1, "upgrade": true, "description": "Permanently adds four backpack slots (8 to 12). Find the Bellmaw beyond the archery target along the ochre trail markers. Crafted and fitted here; no empty slot needed."},
-	"stone_spear": {"name": "Stone spear", "cost": {"wood": 2, "stone": 2}, "output": "stone_spear", "amount": 1, "description": "A melee weapon for short forward thrusts. Left click to strike the practice target within 2.8 meters. Does not harvest trees or rocks."},
+	"stone_spear": {"name": "Stone spear", "cost": {"stick": 3, "stone": 2}, "output": "stone_spear", "amount": 1, "handcraft": true, "description": "A melee weapon for short forward thrusts. Left click to strike the practice target within 2.8 meters. Does not harvest trees or rocks."},
 	"bow": {"name": "Woodland bow", "cost": {"wood": 3, "stick": 2}, "output": "bow", "amount": 1, "description": "Hold left click to draw, release to fire. A longer draw shoots farther. Uses arrows from your backpack."},
 	"arrows": {"name": "5 stone-tipped arrows", "cost": {"stick": 2, "stone": 1}, "output": "arrow", "amount": 5, "description": "Ammunition for your bow. Recover landed arrows with E. Arrows stack to ten."},
-	"stone_pickaxe": {"name": "Stone pickaxe", "cost": {"stick": 3, "stone": 4}, "output": "stone_pickaxe", "amount": 1, "description": "Break boulders into loose stones. Four swings yield eight stones."},
+	"stone_pickaxe": {"name": "Stone pickaxe", "cost": {"stick": 3, "stone": 4}, "output": "stone_pickaxe", "amount": 1, "handcraft": true, "description": "Break boulders into loose stones. Four swings yield eight stones."},
 	"torch": {"name": "Pine torch", "cost": {"stick": 2, "wood": 1}, "output": "torch", "amount": 1, "description": "A resinous pine torch. Hold it to light the ground ahead; no fuel upkeep yet."},
 	"split_wood": {"name": "Split wood into sticks", "cost": {"wood": 1}, "output": "stick", "amount": 4, "description": "Turn one piece of timber into four crafting sticks."},
-	"furnace": {"name": "Stone furnace", "cost": {"stone": 10, "wood": 2}, "output": "furnace", "amount": 1, "description": "A placeable furnace that turns two iron ore and one wood into an iron ingot every twelve seconds. Mine ore from the rusty veins at the clearing's edge."}
+	"furnace": {"name": "Stone furnace", "cost": {"stone": 10, "wood": 2}, "output": "furnace", "amount": 1, "description": "A placeable furnace that turns two selected ore and one wood into an iron ingot every twelve seconds. Select Copper for the first metal stage; Iron remains available for existing supplies."}
 }
 const BENCH_COST := {"stick": 6, "stone": 4}
 const AXE_COST := {"stick": 3, "stone": 2}

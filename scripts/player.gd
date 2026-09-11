@@ -28,6 +28,7 @@ const JUMP_BUFFER := 0.12
 @onready var camera: Camera3D = $Camera3D
 
 var health := 100
+var crafting := preload("res://scripts/craft_progress.gd").new()
 var stamina := preload("res://scripts/stamina.gd").new()
 var vitals: Control
 var damage_grace := 0.0
@@ -49,7 +50,7 @@ var workbench: Node3D:
 	get: return _nearest_workbench()
 var equipped_item := ""
 var axe_equipped: bool:
-	get: return equipped_item == "stone_axe"
+	get: return equipped_item in ["stone_axe", "copper_axe"]
 var hotbar: Array[String] = ["", "", "", "", "", "", "", "", "", ""]
 var hotbar_view: Control
 var wood: int:
@@ -180,7 +181,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not controls_active:
 			_capture_controls(true)
 			return # The click that resumes play must not also swing the axe.
-		if equipped_item in ["stone_axe", "stone_pickaxe", "stone_spear"] and inventory.count(equipped_item) > 0:
+		if equipped_item in ["stone_axe", "copper_axe", "stone_pickaxe", "stone_spear"] and inventory.count(equipped_item) > 0:
 			axe.start_swing()
 		elif equipped_item == "bow":
 			if inventory.count("arrow") > 0:
@@ -258,8 +259,8 @@ func _physics_process(delta: float) -> void:
 		_show_feedback("Back in the clearing")
 	if axe.advance(delta):
 		var hit := _spear_target() if equipped_item == "stone_spear" else (_melee_target(REACH) if axe_equipped else _aim_target())
-		if equipped_item in ["stone_spear", "stone_axe"] and not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
-			var damage := Axe.SPEAR_DAMAGE if equipped_item == "stone_spear" else Axe.AXE_DAMAGE
+		if equipped_item in ["stone_spear", "stone_axe", "copper_axe"] and not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
+			var damage := Axe.SPEAR_DAMAGE if equipped_item == "stone_spear" else (14 if equipped_item == "copper_axe" else Axe.AXE_DAMAGE)
 			var message: String = hit.collider.receive_melee_hit(damage, hit.position)
 			axe.impact.play()
 			_show_feedback(message)
@@ -267,6 +268,7 @@ func _physics_process(delta: float) -> void:
 			_show_feedback("Spear blocked • Practice on the target at the far right of camp.")
 		elif axe_equipped and not hit.is_empty() and hit.collider.has_method("chop"):
 			if hit.collider.chop(hit.position):
+				if equipped_item == "copper_axe": hit.collider.chop(hit.position)
 				axe.impact.play()
 				_progress_changed()
 				_show_feedback("Timber! Collect the fallen wood with E." if hit.collider.hits_left == 0 else "Good hit")
@@ -286,8 +288,8 @@ func _physics_process(delta: float) -> void:
 				var item: String = target.item_id
 				var amount: int = target.collect_into(inventory)
 				if amount > 0:
-					if item == "stone_axe":
-						equip_axe(true)
+					if item in ["stone_axe", "copper_axe"]:
+						equip_item(item)
 					_show_feedback("+%d %s" % [amount, Inventory.ITEMS[item].name.to_lower()])
 				else:
 					_show_feedback("Backpack full • Press Tab to drop a stack or craft.")
@@ -421,16 +423,16 @@ func _update_hud() -> void:
 		prompt_label.text = "Open your backpack [Tab] to place your workbench."
 	elif not is_instance_valid(workbench):
 		prompt_label.text = "Walk near sticks and stones • E Gather • Tab Backpack"
-	elif inventory.count("stone_axe") == 0:
-		prompt_label.text = "Return to your workbench to craft a stone axe."
+	elif inventory.count("stone_axe") == 0 and inventory.count("copper_axe") == 0:
+		prompt_label.text = "Craft a stone axe by hand in your backpack [Tab]."
 	elif inventory.count("chest") > 0:
 		prompt_label.text = "Open your backpack [Tab] to place your storage chest."
 	elif get_tree().get_nodes_in_group("chests").is_empty() and inventory.can_afford(Inventory.CHEST_COST):
 		prompt_label.text = "Return to your workbench to craft a storage chest."
 	elif inventory.count("furnace") > 0:
 		prompt_label.text = "Open your backpack [Tab] to place your furnace."
-	elif inventory.count("iron_ore") > 0 and get_tree().get_nodes_in_group("furnaces").is_empty():
-		prompt_label.text = "Iron ore needs a furnace • Craft one at your workbench (10 stones + 2 wood)."
+	elif (inventory.count("iron_ore") > 0 or inventory.count("copper_ore") > 0) and get_tree().get_nodes_in_group("furnaces").is_empty():
+		prompt_label.text = "Ore needs a furnace • Craft one at your workbench (10 stones + 2 wood)."
 	else:
 		prompt_label.text = "Aim at a nearby pine to chop • Tab Backpack"
 
@@ -573,14 +575,23 @@ func restore_equipment(saved: Dictionary) -> void:
 		hotbar[0] = "stone_axe"
 	_update_hud()
 
+func earn_craft_step(id: String) -> bool:
+	if not crafting.earn(id): return false
+	_progress_changed()
+	if id == "copperworking":
+		for bench in get_tree().get_nodes_in_group("workbenches"): bench.show_copperworking()
+	return true
+
 func recipe_requirement(id: String) -> String:
 	if not Inventory.RECIPES.has(id):
 		return "Unknown recipe."
-	if not is_instance_valid(workbench):
-		return "Craft and place a simple workbench first."
-	if not workbench.within_reach(self):
-		return "Stand close to your workbench."
 	var recipe: Dictionary = Inventory.RECIPES[id]
+	if not recipe.get("handcraft", false):
+		if not is_instance_valid(workbench): return "Craft and place a simple workbench first."
+		if not workbench.within_reach(self): return "Stand close to your workbench."
+	var locked := crafting.lock_reason(id)
+	if not locked.is_empty(): return locked
+	if id == "copperworking" and crafting.has("copperworking"): return "Copperworking kit already fitted."
 	if id == "explorer_pack" and inventory.slots.size() >= Inventory.EXPLORER_CAPACITY:
 		return "Explorer Pack already fitted (12 slots)."
 	if recipe.output in Inventory.EQUIPPABLE and inventory.count(recipe.output) > 0:
@@ -599,6 +610,8 @@ func craft_recipe(id: String) -> String:
 	var before := _pack_counts(recipe.cost)
 	if not Inventory.craft_across(containers(), recipe.cost, "" if recipe.get("upgrade", false) else recipe.output, recipe.amount):
 		return "Couldn't craft: check materials and backpack space."
+	earn_craft_step(id)
+	if id == "copperworking": return "Copperworking kit fitted! Copper axes are now unlocked at your benches."
 	if id == "explorer_pack":
 		inventory.expand_backpack()
 		return "Explorer Pack fitted! You now have twelve backpack slots." + _storage_note(before, recipe.cost)
@@ -617,6 +630,8 @@ func show_quit_error() -> void:
 	inventory_panel.message_label.text = "Couldn't save. Your game is still open. Free disk space or check folder access, then retry."
 
 func bench_requirement() -> String:
+	var locked := crafting.lock_reason("bench")
+	if not locked.is_empty(): return locked
 	if not Inventory.can_afford_across(containers(), Inventory.BENCH_COST):
 		return "Gather more sticks and stones by hand."
 	if not Inventory.can_craft_across(containers(), Inventory.BENCH_COST, "bench"):
@@ -624,10 +639,6 @@ func bench_requirement() -> String:
 	return ""
 
 func axe_requirement() -> String:
-	if not is_instance_valid(workbench):
-		return "Craft and place a simple workbench first."
-	if not workbench.within_reach(self):
-		return "Stand close to your workbench."
 	if inventory.count("stone_axe") > 0:
 		return "You already have an axe in your backpack."
 	if not Inventory.can_afford_across(containers(), Inventory.AXE_COST):
@@ -653,6 +664,7 @@ func craft_axe() -> String:
 	var pack_before := _pack_counts(Inventory.AXE_COST)
 	if not Inventory.craft_across(containers(), Inventory.AXE_COST, "stone_axe"):
 		return "Couldn't craft: check materials and backpack space."
+	earn_craft_step("stone_axe")
 	equip_axe(true)
 	return "Stone axe crafted and equipped. Close your pack to try it." + _storage_note(pack_before, Inventory.AXE_COST)
 
@@ -852,6 +864,8 @@ func place_workbench(index: int) -> String:
 	bench.global_position = placement.position
 	bench.rotation.y = rotation.y
 	active_bench = bench
+	earn_craft_step("bench_placed")
+	if crafting.has("copperworking"): bench.show_copperworking()
 	_progress_changed()
 	return "Workbench placed. Stand nearby and press E to craft tools."
 
@@ -878,8 +892,10 @@ func place_furnace(index: int) -> String:
 	get_parent().add_child(furnace)
 	furnace.global_position = placement.position
 	furnace.rotation.y = rotation.y
+	furnace.metal = "copper"
+	earn_craft_step("furnace_placed")
 	_progress_changed()
-	return "Furnace placed. Walk up to it and press E to load iron ore and wood."
+	return "Furnace placed. Walk up to it and press E to select Copper or Iron and load ore and wood."
 
 func pickup_furnace(furnace: Node3D) -> String:
 	if not is_instance_valid(furnace) or furnace.is_queued_for_deletion():

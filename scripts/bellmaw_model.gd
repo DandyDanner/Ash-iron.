@@ -3,6 +3,7 @@ extends Node3D
 const M = preload("res://scripts/traveler_model.gd")
 const D = preload("res://scripts/character_mesh.gd")
 const SKIN := Color("606953")
+var boom_radius := 6.0
 var body: Node3D
 var throat: Node3D
 var limbs: Array[Node3D] = []
@@ -83,5 +84,5 @@ func pose(delta: float, speed: float, state: String, state_time: float, hit_flas
 	# The ring shows the complete danger boundary during the warning; the burst then fades.
 	pulse.visible = state == "warn" or (state == "recover" and state_time < 0.45)
 	if pulse.visible:
-		pulse.scale = Vector3(4.5, 1, 4.5)
+		pulse.scale = Vector3(boom_radius, 1, boom_radius)
 		pulse.material_override.albedo_color.a = (0.25 + inflation * 0.4) if state == "warn" else (1 - state_time / 0.45) * 0.65

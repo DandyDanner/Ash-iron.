@@ -52,7 +52,7 @@ func _ready() -> void:
 	for mesh in player.camera.find_children("*", "MeshInstance3D", true, false):
 		mesh.layers = 2
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	for pair in [["stone_axe", "Tool"], ["stone_pickaxe", "Pickaxe"], ["torch", "Torch"]]:
+	for pair in [["copper_axe", "CopperTool"], ["stone_axe", "Tool"], ["stone_pickaxe", "Pickaxe"], ["torch", "Torch"]]:
 		var tool: Node3D = player.axe.get_node(pair[1]).duplicate()
 		tool.name = pair[0]
 		avatar.tool_grip.add_child(tool)

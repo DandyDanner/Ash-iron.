@@ -3,7 +3,7 @@ extends RefCounted
 ## Character appearance lives in character_profile.gd; the two files never overwrite each other.
 
 const SAVE_PATH := "user://save.json"
-const VERSION := 10
+const VERSION := 11
 static var storage_path: String = SAVE_PATH
 
 static func exists(path: String = "") -> bool:

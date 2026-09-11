@@ -53,7 +53,8 @@ func run() -> void:
 	bell._set_state("warn")
 	bell.state_time = 1.2
 	bell.art.pose(0, 0, "warn", 1.2, 0)
-	camera.position = bell.position + Vector3(6.5, 5.5, 8.5)
+	camera.fov = 50
+	camera.position = bell.position + Vector3(7, 9, 10)
 	camera.look_at(bell.position + Vector3.UP * 0.6)
 	await capture("echo-hollow-engine.png")
 	# Exercise the real pack button, with the earned material supplied only in this test save.

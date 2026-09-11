@@ -339,7 +339,7 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		if authored != null:
 			arms[i].quaternion = arm_rest[i] * Quaternion.from_euler(Vector3(-stride * side * .65, 0, side * .04))
 			forearms[i].quaternion = forearm_rest[i] * Quaternion(Vector3.RIGHT, -.10)
-	if item in ["stone_axe", "stone_pickaxe", "torch"]:
+	if item in ["stone_axe", "copper_axe", "stone_pickaxe", "torch"]:
 		arms[1].rotation.x = -0.40
 		forearms[1].rotation.x = -0.45
 		if swing >= 0:
@@ -359,8 +359,8 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		arms[1].rotation.z = -0.25 * draw + 0.10
 		forearms[1].rotation.x = -1.3 * draw
 	else:
-		arms[1].rotation.z = 0.0 if item in ["stone_axe", "stone_pickaxe"] else (0.20 if item == "torch" else 0.10)
-	if item in ["stone_axe", "stone_pickaxe"]:
+		arms[1].rotation.z = 0.0 if item in ["stone_axe", "copper_axe", "stone_pickaxe"] else (0.20 if item == "torch" else 0.10)
+	if item in ["stone_axe", "copper_axe", "stone_pickaxe"]:
 		arms[1].rotation.y = 0.0
 		forearms[1].rotation.y = 0.0
 		forearms[1].rotation.z = 0.0

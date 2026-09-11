@@ -4,7 +4,9 @@ Dallon approved the material order on September 11, 2026:
 
 **Stone → Copper → Bronze → Iron → Steel**
 
-This is the target progression. The current build still requires a bench for stone tools and already prototypes iron mining/smelting. This document records the direction; it does not change live recipes, equipment or saves. The station layout and benefits below are the proposed implementation outline, with costs and balance still to be playtested.
+Stone and copper are now playable: stone axe/pickaxe/spear by hand; axe unlocks the bench; axe + pickaxe unlock the furnace recipe; placing a furnace and completing a copper smelt unlock copper fittings; the Copperworking kit unlocks the copper axe at all benches. Copperworking is a permanent learned workshop upgrade. Bronze, iron equipment and steel remain proposed later stages.
+
+Current costs and controls are in the README. Save format 11 records earned milestones and furnace metal selection. Prior saves retain earlier recipe access and iron processing; they gain fresh copper deposits without losing items, contents or progress.
 
 ## A new craft at each stage
 
@@ -27,13 +29,11 @@ These are game abstractions, not a historical chronology or a claim that every l
 - Preserve convenient crafting from nearby chests. Tune costs to the eight-slot starting pack; the Explorer Pack should help exploration without becoming a hidden prerequisite for the first metal.
 - Discoveries can later bring home techniques, workshop improvements or specialist opportunities. Villagers, relic bonuses and the Wayfarer's Lantern remain part of the broader design, outside this first crafting change.
 
-## Next implementation slice
+## Current slice and next playtest
 
-1. Move basic stone axe, pickaxe and spear recipes into inventory crafting. Show which recipes require a station and why. Keep placement, hotbar and connected-storage behavior coherent.
-2. Add a compact copper loop: an accessible source, primitive smelting, one worthwhile copper item and fittings toward the improved station. Decide concrete recipes and timing as part of that implementation.
-3. Verify a fresh player can complete the loop without recipe dependency traps. Verify full inventories, material transfers, furnace queues and save/reload.
-4. Preserve existing iron ore, ingots, placed furnaces and progress during the transition. Explicitly migrate any changed save structure; do not silently rename or delete old items. Existing iron processing needs a compatibility decision before changing its availability.
-5. Playtest stone/copper before adding tin/bronze, then iron forging and steel refinement. Do not expand the enemy roster or require a large new biome merely to supply the next material.
+Implemented inventory-crafted stone tools, visible recipe locks and next-step guidance, three copper outcrops, selectable copper/iron smelting, fittings, a permanent Copperworking kit, and a copper axe. Copper shares twelve-second smelting and nearby chest supplies. The kit costs two fittings, two wood and two stones; the axe costs three ingots and two sticks, chops a pine in two swings and deals 14 base melee damage. Existing iron processing remains available for compatibility; later iron forging has not been added.
+
+Playtest gathering/crafting with eight slots, locating copper, reading unlocks, and whether the first copper axe feels worth the expedition. Check continuing an existing save as well as the fresh sequence. Next material stage: tin/bronze after feedback. Costs, copper availability and encounter balance can be tuned before adding further gear.
 
 ## Future armor decoration — requested September 11
 

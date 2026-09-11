@@ -42,6 +42,17 @@ func setup(cloth: Color, skin: Color) -> void:
 	Model.box(tool, Vector3(-0.218, 0.46, 0), Vector3(0.012, 0.235, 0.033), Color("98a38f"))
 	for i in range(3):
 		Model.box(tool, Vector3(0, 0.415 + i * 0.035, 0.06), Vector3(0.135, 0.021, 0.035), Color("c2ac7c"))
+	var copper := tool.duplicate()
+	copper.name = "CopperTool"
+	add_child(copper)
+	for mesh in copper.find_children("*", "MeshInstance3D", true, false):
+		if mesh.position.y >= 0.4:
+			var finish := StandardMaterial3D.new()
+			finish.albedo_color = Color("c98752")
+			finish.metallic = 0.65
+			finish.roughness = 0.42
+			mesh.material_override = finish
+	copper.hide()
 	var pick := Node3D.new()
 	pick.name = "Pickaxe"
 	pick.rotation.y = -PI / 2
@@ -107,14 +118,15 @@ func set_item(item: String) -> void:
 	selected_item = item
 	hand.set_grip(not item.is_empty())
 	$Tool.visible = item == "stone_axe"
+	$CopperTool.visible = item == "copper_axe"
 	$Pickaxe.visible = item == "stone_pickaxe"
 	$Torch.visible = item == "torch"
 	$Spear.visible = item == "stone_spear"
-	if not item in ["stone_axe", "stone_pickaxe", "stone_spear"]:
+	if not item in ["stone_axe", "copper_axe", "stone_pickaxe", "stone_spear"]:
 		cancel_swing()
 
 func start_swing() -> bool:
-	if not selected_item in ["stone_axe", "stone_pickaxe", "stone_spear"] or elapsed >= 0.0:
+	if not selected_item in ["stone_axe", "copper_axe", "stone_pickaxe", "stone_spear"] or elapsed >= 0.0:
 		return false
 	elapsed = 0.0
 	contact_sent = false

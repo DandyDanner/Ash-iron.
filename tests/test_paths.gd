@@ -12,6 +12,8 @@ static func path(filename: String) -> String:
 
 static func place_bench(world: Node3D, spot: Vector3 = Vector3(-3.5, 0.2, 0.3)) -> Node3D:
 	## Fixture for tests of systems that already require an established workshop.
+	var player := world.get_node("Player")
+	for id in ["stone_axe", "stone_pickaxe", "bench_placed"]: player.crafting.earn(id)
 	var bench := preload("res://scripts/workbench.gd").new()
 	world.add_child(bench)
 	bench.global_position = spot
@@ -21,6 +23,8 @@ static func craft_and_place_bench(player: Node3D) -> bool:
 	player.global_position = Vector3(-3.5, 1.1, 2.5)
 	player.rotation = Vector3.ZERO
 	player.camera.rotation = Vector3.ZERO
+	# Established-tool fixture; the fresh unlock sequence is covered in crafting_progression_test.
+	player.crafting.earn("stone_axe")
 	if not player.craft_bench().begins_with("Workbench crafted"):
 		return false
 	for i in range(player.inventory.slots.size()):

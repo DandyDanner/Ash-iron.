@@ -20,12 +20,13 @@ var axe_status: Label
 var chest_status: Label
 var message_label: Label
 var storage_note: Label
+var progression_note: Label
 var shortcut_buttons: Array[Button] = []
 var recipe_rows := {}
 var quit_button: Button
 var pickup_bench_button: Button
 var craftables := {}
-var selected_recipe := "bench"
+var selected_recipe := "stone_axe"
 const CraftableTile = preload("res://scripts/craftable_tile.gd")
 
 func setup(owner_player: Node3D) -> void:
@@ -53,7 +54,7 @@ func setup(owner_player: Node3D) -> void:
 	var left := VBoxContainer.new()
 	left.custom_minimum_size.x = 590
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.add_theme_constant_override("separation", 10)
+	left.add_theme_constant_override("separation", 6)
 	columns.add_child(left)
 	capacity_label = _label(left, "", 16, GOLD)
 	pack_help = _label(left, "Resources stack to 10. Each tool takes one slot.", 14, MUTED)
@@ -93,6 +94,8 @@ func setup(owner_player: Node3D) -> void:
 	_label(left, "Select an empty backpack slot to clear a shortcut. Tools still use pack space.", 13, MUTED)
 	storage_note = _label(left, "", 14, MUTED)
 	storage_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	progression_note = _label(left, "", 15, GOLD)
+	progression_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var scroll := ScrollContainer.new()
 	scroll.name = "Recipes"
 	scroll.custom_minimum_size.x = 390
@@ -105,26 +108,31 @@ func setup(owner_player: Node3D) -> void:
 	right.add_theme_constant_override("separation", 6)
 	scroll.add_child(right)
 	_label(right, "CRAFTABLES", 16, GOLD)
-	var help := _label(right, "Hover for recipe & use. Select an icon, then craft below.", 14, MUTED)
+	var help := _label(right, "Scroll icons • Hover for details. Select, then craft below.", 14, MUTED)
 	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var grid := GridContainer.new()
 	grid.name = "CraftableGrid"
 	grid.columns = 4
 	grid.add_theme_constant_override("h_separation", 8)
 	grid.add_theme_constant_override("v_separation", 8)
-	right.add_child(grid)
+	var grid_scroll := ScrollContainer.new()
+	grid_scroll.name = "RecipeIconsScroll"
+	grid_scroll.custom_minimum_size.y = 206
+	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right.add_child(grid_scroll)
+	grid_scroll.add_child(grid)
 	var cards := VBoxContainer.new()
 	cards.name = "RecipeDetails"
 	var catalog := {
-		"bench": {"name": "Simple workbench", "short": "Workbench", "output": "bench", "amount": 1, "cost": Inventory.BENCH_COST, "description": Inventory.ITEMS.bench.description},
-		"stone_axe": {"name": "Stone axe", "short": "Stone axe", "output": "stone_axe", "amount": 1, "cost": Inventory.AXE_COST, "description": Inventory.ITEMS.stone_axe.description},
+		"bench": {"handcraft": true, "name": "Simple workbench", "short": "Workbench", "output": "bench", "amount": 1, "cost": Inventory.BENCH_COST, "description": Inventory.ITEMS.bench.description},
+		"stone_axe": {"handcraft": true, "name": "Stone axe", "short": "Stone axe", "output": "stone_axe", "amount": 1, "cost": Inventory.AXE_COST, "description": Inventory.ITEMS.stone_axe.description},
 		"chest": {"name": "Storage chest", "short": "Chest", "output": "chest", "amount": 1, "cost": Inventory.CHEST_COST, "description": "Place a chest to store supplies in twelve slots. Chests near the bench supply crafting materials."}
 	}
-	var short_names := {"stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks", "furnace": "Furnace", "explorer_pack": "Pack +4"}
+	var short_names := {"copper_fittings": "Fittings", "copperworking": "Bench kit", "copper_axe": "Copper axe", "stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks", "furnace": "Furnace", "explorer_pack": "Pack +4"}
 	for id in Inventory.RECIPES:
 		catalog[id] = Inventory.RECIPES[id].duplicate(true)
 		catalog[id].short = short_names.get(id, catalog[id].name)
-	for id in catalog:
+	for id in ["stone_axe", "stone_pickaxe", "stone_spear", "bench", "chest", "bow", "arrows", "torch", "split_wood", "furnace", "copper_fittings", "copperworking", "copper_axe", "explorer_pack"]:
 		var recipe: Dictionary = catalog[id]
 		var tile := CraftableTile.new()
 		tile.name = "Recipe_" + id
@@ -243,6 +251,7 @@ func _find(item: String, fallback: int) -> int:
 
 func refresh() -> void:
 	var inventory: RefCounted = player.inventory
+	progression_note.text = player.crafting.next_step()
 	capacity_label.text = "YOUR BACKPACK    %d / %d slots" % [inventory.used_slots(), inventory.slots.size()]
 	pack_help.text = "Explorer Pack fitted • Scroll down for slots 9–12." if inventory.slots.size() > Inventory.CAPACITY else "Resources stack to 10. Each tool takes one slot."
 	_refresh_grid(pack, inventory, selected, player.equipped_item)
@@ -262,9 +271,9 @@ func refresh() -> void:
 	var connected: int = player.linked_chests().size()
 	pickup_bench_button.visible = is_instance_valid(player.workbench) and player.workbench.within_reach(player)
 	if connected == 0:
-		storage_note.text = "Recipes use your backpack. A chest placed within a few steps of the bench is connected and supplies materials too."
+		storage_note.text = "Backpack supplies • Chests near a usable bench can also supply recipes."
 	else:
-		storage_note.text = "Connected storage: %d chest%s near the bench. Recipes take from your backpack first, then from the chest%s." % [connected, "" if connected == 1 else "s", "" if connected == 1 else "s"]
+		storage_note.text = "Connected storage: %d chest%s • Backpack materials first." % [connected, "" if connected == 1 else "s"]
 	for i in range(shortcut_buttons.size()):
 		var item: String = player.hotbar[i]
 		shortcut_buttons[i].text = str((i + 1) % 10) + (" •" if not item.is_empty() else "")
@@ -291,14 +300,15 @@ func refresh() -> void:
 			"chest": reason = player.chest_requirement()
 			_: reason = player.recipe_requirement(id)
 		var ready := reason.is_empty()
-		var status := reason if not ready else "Ready to craft here."
+		var station := "By hand" if recipe.get("handcraft", false) else "At workbench"
+		var status := station + " • " + (reason if not ready else "Ready to craft here.")
 		row.status.text = status
 		row.status.add_theme_color_override("font_color", GOLD if ready else MUTED)
 		row.button.disabled = not ready
-		row.availability.text = "READY" if ready else "UNAVAILABLE"
+		row.availability.text = "READY" if ready else ("LOCKED" if not player.crafting.lock_reason(id).is_empty() else "UNAVAILABLE")
 		if recipe.output in Inventory.EQUIPPABLE and inventory.count(recipe.output) > 0:
 			row.availability.text = "OWNED"
-		if id == "explorer_pack" and inventory.slots.size() >= Inventory.EXPLORER_CAPACITY:
+		if (id == "explorer_pack" and inventory.slots.size() >= Inventory.EXPLORER_CAPACITY) or (id == "copperworking" and player.crafting.has("copperworking")):
 			row.availability.text = "FITTED"
 		row.icon.modulate.a = 1.0 if ready else 0.60
 		row.tile.tooltip_text = recipe.name + "\n\n" + recipe.description + "\n\nMATERIALS • Have / need\n" + "\n".join(amounts)
@@ -312,6 +322,8 @@ func _select_recipe(id: String) -> void:
 	if not craftables.has(id):
 		return
 	selected_recipe = id
+	var icon_scroll: ScrollContainer = find_child("RecipeIconsScroll", true, false)
+	icon_scroll.ensure_control_visible(craftables[id].tile)
 	for key in craftables:
 		craftables[key].card.visible = key == id
 		craftables[key].tile.set_pressed_no_signal(key == id)

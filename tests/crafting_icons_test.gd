@@ -27,7 +27,7 @@ func run() -> void:
 	player.open_inventory()
 	var panel: Control = player.inventory_panel
 	await ticks()
-	check(panel.craftables.size() == 11, "Not all eleven craftables appear in the icon grid")
+	check(panel.craftables.size() == 14, "Not all fourteen craftables appear in the icon grid")
 	var before: Array = player.inventory.to_data()
 	for id in panel.craftables:
 		var row: Dictionary = panel.craftables[id]
@@ -40,7 +40,7 @@ func run() -> void:
 		check(root.get_visible_rect().encloses(row.card.get_global_rect()), "Recipe details extend beyond the viewport: " + id)
 	check(player.inventory.to_data() == before and not is_instance_valid(player.workbench), "Browsing spent resources or built a bench")
 	var grid: Control = panel.find_child("CraftableGrid", true, false)
-	check(root.get_visible_rect().encloses(grid.get_global_rect()), "Icon grid extends beyond the viewport")
+	check(root.get_visible_rect().encloses(grid.get_parent().get_global_rect()), "Icon grid extends beyond the viewport")
 	# Keyboard focus exposes the same details without relying on a mouse hover.
 	panel.craftables.bench.tile.grab_focus()
 	await ticks()
@@ -48,8 +48,9 @@ func run() -> void:
 	player.global_position = Vector3(12, 1.1, 12)
 	player.inventory.add("stick", 9)
 	player.inventory.add("stone", 6)
+	player.craft_axe()
 	panel.refresh()
-	check(panel.craftables.bench.tile.tooltip_text.contains("Sticks  9 / 6") and not panel.bench_button.disabled, "Available material totals did not refresh")
+	check(panel.craftables.bench.tile.tooltip_text.contains("Sticks  6 / 6") and not panel.bench_button.disabled, "Available material totals did not refresh")
 	panel.bench_button.pressed.emit()
 	check(player.inventory.count("bench") == 1 and not is_instance_valid(player.workbench), "Workbench craft did not create an inventory item")
 	panel.place_button.pressed.emit()

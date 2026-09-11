@@ -6,7 +6,7 @@ const HOME := Vector3(42, 1.03, -20)
 const BODY_SCALE := 2.0
 const MAX_HEALTH := 160
 const BOOM_DAMAGE := 34
-const BOOM_RADIUS := 4.5
+const BOOM_RADIUS := 6.0
 const WARNING_TIME := 1.2
 const RECOVERY_TIME := 1.25
 const LEASH_RADIUS := 12.0
@@ -30,6 +30,7 @@ func _ready() -> void:
 	floor_snap_length = 0.5
 	art = Art.new()
 	add_child(art)
+	art.boom_radius = BOOM_RADIUS
 	# Enlarge the creature only; the sibling warning ring stays at BOOM_RADIUS.
 	art.body.scale = Vector3.ONE * BODY_SCALE
 	collider = CollisionShape3D.new()
@@ -76,7 +77,7 @@ func _physics_process(delta: float) -> void:
 		"approach":
 			direction = offset.normalized()
 			speed = 3.3
-			if distance < 4.2 and _sees_player(): _set_state("warn")
+			if distance < BOOM_RADIUS - 0.3 and _sees_player(): _set_state("warn")
 		"warn":
 			if state_time >= WARNING_TIME:
 				_boom()
