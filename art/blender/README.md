@@ -1,6 +1,6 @@
 # Character and wildlife modeling studio
 
-Open `cycles/cycle_06/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
+Open `cycles/cycle_08/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
 
 `ash_iron_character_studio.blend` remains the original baseline.
 

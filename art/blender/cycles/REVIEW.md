@@ -1,6 +1,6 @@
 # Eight-model Blender review cycles
 
-These are actual Blender meshes and Cycles renders, generated locally from `tools/blender/model_characters.py`. They are **unrigged modeling studies**, not finished game assets. No runtime scene, world art, damage value, save format, or customization behavior changes in this work.
+These are actual Blender meshes and Cycles renders, authored locally with the versioned workflows under `tools/blender/`. They are **unrigged modeling studies**, not finished game assets. No runtime scene, world art, damage value, save format, or customization behavior changes in this work.
 
 Dallon expanded the scope to Willow Scout, Hearthland Ranger, Ridge Wayfarer, Ember Forager, Bristleback Boar, Woodland Hog, Ridgeback Boar, and Meadow Buck. The three approved concept sheets are packed into each native file. The bear is deferred.
 
@@ -40,21 +40,33 @@ Cycle 5 review found a black-ear/eyelid material error (the cheek-tint vertex at
 
 Still unresolved: the eyes remain stylized fitted patches with limited depth rather than a complete ocular socket, lips are simple, faces need more individual personality and asymmetry, and the illustrated expression is not yet matched. Existing shell-like hair and rigid garments are now especially visible beside the revised face. No illustration-fidelity or game-readiness claim. Cycle 5 is retained as a review record of faults, not the preferred model.
 
-**Continue from `cycle_06/characters.blend`.** Next priority: authored hair coverage and flowing clumps, then tailored/draped outfits and distinct silhouettes; subsequent animal refinement must retain these faces. Do not run the old full-set generator and accidentally discard the facial work.
+At the end of the face pass, the continuation source was `cycle_06/characters.blend`. Next priority: authored hair coverage and flowing clumps, then tailored/draped outfits and distinct silhouettes; subsequent animal refinement must retain these faces. Do not run the old full-set generator and accidentally discard the facial work.
+
+## Cycles 7–8 — overnight hairstyle reconstruction
+
+Loaded the saved cycle 6 scene and replaced only the four travelers' hair. Authored a continuous scalp foundation, overlapping curved locks with directional surface strands, a tied-back scout cut, swept ranger waves, a copper bob, and closed woven braids. Both passes include front/rear lineups, four face portraits, and a scout profile. All animals and the previously revised faces are retained.
+
+Cycle 7 review found antenna-like scout wisps, three handle-like loops above the forager's bob, a sparse flat hairline below the wayfarer's braids, glossy locks, and repeated pointed bob ends. Cycle 8 shortens and lowers the scout's wisps, reduces the forager's top accent to one low asymmetric wave, curves broader bob ends inward, lowers the crown braids to the hairline and closer to the skull, varies trailing braid lengths, and reduces hair gloss. The braid strands now cross in a figure-eight pattern rather than following a simple three-strand helix.
+
+The scout profile also exposes an unresolved facial issue from cycle 6: the transition below the projecting nose recedes too abruptly toward the upper lip, and the mouth/chin profile is too simple. This pass preserves the face so that issue is still present. It needs correction before treating the face milestone as approved. The ranger beard is sparse repeated strokes; braids and back hair still repeat too regularly; the face lacks the expression and asymmetry of the reference. Clothing remains rigid. These studies are still substantially simpler than the illustrations.
+
+Reviewed all seven actual renders in each hair pass. The corrected braids reach the forehead, though the exposed side foundation and very regular braid rows still read as a stylized cap. Reopened both native files and verified all eight visible model collections, three packed references, and 1,194 unchanged non-hair objects (geometry, transforms, material assignments). All fourteen gameplay suites passed with exit 0. No runtime changes.
+
+**Continue from `cycle_08/characters.blend`.** Next: correct facial profiles while preserving the new hair, then improve garment drape and distinct silhouettes; refine animal anatomy/fur afterward. Both old generators read earlier baselines and must not discard newer work. To reproduce the hair pass in a fresh directory: `Blender --background --factory-startup --python tools/blender/refine_traveler_hair.py -- --art-pass=99 --refinement=2` (intentionally reads cycle 6).
 
 ## Reproduce
 
 Use Blender 5.2.1 LTS from the repository root:
 
 ```sh
-/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python tools/blender/model_characters.py -- --art-pass=5
+/Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python tools/blender/model_characters.py -- --art-pass=99
 ```
 
 A new pass number preserves existing `.blend` files; the generator refuses to overwrite a saved pass. The old full-set generator reproduces the cycle 4 design; it does not include later facial work. A future iteration should change the source based on an actual render review before claiming another improvement. Cycle 1/2 snapshots preserve their exact meshes; later source maintenance is not a byte-identical reproduction guarantee.
 
 Each design is in its own named collection. `APPROVED REFERENCES` holds packed images. `STUDIO — never export` is only a presentation setup. `REVIEW STATUS` inside the file states the modeling stage. This whole directory is excluded from Godot by its parent's `.gdignore`.
 
-To reproduce the face milestone in a new output directory, run `Blender --background --factory-startup --python tools/blender/refine_traveler_faces.py -- --art-pass=7 --refinement=2`. This intentionally reads cycle 4 and applies the face reconstruction, so do not use it to overwrite later hair/clothing changes.
+To reproduce the face milestone in a new output directory, run `Blender --background --factory-startup --python tools/blender/refine_traveler_faces.py -- --art-pass=99 --refinement=2`. This intentionally reads cycle 4 and applies the face reconstruction, so do not use it to overwrite later hair/clothing changes.
 
 ## Remaining work before game integration
 
