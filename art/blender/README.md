@@ -1,6 +1,6 @@
 # Character and wildlife modeling studio
 
-Open `cycles/cycle_20/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
+Open `cycles/cycle_26/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
 
 `ash_iron_character_studio.blend` remains the original baseline.
 
@@ -35,3 +35,17 @@ The setup script refuses to overwrite an existing studio by default. Rebuilding 
 `Blender --background --factory-startup --python tools/blender/render_wildlife_details.py -- --art-pass=19` renders rear and face inspection views from that saved source without modifying the `.blend` file. The ordinary wildlife generator also renders full silhouettes and portrait/side pairs. All images are actual Cycles renders.
 
 For the cycle 20 attachment cleanup, `Blender --background --factory-startup --python tools/blender/polish_wildlife_attachments.py -- --art-pass=99` loads the saved cycle 19 animals and corrects antler/ear seating, eye/fur clearance and hoof finish. It preserves the saved traveler models and refuses to overwrite an existing source. Use `render_wildlife_details.py -- --art-pass=20` for the latest close views.
+
+## Latest traveler studies
+
+Cycle 26 preserves the cycle 20 wildlife and includes revised eyelids, cupped ears, sloped jaws, fitted lips, freckles, finer graded stubble, narrower hanging capes, fitted straps and scalp-following wayfarer braids. These remain simplified offline studies. [The morning review](../../docs/art/OVERNIGHT_REVIEW.md) links actual renders and the largest remaining differences from the illustrations.
+
+The versioned scripts intentionally read specific saved baselines and refuse to overwrite existing sources:
+
+- `refine_traveler_expression.py -- --art-pass=99 --refinement=2` reproduces the cycle 22 face checkpoint from cycle 20.
+- `refine_cape_silhouettes.py -- --art-pass=99 --refinement=5` reproduces the cycle 24 cape/stubble checkpoint from cycle 22.
+- `fit_wayfarer_braids.py -- --art-pass=99 --refinement=3` reproduces cycle 26 braid/cloth-contact corrections from cycle 24.
+
+Prefix each with `Blender --background --factory-startup --python tools/blender/` and use a different unused pass number for each run. For new work, load **cycle 26** directly; do not regenerate from an earlier baseline and discard later edits. Face details for unchanged scout/forager faces are in cycle 22, ranger details in cycle 24, and wildlife details in cycle 20. Cycle 26 has current traveler front/rear lineups, wayfarer face/profile/rear views, both cape closeups and a scout side view.
+
+Render an overview directly from the latest saved source with `Blender --background --factory-startup --python tools/blender/render_study_overview.py -- --art-pass=26`. This writes `all-eight.png` without changing the native file.

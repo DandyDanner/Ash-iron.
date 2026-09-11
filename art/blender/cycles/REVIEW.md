@@ -116,6 +116,38 @@ Across cycles 16–20, inspected 55 actual Blender images. Reopened all five nat
 
 Next return to traveler face/ear and garment-contact refinement, preserving this animal checkpoint. To reproduce the attachment correction in a fresh folder, use `Blender --background --factory-startup --python tools/blender/polish_wildlife_attachments.py -- --art-pass=99`; it intentionally reads cycle 19. To reproduce the preceding animal reconstruction, use `refine_wildlife.py -- --art-pass=99 --refinement=4`; that intentionally reads cycle 15. Never use these baseline-specific scripts to overwrite later edits. `render_wildlife_details.py -- --art-pass=20` renders the latest rear/face inspection images without altering the saved source.
 
+
+## Cycles 21–22 — eyelids, ears and facial expression
+
+Loaded cycle 20 and retained its complete animal work. Sculpted small socket/cheek/nose adjustments into the existing continuous traveler heads, narrowed the lower jaws more for scout/forager, rebuilt smaller fitted almond eyes with skin eyelid bands, and replaced thin ear panels with closed cupped volumes, helix and inner folds. Each pass has front/rear lineups and front/profile closeups of all four faces.
+
+Cycle 21 review showed more ear depth and less exposed eye white, but lips still projected sharply and the lower jaw remained too horizontal. The ranger's stubble was coarse and sparse, while the forager's pale freckles resembled raised marks. Cycle 22 slopes the underside of each jaw, refits lips and the mouth line to the face, seats warmer freckles, and replaces individual coarse beard strokes with finer surface-following fibers.
+
+All 20 actual images were inspected. The jaw/lip profiles are more connected and the freckles read more clearly. The new beard, however, has sharply bounded cheek/mouth regions, addressed in cycle 24. Faces still look generic and smooth; eyes/ear folds retain an applied-rim appearance, nostrils remain surface strokes, and hair is broad repeated sculpted locks. These changes do not establish illustration fidelity. Both native files reopened with all eight models/three packed references and 856 unrelated objects retaining identical geometry, transforms and material assignments.
+
+## Cycles 23–24 — hanging capes, garment contact and stubble boundaries
+
+Loaded cycle 22 and narrowed the scout/wayfarer cape silhouettes, changed the shoulder-to-hem drop, retained sleeve clearance, rebuilt borders/embroidery on those surfaces, and fitted their straps to the underlying cape, shirt and sash. Cycle 23 review exposed pieces of the old shirt collars piercing the narrower cloth, along with a remaining ochre shirt patch beneath the wayfarer cape. The capes remain stiff overall, and the side view still shows strap bridging.
+
+Cycle 24 removes the two covered collars per cape, eases strap depth changes, moves buckle leather into view and grades the ranger beard's upper/side/mouth boundaries with varied fiber density. Reviewed all seven cycle 23 images and all nine cycle 24 images, including ranger front/profile details. The collar triangles are gone and the beard no longer ends in a sharp rectangle; one upper-shirt patch still pierces the poncho and requires a surface-clearance correction. The ranger jacket and forager collar remain stiff, the scout's sash creates repeated strap ripples, and equipment is still simplified and not motion-tested. Keep these intermediate images as the record of defects, not as approved final art.
+
+Cycle 23 native verification retained all eight models/packed references and 914 objects outside the cape/strap scope. Cycle 24 additionally changes the covered collars and ranger beard; native verification retained 909 objects outside that scope with identical geometry, transforms and material assignments.
+
+
+
+## Cycles 25–26 — fitted braids and final cloth clearance
+
+Loaded cycle 24. Replaced the wayfarer's seven elevated crown rows with eleven narrower braids fitted to the evaluated scalp, plus nine curved trailing paths starting from the crown ends. The close front/profile views show a rounder silhouette following the head; the hairline foundation remains visibly cap-like and the repeated braid pattern is still too uniform. Cycle 25 rear review caught small gaps at the crown-to-trailing joins. Cycle 26 embeds the crown centers slightly more and overlaps the hanging braid roots, closing those visible gaps. The root shapes still need natural blending and varied transition widths.
+
+Also checked both capes against the evaluated shirts, moved penetrating cape regions outside the underlying cloth, and kept strap surfaces above the revised capes. The wayfarer upper-shirt patch is gone in the corrected outfit view. These are static clearance fixes; the scout strap still bridges the cape edge and follows the sash too mechanically.
+
+Each pass contains eight actual renders: traveler front/rear lineups, wayfarer front/profile/rear closeups, scout/wayfarer outfit views and scout side view. All 52 pass images from cycles 21–26 were inspected, followed by an additional all-eight overview rendered directly from the final saved source. Reopened cycles 25/26 and verified eight visible collections, three packed references and 888 objects outside the braid/cape scope with identical geometry, transforms and material assignments. All six sources in the final overnight session preserve the complete animal checkpoint from cycle 20. No world, runtime, balance, save, or playable-model changes. All fourteen gameplay suites passed with exit 0; sandboxed Godot also reported its previously seen system certificate lookup warning.
+
+**Continue from `cycle_26/characters.blend`.** The complete set remains substantially below the approved illustrations. Next, give Willow Scout a focused silhouette/face/hair/garment sculpt pass rather than spreading small details across the set. The animals retain the cycle 20 limitations described above. Retopology, UVs/baked materials, deforming rigs/weights and tested game integration remain future work.
+
+Reproduce the last face checkpoint from cycle 20 using `refine_traveler_expression.py -- --art-pass=99 --refinement=2`; reproduce the cape/stubble checkpoint from cycle 22 using `refine_cape_silhouettes.py -- --art-pass=99 --refinement=5`; reproduce the final braid/clearance correction from cycle 24 using `fit_wayfarer_braids.py -- --art-pass=99 --refinement=3`. Prefix with `Blender --background --factory-startup --python tools/blender/`, use unused pass numbers, and never overwrite newer manual work with these baseline-specific scripts.
+
+
 ## Reproduce
 
 Use Blender 5.2.1 LTS from the repository root:
