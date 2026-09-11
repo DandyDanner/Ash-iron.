@@ -48,6 +48,9 @@ var legs: Array[Node3D] = []
 var knees: Array[Node3D] = []
 var gait := 0.0
 var gameplay := false
+var tool_grip: Node3D
+var open_right_fingers: Node3D
+var closed_right_fingers: Node3D
 var motion := 0.0
 
 static func loft(parent: Node3D, rings: Array, color: Color, sides: int = 12) -> MeshInstance3D:
@@ -141,11 +144,27 @@ func rebuild(profile: Dictionary) -> void:
 			cylinder(elbow, Vector3(0, -0.195 + n * 0.015, 0), 0.047, 0.01, leather.darkened(0.18))
 		var hand := joint(elbow, "Hand", Vector3(0, -0.26, 0))
 		oval(hand, Vector3.ZERO, Vector3(0.095, 0.12, 0.055), skin)
+		var fingers := joint(hand, "OpenFingers", Vector3.ZERO)
 		for n in range(4):
-			oval(hand, Vector3(-0.032 + n * 0.021, -0.06, 0.01), Vector3(0.022, 0.065, 0.027), skin)
-		oval(hand, Vector3(-side * 0.05, -0.012, 0.014), Vector3(0.036, 0.062, 0.034), skin)
-		if side < 0: left_hand = hand
-		else: right_hand = hand
+			oval(fingers, Vector3(-0.032 + n * 0.021, -0.06, 0.01), Vector3(0.022, 0.065, 0.027), skin)
+		oval(fingers, Vector3(-side * 0.05, -0.012, 0.014), Vector3(0.036, 0.062, 0.034), skin)
+		if side < 0:
+			left_hand = hand
+		else:
+			right_hand = hand
+			open_right_fingers = fingers
+			# The tool's long axis crosses the palm instead of pointing into the elbow.
+			tool_grip = joint(hand, "ToolGrip", Vector3(0, -0.02, 0.045))
+			tool_grip.rotation.x = 1.35
+			closed_right_fingers = joint(tool_grip, "ClosedFingers", Vector3.ZERO)
+			for finger in range(4):
+				var y := -0.034 + finger * 0.023
+				for bend in range(5):
+					var a := 0.45 + bend * 0.82
+					var b := a + 0.82
+					segment(closed_right_fingers, Vector3(cos(a) * 0.027, y, sin(a) * 0.027), Vector3(cos(b) * 0.027, y, sin(b) * 0.027), 0.011, skin)
+			oval(closed_right_fingers, Vector3(0.028, 0.047, 0), Vector3(0.035, 0.059, 0.032), skin)
+			closed_right_fingers.hide()
 	# Layered sash follows the waist, and a loose tail reads clearly from behind.
 	for n in range(5):
 		var wrap := oval(body, Vector3(0, 1.005 + n * 0.019, 0.008), Vector3(0.47, 0.039, 0.32), sash.lightened(n * 0.015))
@@ -235,6 +254,10 @@ func _build_cape(color: Color) -> void:
 	for side in [-1.0, 1.0]:
 		oval(cape, Vector3(side * 0.07, 0.08, 0.11), Vector3(0.03, 0.03, 0.012), Color("d7b870"))
 
+func set_tool_grip(gripping: bool) -> void:
+	open_right_fingers.visible = not gripping
+	closed_right_fingers.visible = gripping
+
 func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed: float, item: String, swing: float, draw: float) -> void:
 	gameplay = true
 	elapsed += delta
@@ -260,7 +283,7 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		arms[1].rotation.z = -0.25 * draw + 0.10
 		forearms[1].rotation.x = -1.3 * draw
 	else:
-		arms[1].rotation.z = 0.10
+		arms[1].rotation.z = 0.20 if item in ["stone_axe", "stone_pickaxe", "torch"] else 0.10
 	body.position.y = absf(sin(gait)) * 0.025 * motion if grounded else 0.02
 	torso.rotation.x = motion * 0.035
 	cape.rotation.x = sin(elapsed * 2.1) * 0.025 + motion * 0.08 + clampf(-vertical_speed * 0.025, -0.12, 0.16)

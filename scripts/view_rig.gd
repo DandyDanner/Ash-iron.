@@ -54,9 +54,10 @@ func _ready() -> void:
 	for pair in [["stone_axe", "Tool"], ["stone_pickaxe", "Pickaxe"], ["torch", "Torch"]]:
 		var tool: Node3D = player.axe.get_node(pair[1]).duplicate()
 		tool.name = pair[0]
-		avatar.right_hand.add_child(tool)
+		avatar.tool_grip.add_child(tool)
 		tool.scale = Vector3.ONE * 0.72
-		tool.position = Vector3(0, -0.02, 0.015)
+		tool.position = Vector3.ZERO
+		tool.rotation = Vector3(0, PI, 0) # Keep the axe blade on the outside of the right hand.
 		tool.hide()
 		held[pair[0]] = tool
 	first_torch_light = player.axe.get_node("Torch/WarmLight")
@@ -92,6 +93,7 @@ func set_mode(enabled: bool) -> void:
 	_sync_equipment()
 
 func _sync_equipment() -> void:
+	avatar.set_tool_grip(player.equipped_item in held)
 	for item in held:
 		held[item].visible = player.equipped_item == item
 	held_bow.visible = player.equipped_item == "bow"

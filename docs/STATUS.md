@@ -8,10 +8,18 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Playable loop: create a traveler, gather sticks/stones, hand-craft and place a portable bench, craft tools, chop pines and mine boulders, store in chests, craft using linked chest materials, and practice with a craftable bow and recoverable arrows. Eight backpack slots and ten saved hotbar shortcuts. Automatic progress saves, Continue / Start over, and Save & Quit.
 - Workbenches: craft anywhere for six sticks/four stones, carry in one slot, place on clear level ground, then use E nearby. Pick up this workbench packs it for relocation. Multiple benches persist; E selects the viewed bench, I uses the nearest reachable one. Recipes use that bench’s nearby chests; remote stock is unavailable.
 - Crafting UI: eight recipe icons with hover cards for use, have/need totals, missing ingredients, and availability. Click or keyboard-focus to inspect; use the separate craft button. Disabled recipes remain browsable. Arrow/stick icons show output amounts.
+- Tool grip: third-person axe, pickaxe, and torch sit across the palm with closing fingers and checked forearm clearance through carrying and swing poses.
 - Presentation: approved Willow Scout implemented as an articulated procedural model shared by the creator and world. Third person starts by default; V switches views and saves the preference. Walking, jumping, tool gestures, bow drawing, and cape movement. Forest paths, grass, flowers, hills, fuller pines, lichen boulders, planked bench/chest, warm sky/light, and shorter HUD. F11 toggles standalone full screen.
 - Suggested next for visuals: refine the face/hair/cape and animation hand contact against `docs/art/willow-scout-turnaround.png`, replace simple distant silhouettes, vary foliage density, then add footsteps/ambient audio. This is a coordinated first procedural pass, not the finished concept-art model.
 - Suggested next for systems (Phase 3): choose one meaningful expedition upgrade (ore → furnace → improved tool) or one animal for the existing bow, before expanding the map.
 - Known gaps: no placement ghost or manual rotation tool yet (furniture follows the player’s horizontal facing); no confirmation before dropping a stack. Torch fuel, ore, resource regrowth, enemy damage, and background abilities remain deferred. Animation is a node rig without foot IK, skeletal skinning, or cloth simulation. The editor's embedded game controls its own window size; F11 is primarily for standalone play.
+
+## 2026-09-10 — ChatGPT / Codex: third-person tool grip
+
+- Dallon reported the held axe intersecting the forearm. Started clean at `6d0a73b` and checked origin/identity.
+- The copied first-person tool geometry had its long axis pointing back toward the elbow. Added a palm grip that turns the axe, pickaxe, and torch across the hand; the axe blade faces outward. The fingers close around the shaft when equipped and relax when holstered. The carrying arm is held slightly farther from the body.
+- First-person tool placement, attack timing/reach, inventory, and saves are unchanged. Bow attachment remains separate.
+- Verification: all twelve suites pass. The third-person suite now checks actual rendered tool vertices against the forearm volume through idle and swing poses for all three tools, plus gripping/relaxed finger visibility. Native Godot front-view inspection confirms the axe sits in the hand with the head clear of the arm. Saved the user's active play session before switching to the isolated preview.
 
 ## 2026-09-10 — ChatGPT / Codex: portable workbenches
 

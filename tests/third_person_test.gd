@@ -45,6 +45,16 @@ func wall_at(spot: Vector3) -> StaticBody3D:
 	wall.position = spot
 	return wall
 
+func tool_clears_forearm(tool: Node3D, forearm: Node3D) -> bool:
+	# Check rendered geometry against the forearm volume, not a particular socket transform.
+	for part in tool.find_children("*", "MeshInstance3D", true, false):
+		var vertices: PackedVector3Array = part.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+		for vertex in vertices:
+			var local: Vector3 = forearm.to_local(part.to_global(vertex))
+			if local.y > -0.23 and local.y < 0.02 and pow(local.x / 0.075, 2) + pow(local.z / 0.070, 2) < 1.0:
+				return false
+	return true
+
 func run() -> void:
 	var player := await enter()
 	var rig: Node3D = player.view_rig
@@ -97,6 +107,15 @@ func run() -> void:
 	player.axe.start_swing()
 	await ticks(45)
 	check(pine.hits_left == 3, "Third-person axe gained camera-length reach")
+	# Tools stay outside the forearm while their gripping hand follows the animation.
+	check(rig.avatar.closed_right_fingers.visible and not rig.avatar.open_right_fingers.visible, "Equipped axe did not close the gripping fingers")
+	for held_item in rig.held:
+		for pose in [-1.0, 0.0, 0.22, 0.30, 0.59]:
+			rig.avatar.animate_movement(0.1, 5, true, 0, held_item, pose, 0)
+			check(tool_clears_forearm(rig.held[held_item], rig.avatar.forearms[1]), "%s intersects the forearm during pose %.2f" % [held_item, pose])
+	player.equip_item("")
+	rig._sync_equipment()
+	check(rig.avatar.open_right_fingers.visible and not rig.avatar.closed_right_fingers.visible, "Holstering did not relax the gripping hand")
 	# Aim from the chase crosshair, but launch at the head so close walls still block arrows.
 	player.global_position = Vector3(10, 1.1, -4)
 	player.camera.rotation.x = -0.055
