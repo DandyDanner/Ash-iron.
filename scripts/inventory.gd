@@ -13,10 +13,14 @@ const ITEMS := {
 	"stone_axe": {"name": "Stone axe", "stack": 1, "description": "A shaped stone head on a wooden handle. Equip it to chop trees."},
 	"stone_pickaxe": {"name": "Stone pickaxe", "stack": 1, "description": "A pointed stone tool. Equip it and strike boulders to gather more stones."},
 	"torch": {"name": "Pine torch", "stack": 1, "description": "A warm pool of light for exploring. Equip from your hotbar; put away with the same key."},
+	"bow": {"name": "Woodland bow", "stack": 1, "description": "A bent-wood bow. Hold left click to draw, release to shoot. Right click cancels the draw."},
+	"arrow": {"name": "Arrows", "stack": 10, "description": "Stone-tipped ammunition. Each shot uses one arrow; recover landed arrows with E."},
 	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips. Chests near the bench feed its recipes."}
 }
-const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch"]
+const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch", "bow"]
 const RECIPES := {
+	"bow": {"name": "Woodland bow", "cost": {"wood": 3, "stick": 2}, "output": "bow", "amount": 1, "description": "Hold left click to draw, release to fire. A longer draw shoots farther. Uses arrows from your backpack."},
+	"arrows": {"name": "5 stone-tipped arrows", "cost": {"stick": 2, "stone": 1}, "output": "arrow", "amount": 5, "description": "Ammunition for your bow. Recover landed arrows with E. Arrows stack to ten."},
 	"stone_pickaxe": {"name": "Stone pickaxe", "cost": {"stick": 3, "stone": 4}, "output": "stone_pickaxe", "amount": 1, "description": "Break boulders into loose stones. Four swings yield eight stones."},
 	"torch": {"name": "Pine torch", "cost": {"stick": 2, "wood": 1}, "output": "torch", "amount": 1, "description": "A resinous pine torch. Hold it to light the ground ahead; no fuel upkeep yet."},
 	"split_wood": {"name": "Split wood into sticks", "cost": {"wood": 1}, "output": "stick", "amount": 4, "description": "Turn one piece of timber into four crafting sticks."}

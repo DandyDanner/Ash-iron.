@@ -62,7 +62,8 @@ Goal: walk out, collect one thing, bring it home.
 
 - [ ] One animal/enemy archetype
 - [ ] Health/stamina
-- [ ] Bow or simple ranged weapon
+- [x] Craftable bow and arrows, draw/release, ballistics, recovery, practice target, and saved flight state
+- [ ] Bow damage against the first animal/enemy
 - [ ] Damage reactions
 - [ ] Death + recoverable carried loot
 - [ ] Basic day/night pressure

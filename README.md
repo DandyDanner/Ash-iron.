@@ -31,7 +31,8 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `Shift` — sprint
 - `Space` — jump
 - Mouse — look
-- Left click — swing your equipped axe or pickaxe (while the mouse is captured)
+- Left click — swing your equipped axe or pickaxe; with a bow, hold to draw and release to fire (while the mouse is captured)
+- Right click — cancel a bow draw without spending an arrow
 - `E` — gather sticks, loose stones, or wood; use the camp worksite or bench; open a storage chest
 - `I` — open or close your backpack and crafting panel
 - `Esc` — open the backpack and save controls; close an open panel
@@ -63,30 +64,37 @@ Every background now starts with **eight empty inventory slots and no tools**. Y
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
 6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
 
-Scroll the recipe column for three additional bench recipes. They use nearby connected chests too:
+Scroll the recipe column for additional bench recipes. They use nearby connected chests too:
 
 | Recipe | Materials | Use |
 | --- | --- | --- |
+| Woodland bow | 3 wood + 2 sticks | Hold left click to draw, release to fire. Longer draws shoot farther. |
+| 5 stone-tipped arrows | 2 sticks + 1 stone | Bow ammunition; landed arrows can be recovered with E. |
 | Stone pickaxe | 3 sticks + 4 stones | Four swings break a boulder; each hit drops two loose stones to gather with E. |
 | Pine torch | 2 sticks + 1 wood | Hold for warm light. No fuel upkeep or fire damage in this prototype. |
 | Split wood into sticks | 1 wood | Produces 4 sticks for tools and camp supplies. |
 
-Tools automatically take the first unused hotbar shortcut when equipped. Shortcuts point to items in your eight-slot backpack; they add no storage. A stored or dropped tool is shown dimmed until recovered. Assignments survive quitting and loading.
+The bow and tools automatically take the first unused hotbar shortcut when equipped. Shortcuts point to items in your eight-slot backpack; they add no storage. A stored or dropped tool is shown dimmed until recovered. Assignments survive quitting and loading.
 
 The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
 Select a backpack slot to inspect an item, equip or put away a tool, or **Drop selected stack**. Dropped items can be recovered. Equipped tools still occupy their backpack slots. Axes chop pines; pickaxes mine boulders. Depleted boulders stay depleted after loading.
 
+An **archery target** stands at the far right of the clearing, beyond the rocks. With a bow equipped and arrows in the backpack, hold left click for up to 0.85 seconds, then release. The HUD shows draw strength and arrow count. A quick tap does not shoot; right click, changing equipment, opening a panel, or losing window focus cancels the draw without spending ammunition. The target reports bullseye, inner ring, or target hit. Its practice hit counter resets on entering the clearing.
+
+Each shot consumes one arrow, which becomes a recoverable pickup on impact. Arrows follow gravity, and solid walls block them, including at close range. Flying arrows and landed pickups survive saving and loading. Arrows that leave the test clearing or fly longer than eight seconds are lost. Bow damage against enemies and hunting remain future work; bows cannot chop trees or mine rocks.
+
 Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point with your current inventory.
 
 **Your progress is kept.** Your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree and boulder damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
 
-Save format 2 accepts existing format 1 saves without resetting the clearing. Old saves gain an axe shortcut when an axe is in the backpack. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
+Save format 3 accepts existing format 1 and 2 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
 ## Verification
 
 Use your Godot executable in these commands:
 
+- `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
 - `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
 - `Godot --headless --path . --script res://tests/pickup_assist_test.gd` — generous pickup targeting, reach limits, priority, and blocked sight lines.
 - `Godot --headless --path . --script res://tests/inventory_crafting_test.gd` — slot limits, stacking, partial pickups, atomic crafting, empty-handed start, gathering, workbench, axe, equip/drop/recover.

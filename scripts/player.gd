@@ -8,6 +8,8 @@ const InventoryPanel = preload("res://scripts/inventory_panel.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const StoragePanel = preload("res://scripts/storage_panel.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const Bow = preload("res://scripts/starter_bow.gd")
+const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Hotbar = preload("res://scripts/hotbar.gd")
 const REACH := 2.6
 @export var pickup_radius: float = 3.0
@@ -26,6 +28,7 @@ var identity_label: Label
 var resource_label: Label
 var prompt_label: Label
 var axe: Node3D
+var bow: Node3D
 var controls_active := true
 var inventory := Inventory.new()
 var inventory_panel: Control
@@ -74,6 +77,8 @@ func _ready() -> void:
 	camera.add_child(axe)
 	axe.setup(Profile.CLOTHES[profile.clothes], Profile.SKINS[profile.skin])
 	axe.set_equipped(false)
+	bow = Bow.new()
+	camera.add_child(bow)
 	workbench = get_tree().get_first_node_in_group("workbenches")
 	hotbar_view = Hotbar.new()
 	hud.add_child(hotbar_view)
@@ -133,12 +138,24 @@ func _unhandled_input(event: InputEvent) -> void:
 				jump_buffer = JUMP_BUFFER
 			if event.physical_keycode == KEY_E:
 				collect_requested = true
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and controls_active:
+		bow.cancel_draw()
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		if controls_active and equipped_item == "bow":
+			fire_bow()
+		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if not controls_active:
 			_capture_controls(true)
 			return # The click that resumes play must not also swing the axe.
 		if equipped_item in ["stone_axe", "stone_pickaxe"] and inventory.count(equipped_item) > 0:
 			axe.start_swing()
+		elif equipped_item == "bow":
+			if inventory.count("arrow") > 0:
+				bow.begin_draw()
+			else:
+				_show_feedback("No arrows • Craft a bundle at your workbench.")
 		elif equipped_item == "torch":
 			_show_feedback("Pine torch • Press its hotbar key again to put it away.")
 		else:
@@ -160,10 +177,13 @@ func _cancel_actions() -> void:
 	jump_buffer = 0.0
 	collect_requested = false
 	axe.cancel_swing()
+	if is_instance_valid(bow):
+		bow.cancel_draw()
 
 func _physics_process(delta: float) -> void:
 	if not controls_active:
 		return
+	bow.advance(delta)
 	grounded_grace = JUMP_GRACE if is_on_floor() else maxf(0.0, grounded_grace - delta)
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -276,10 +296,15 @@ func _interaction_target() -> Node3D:
 
 func _update_hud() -> void:
 	resource_label.text = "%s   /   PACK %d / 8" % [Inventory.ITEMS[equipped_item].name.to_upper() if not equipped_item.is_empty() else "EMPTY HANDS", inventory.used_slots()]
+	if equipped_item == "bow":
+		resource_label.text += "   /   ARROWS %d" % inventory.count("arrow")
 	if is_instance_valid(hotbar_view):
 		hotbar_view.refresh()
 	if feedback_time > 0.0:
 		prompt_label.text = feedback
+		return
+	if bow.drawing:
+		prompt_label.text = "DRAW %d%% • Release to fire • Right click to cancel" % roundi(bow.charge() * 100)
 		return
 	var nearby := _interaction_target()
 	if is_instance_valid(nearby):
@@ -291,6 +316,8 @@ func _update_hud() -> void:
 			prompt_label.text = "Equip your axe in the backpack [I]." if inventory.count("stone_axe") > 0 else "A pine needs an axe • Gather loose sticks and stones first."
 		else:
 			prompt_label.text = hit.collider.prompt()
+	elif equipped_item == "bow":
+		prompt_label.text = "Hold left click to draw • Release to fire • Target at the far right of camp"
 	elif not workbench.built:
 		prompt_label.text = "Walk near sticks and stones • E Gather • I Backpack"
 	elif inventory.count("stone_axe") == 0:
@@ -350,6 +377,9 @@ func _inventory_changed() -> void:
 	if not equipped_item.is_empty() and inventory.count(equipped_item) == 0:
 		equipped_item = ""
 	axe.set_item(equipped_item)
+	bow.visible = equipped_item == "bow"
+	if not bow.visible or inventory.count("arrow") == 0:
+		bow.cancel_draw()
 	_update_hud()
 	if inventory_panel.visible:
 		inventory_panel.refresh()
@@ -364,6 +394,8 @@ func equip_item(item: String) -> void:
 	if not item.is_empty() and (not item in Inventory.EQUIPPABLE or inventory.count(item) == 0):
 		return
 	equipped_item = item
+	bow.cancel_draw()
+	bow.visible = item == "bow"
 	axe.cancel_swing()
 	axe.set_item(item)
 	if not item.is_empty() and not item in hotbar:
@@ -386,7 +418,7 @@ func assign_hotbar(index: int, item: String) -> String:
 	if index < 0 or index >= hotbar.size():
 		return "Unknown shortcut."
 	if not item.is_empty() and (not item in Inventory.EQUIPPABLE or inventory.count(item) == 0):
-		return "Choose an axe, pickaxe, or torch from your backpack."
+		return "Choose a tool or bow from your backpack."
 	# Moving a shortcut keeps a single, predictable key for each tool.
 	for i in range(hotbar.size()):
 		if not item.is_empty() and hotbar[i] == item:
@@ -614,3 +646,16 @@ func pickup_chest(chest: Node3D) -> String:
 	close_storage()
 	_progress_changed()
 	return "Chest packed up."
+
+func fire_bow() -> void:
+	var power: float = bow.release()
+	if power < 0.0 or equipped_item != "bow" or not inventory.craft({"arrow": 1}):
+		return
+	var projectile := Arrow.new()
+	projectile.shooter_rid = get_rid()
+	projectile.velocity = -camera.global_basis.z * lerpf(12.0, 32.0, power)
+	get_parent().add_child(projectile)
+	# Starting at the camera makes even a wall right in front of the player block the shot.
+	projectile.global_position = camera.global_position
+	axe.whoosh.play()
+	_progress_changed()

@@ -3,7 +3,7 @@ extends RefCounted
 ## Character appearance lives in character_profile.gd; the two files never overwrite each other.
 
 const SAVE_PATH := "user://save.json"
-const VERSION := 2
+const VERSION := 3
 static var storage_path: String = SAVE_PATH
 
 static func exists(path: String = "") -> bool:
@@ -18,9 +18,9 @@ static func load_state(path: String = "") -> Dictionary:
 	if parser.parse(FileAccess.get_file_as_string(path)) != OK or not (parser.data is Dictionary):
 		return {}
 	var data: Dictionary = parser.data
-	if not int(data.get("version", 0)) in [1, VERSION]:
+	if not int(data.get("version", 0)) in [1, 2, VERSION]:
 		return {}
-	# Version 1 keeps all progress; the world supplies defaults for new equipment and boulders.
+	# Older saves keep all progress; the world supplies defaults for missing equipment, rocks, or airborne arrows.
 	return data
 
 static func save_state(data: Dictionary, path: String = "") -> Error:

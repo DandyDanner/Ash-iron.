@@ -34,3 +34,14 @@ func _draw() -> void:
 			draw_line(center + Vector2(-6, 23), center + Vector2(1, -5), Color("b8915d"), 7, true)
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-12, -5), center + Vector2(-5, -20), center + Vector2(1, -29), center + Vector2(7, -15), center + Vector2(13, -5), center + Vector2(1, 4)]), Color("efa34c"))
 			draw_circle(center + Vector2(0, -4), 5, Color("ffe7a8"))
+
+		"bow":
+			var curve := PackedVector2Array([center + Vector2(9, -26), center + Vector2(-10, -17), center + Vector2(-18, 0), center + Vector2(-10, 17), center + Vector2(9, 26)])
+			draw_polyline(curve, Color("c29a62"), 5, true)
+			draw_line(center + Vector2(9, -26), center + Vector2(9, 26), Color("e2d6b4"), 1.5, true)
+			draw_line(center + Vector2(-2, 0), center + Vector2(23, 0), Color("cad4ca"), 2, true)
+		"arrow":
+			for x in [-8, 8]:
+				draw_line(center + Vector2(x - 9, 23), center + Vector2(x + 6, -20), Color("c9b081"), 3, true)
+				draw_colored_polygon(PackedVector2Array([center + Vector2(x + 1, -15), center + Vector2(x + 9, -26), center + Vector2(x + 12, -12)]), Color("a4b9b2"))
+				draw_line(center + Vector2(x - 11, 13), center + Vector2(x - 4, 21), Color("e6e1c9"), 5, true)

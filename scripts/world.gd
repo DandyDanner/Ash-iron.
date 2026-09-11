@@ -4,6 +4,7 @@ const GameSave = preload("res://scripts/game_save.gd")
 const Inventory = preload("res://scripts/inventory.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const Bundle = preload("res://scripts/wood_bundle.gd")
+const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
 const AUTOSAVE_INTERVAL := 15.0
 const DIRTY_DELAY := 1.0
@@ -79,7 +80,12 @@ func to_data() -> Dictionary:
 	var boulders := []
 	for rock in get_tree().get_nodes_in_group("mineable_rocks"):
 		boulders.append({"name": rock.name, "hits_left": rock.hits_left})
+	var arrows := []
+	for arrow in get_tree().get_nodes_in_group("flying_arrows"):
+		if not arrow.is_queued_for_deletion() and not arrow.landed:
+			arrows.append(arrow.to_data())
 	return {
+		"arrows": arrows,
 		"boulders": boulders,
 		"player": {
 			"x": player.global_position.x, "y": player.global_position.y, "z": player.global_position.z,
@@ -152,6 +158,15 @@ func _apply(data: Dictionary) -> void:
 		player.rotation.y = _num(saved.get("yaw"), 0.0)
 		player.camera.rotation.x = clampf(_num(saved.get("pitch"), 0.0), deg_to_rad(-85.0), deg_to_rad(85.0))
 		player.velocity = Vector3.ZERO
+	for entry in _list(data.get("arrows")):
+		var saved_arrow := _dict(entry)
+		var arrow := Arrow.new()
+		arrow.velocity = Vector3(_num(saved_arrow.get("vx"), 0), _num(saved_arrow.get("vy"), 0), _num(saved_arrow.get("vz"), 0)).limit_length(50.0)
+		arrow.age = clampf(_num(saved_arrow.get("age"), 0), 0.0, Arrow.MAX_AGE)
+		if player:
+			arrow.shooter_rid = player.get_rid()
+		add_child(arrow)
+		arrow.global_position = _vec(saved_arrow, Vector3(0, 1, 0))
 
 func _list(value: Variant) -> Array:
 	return value if value is Array else []
