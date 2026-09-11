@@ -40,8 +40,6 @@ func cancel_draw() -> void:
 		_refresh()
 
 func _refresh() -> void:
-	var middle := Vector3(0, 0, charge() * 0.28)
-	Art.place_segment(strings.lower, Vector3(0, -0.52, 0.04), middle)
-	Art.place_segment(strings.upper, middle, Vector3(0, 0.52, 0.04))
+	var middle := Art.pose_bow(strings, charge())
 	nocked.visible = drawing
-	nocked.position = middle + Vector3(0, 0, -0.28)
+	nocked.position = middle + Vector3(0, 0, -0.39)

@@ -110,7 +110,7 @@ func run() -> void:
 	# Tools stay outside the forearm while their gripping hand follows the animation.
 	check(rig.avatar.closed_right_fingers.visible and not rig.avatar.open_right_fingers.visible, "Equipped axe did not close the gripping fingers")
 	for held_item in rig.held:
-		for pose in [-1.0, 0.0, 0.22, 0.30, 0.59]:
+		for pose in [-1.0, 0.0, 0.08, 0.22, 0.30, 0.59]:
 			rig.avatar.animate_movement(0.1, 5, true, 0, held_item, pose, 0)
 			check(tool_clears_forearm(rig.held[held_item], rig.avatar.forearms[1]), "%s intersects the forearm during pose %.2f" % [held_item, pose])
 	player.equip_item("")
@@ -126,6 +126,14 @@ func run() -> void:
 	player.bow.begin_draw()
 	await ticks(55)
 	check(rig.held_bow.visible and not rig.back_bow.visible and rig.drawn_arrow.visible and rig.arm.spring_length < 2.4, "Bow presentation did not follow drawing/equipment")
+	check(rig.held_bow.global_basis.y.normalized().dot(Vector3.UP) > 0.99, "Held bow limbs are sideways")
+	check((-rig.drawn_arrow.global_basis.z.normalized()).dot(rig.avatar.global_basis.z.normalized()) > 0.99, "Nocked arrow does not point forward")
+	var nock: Vector3 = rig.drawn_arrow.to_global(Vector3(0, 0, 0.39))
+	check(nock.distance_to(rig.avatar.right_hand.global_position) < 0.035, "Drawing hand does not meet the bowstring")
+	check(rig.held_bow.global_position.distance_to(rig.avatar.left_hand.global_position) < 0.001, "Bow grip is detached from the left palm")
+	check(rig.drawn_arrow.position.y > 0.08 and rig.drawn_arrow.position.x > 0.04, "Nocked arrow passes through the bow grip")
+	var lower: Node3D = rig.bow_strings.lower
+	check(nock.distance_to(lower.to_global(Vector3(0, 0.5, 0))) < 0.001, "Arrow nock does not meet the string")
 	player.fire_bow()
 	await ticks(30)
 	var target: Node3D = current_scene.get_node("ClearingResources/PracticeTarget")
@@ -151,7 +159,12 @@ func run() -> void:
 	avatar.animate_movement(0.1, 0, false, 4, "", -1, 0)
 	check(avatar.knees[0].rotation.x > 0.4, "Jump pose did not bend the knees")
 	avatar.animate_movement(0.1, 0, true, 0, "stone_axe", 0.22, 0)
-	check(avatar.arms[1].rotation.x < -1.5, "Axe swing has no third-person gesture")
+	var axe: Node3D = rig.held.stone_axe
+	var forward: Vector3 = avatar.global_basis.z.normalized()
+	check((-axe.global_basis.x.normalized()).dot(forward) > 0.90, "Axe cutting edge is sideways at tree contact")
+	var contact_head: Vector3 = axe.to_global(Vector3(0, 0.46, 0))
+	avatar.animate_movement(0.1, 0, true, 0, "stone_axe", 0.08, 0)
+	check((contact_head - axe.to_global(Vector3(0, 0.46, 0))).dot(forward) > 0.3, "Axe head does not travel forward from windup to contact")
 	# Terrain triangle winding must face up: both lighting and collision depend on it.
 	var terrain: MeshInstance3D = current_scene.get_node("VisualClearing").get_child(0)
 	var normals: PackedVector3Array = terrain.mesh.surface_get_arrays(0)[Mesh.ARRAY_NORMAL]

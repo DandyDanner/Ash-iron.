@@ -57,15 +57,16 @@ func _ready() -> void:
 		avatar.tool_grip.add_child(tool)
 		tool.scale = Vector3.ONE * 0.72
 		tool.position = Vector3.ZERO
-		tool.rotation = Vector3(0, PI, 0) # Keep the axe blade on the outside of the right hand.
+		tool.rotation = Vector3(0, PI / 2, 0) # The cutting edge leads forward in the vertical chopping plane.
 		tool.hide()
 		held[pair[0]] = tool
 	first_torch_light = player.axe.get_node("Torch/WarmLight")
 	third_torch_light = held.torch.get_node("WarmLight")
-	held_bow = Traveler.joint(avatar.left_hand, "HeldBow", Vector3(0, -0.05, 0.01))
-	held_bow.scale = Vector3.ONE * 0.73
-	held_bow.rotation = Vector3(1.47, PI, 0)
+	held_bow = Traveler.joint(avatar.left_hand, "HeldBow", Vector3.ZERO)
+	held_bow.scale = Vector3.ONE * 0.82
 	bow_strings = Archery.bow(held_bow)
+	var bow_fingers := Traveler.gripping_fingers(held_bow, avatar.left_hand.get_child(0).material_override.albedo_color)
+	bow_fingers.scale = Vector3.ONE * 1.12
 	drawn_arrow = Archery.arrow(held_bow)
 	back_bow = Traveler.joint(avatar.body, "StowedBow", Vector3(-0.12, 1.30, -0.24))
 	back_bow.rotation.z = -0.25
@@ -97,17 +98,22 @@ func _sync_equipment() -> void:
 	for item in held:
 		held[item].visible = player.equipped_item == item
 	held_bow.visible = player.equipped_item == "bow"
+	avatar.left_hand.get_node("OpenFingers").visible = not held_bow.visible
 	back_bow.visible = player.inventory.count("bow") > 0 and not held_bow.visible
 	quiver.visible = player.inventory.count("bow") > 0 or player.inventory.count("arrow") > 0
 	arrow_feathers.visible = player.inventory.count("arrow") > 0
 	first_torch_light.visible = not third_person
 	third_torch_light.visible = third_person
 	var pull: float = player.bow.charge()
-	var center := Vector3(0, 0, pull * 0.28)
-	Archery.place_segment(bow_strings.lower, Vector3(0, -0.52, 0.04), center)
-	Archery.place_segment(bow_strings.upper, center, Vector3(0, 0.52, 0.04))
+	var center := Archery.pose_bow(bow_strings, pull)
+	if held_bow.visible:
+		avatar.reach_hand(0, avatar.body.to_global(Vector3(-0.13, 1.38, 0.46)), Vector3(-1, -0.4, 0))
+		# Cancel the arm's rotation: limbs stay upright and the arrow points ahead.
+		held_bow.global_basis = avatar.global_basis.orthonormalized() * Basis(Vector3.UP, PI) * Basis.from_scale(Vector3.ONE * 0.82 * avatar.scale.x)
+		if player.bow.drawing:
+			avatar.reach_hand(1, held_bow.to_global(center), Vector3(1, 0.1, -0.3))
 	drawn_arrow.visible = player.bow.drawing
-	drawn_arrow.position = center + Vector3(0, 0, -0.28)
+	drawn_arrow.position = center + Vector3(0, 0, -0.39)
 
 func _physics_process(delta: float) -> void:
 	arm.rotation.x = player.camera.rotation.x

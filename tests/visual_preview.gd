@@ -7,6 +7,8 @@ const GameSave = preload("res://scripts/game_save.gd")
 var world: Node3D
 var preview_player: Node3D
 var portrait: Camera3D
+var gear_pose := -1
+var portrait_angle := 0.0
 
 func _ready() -> void:
 	Profile.storage_path = Paths.path("visual_preview_profile.json")
@@ -36,7 +38,7 @@ func _ready() -> void:
 	player.camera.rotation.x = -0.12
 	player._capture_controls(true)
 	var label := Label.new()
-	label.text = "VISUAL PREVIEW • Temporary inventory / save • O: portrait • P: capture"
+	label.text = "VISUAL PREVIEW • Temporary inventory / save • O: portrait • J: axe poses • K: drawn bow • L: orbit • P: capture"
 	label.position = Vector2(24, 120)
 	label.add_theme_font_size_override("font_size", 13)
 	var hud := CanvasLayer.new()
@@ -49,7 +51,11 @@ func _unhandled_input(event: InputEvent) -> void:
 			if is_instance_valid(portrait):
 				portrait.queue_free()
 				portrait = null
+				preview_player.axe.cancel_swing()
+				preview_player.bow.cancel_draw()
+				preview_player.view_rig.set_physics_process(true)
 				preview_player.view_rig.set_mode(true)
+				preview_player._capture_controls(true)
 			else:
 				preview_player._capture_controls(false)
 				portrait = Camera3D.new()
@@ -60,6 +66,23 @@ func _unhandled_input(event: InputEvent) -> void:
 				portrait.global_position = avatar.global_position + avatar.global_basis.z.normalized() * 3.1 + Vector3.UP * 1.25
 				portrait.look_at(avatar.global_position + Vector3.UP * 0.95)
 				portrait.make_current()
+		if event.physical_keycode in [KEY_J, KEY_K] and is_instance_valid(portrait):
+			preview_player.view_rig.set_physics_process(false)
+			if event.physical_keycode == KEY_J:
+				gear_pose = (gear_pose + 1) % 4
+				preview_player.equip_item("stone_axe")
+				preview_player.axe.elapsed = [-1.0, 0.08, 0.22, 0.32][gear_pose]
+			else:
+				preview_player.equip_item("bow")
+				preview_player.bow.begin_draw()
+				preview_player.bow.advance(0.85)
+			preview_player.view_rig.avatar.animate_movement(0, 0, true, 0, preview_player.equipped_item, preview_player.axe.elapsed, preview_player.bow.charge())
+			preview_player.view_rig._sync_equipment()
+		if event.physical_keycode == KEY_L and is_instance_valid(portrait):
+			portrait_angle += PI / 4
+			var avatar: Node3D = preview_player.view_rig.avatar
+			portrait.global_position = avatar.global_position + avatar.global_basis.orthonormalized() * Vector3(sin(portrait_angle) * 3.1, 1.25, cos(portrait_angle) * 3.1)
+			portrait.look_at(avatar.global_position + Vector3.UP * 0.95)
 		if event.physical_keycode == KEY_P:
 			await RenderingServer.frame_post_draw
 			var path := Paths.path("graphics_preview.png")

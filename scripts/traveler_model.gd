@@ -156,14 +156,7 @@ func rebuild(profile: Dictionary) -> void:
 			# The tool's long axis crosses the palm instead of pointing into the elbow.
 			tool_grip = joint(hand, "ToolGrip", Vector3(0, -0.02, 0.045))
 			tool_grip.rotation.x = 1.35
-			closed_right_fingers = joint(tool_grip, "ClosedFingers", Vector3.ZERO)
-			for finger in range(4):
-				var y := -0.034 + finger * 0.023
-				for bend in range(5):
-					var a := 0.45 + bend * 0.82
-					var b := a + 0.82
-					segment(closed_right_fingers, Vector3(cos(a) * 0.027, y, sin(a) * 0.027), Vector3(cos(b) * 0.027, y, sin(b) * 0.027), 0.011, skin)
-			oval(closed_right_fingers, Vector3(0.028, 0.047, 0), Vector3(0.035, 0.059, 0.032), skin)
+			closed_right_fingers = gripping_fingers(tool_grip, skin)
 			closed_right_fingers.hide()
 	# Layered sash follows the waist, and a loose tail reads clearly from behind.
 	for n in range(5):
@@ -254,9 +247,36 @@ func _build_cape(color: Color) -> void:
 	for side in [-1.0, 1.0]:
 		oval(cape, Vector3(side * 0.07, 0.08, 0.11), Vector3(0.03, 0.03, 0.012), Color("d7b870"))
 
+static func gripping_fingers(parent: Node3D, skin: Color) -> Node3D:
+	var fingers := joint(parent, "ClosedFingers", Vector3.ZERO)
+	for finger in range(4):
+		var y := -0.034 + finger * 0.023
+		for bend in range(5):
+			var a := 0.45 + bend * 0.82
+			var b := a + 0.82
+			segment(fingers, Vector3(cos(a) * 0.027, y, sin(a) * 0.027), Vector3(cos(b) * 0.027, y, sin(b) * 0.027), 0.011, skin)
+	oval(fingers, Vector3(0.028, 0.047, 0), Vector3(0.035, 0.059, 0.032), skin)
+	return fingers
+
 func set_tool_grip(gripping: bool) -> void:
 	open_right_fingers.visible = not gripping
 	closed_right_fingers.visible = gripping
+
+func reach_hand(index: int, target: Vector3, bend_hint: Vector3) -> void:
+	# Two rigid arm segments reach the bow grip/string without stretching the model.
+	var shoulder: Vector3 = arms[index].global_position
+	var scale_factor := global_basis.get_scale().x
+	var upper_length := 0.28 * scale_factor
+	var lower_length := 0.26 * scale_factor
+	var offset := target - shoulder
+	var distance := clampf(offset.length(), 0.03, upper_length + lower_length - 0.001)
+	var direction := offset.normalized()
+	var hint := global_basis.orthonormalized() * bend_hint
+	var bend := (hint - direction * hint.dot(direction)).normalized()
+	var along := (upper_length * upper_length - lower_length * lower_length + distance * distance) / (2 * distance)
+	var elbow := shoulder + direction * along + bend * sqrt(maxf(0, upper_length * upper_length - along * along))
+	arms[index].global_basis = Basis(Quaternion(Vector3.DOWN, (elbow - shoulder).normalized())) * Basis.from_scale(Vector3.ONE * scale_factor)
+	forearms[index].global_basis = Basis(Quaternion(Vector3.DOWN, (shoulder + direction * distance - elbow).normalized())) * Basis.from_scale(Vector3.ONE * scale_factor)
 
 func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed: float, item: String, swing: float, draw: float) -> void:
 	gameplay = true
@@ -268,14 +288,21 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		var side := -1.0 if i == 0 else 1.0
 		legs[i].rotation.x = stride * side if grounded else (-0.25 if i == 0 else 0.35)
 		knees[i].rotation.x = maxf(0, -stride * side) * 0.85 if grounded else 0.48
-		arms[i].rotation.x = -stride * side * 0.65
-		forearms[i].rotation.x = -0.10
+		arms[i].rotation = Vector3(-stride * side * 0.65, 0, side * 0.10)
+		forearms[i].rotation = Vector3(-0.10, 0, 0)
 	if item in ["stone_axe", "stone_pickaxe", "torch"]:
 		arms[1].rotation.x = -0.40
 		forearms[1].rotation.x = -0.45
 		if swing >= 0:
-			arms[1].rotation.x = -0.45 - sin(clampf(swing / 0.6, 0, 1) * PI) * 1.65
-			forearms[1].rotation.x = -0.30
+			# Wind up, chop forward at contact (0.22 s), follow through, recover.
+			if swing < 0.08:
+				arms[1].rotation.x = lerpf(-0.40, -2.1, smoothstep(0, 0.08, swing))
+			elif swing < 0.22:
+				arms[1].rotation.x = lerpf(-2.1, -0.65, smoothstep(0.08, 0.22, swing))
+			elif swing < 0.32:
+				arms[1].rotation.x = lerpf(-0.65, -0.25, smoothstep(0.22, 0.32, swing))
+			else:
+				arms[1].rotation.x = lerpf(-0.25, -0.40, smoothstep(0.32, 0.6, swing))
 	if item == "bow":
 		arms[0].rotation.x = -1.35
 		forearms[0].rotation.x = -0.12

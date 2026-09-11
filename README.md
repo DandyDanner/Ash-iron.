@@ -55,7 +55,7 @@ Your name and appearance are saved locally between launches. They are separate f
 
 ## Coordinated visual pass
 
-The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. Saved skin, hair, build, clothing color, and keepsake choices still apply. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler.
+The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. Saved skin, hair, build, clothing color, and keepsake choices still apply. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler. The axe chops edge-first with a windup and follow-through. The woodland bow has curved, tapered limbs, a wrapped palm grip, an upright hold, and a drawing hand that follows the string; the arrow rests above the grip.
 
 The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The bench has a planked top and braces; chests have planks, rivets, and an opening lid; boulders have lichen. The HUD is shorter, with camera and full-screen hints beside the hotbar. These are original procedural prototype assets, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
 
@@ -104,11 +104,13 @@ Save format 5 accepts existing format 1, 2, 3, and 4 saves without resetting the
 
 ## Verification
 
+For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (Command + R on Mac). Press O for portrait mode; J cycles axe carry/windup/contact/follow-through, K shows a drawn bow, and L orbits the camera. O returns to play. This scene uses temporary inventory and saves. Run Project returns to the regular game.
+
 Use your Godot executable in these commands:
 
 - `Godot --headless --path . --script res://tests/placeable_workbench_test.gd` — hand crafting, placement/obstruction/overlap/slope checks, selected bench and linked storage, packing and relocation, multiple-bench snapshots, older saves, and dropped bench recovery.
 - `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — eight craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
-- `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation and tool/forearm clearance, terrain collision, saved camera choice, and format 3 migration.
+- `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation, tool/forearm clearance, axe cutting direction, upright bow and hand/string/arrow alignment, terrain collision, saved camera choice, and format 3 migration.
 - `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
 - `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
 - `Godot --headless --path . --script res://tests/pickup_assist_test.gd` — generous pickup targeting, reach limits, priority, and blocked sight lines.

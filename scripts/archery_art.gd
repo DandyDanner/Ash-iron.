@@ -24,12 +24,40 @@ static func arrow(parent: Node3D) -> Node3D:
 		feather.rotation.z = angle
 	return result
 
+# Bow coordinates: grip at the origin, limbs along Y, shooting direction -Z.
+const HALF_HEIGHT := 0.68
+const STRING_REST := 0.16
+const DRAW_LENGTH := 0.34
+const ARROW_REST := Vector3(0.045, 0.09, 0)
+
+static func limb_point(t: float, side: float, pull: float) -> Vector3:
+	var curve := 0.20 * sin(t * PI / 2) - 0.08 * smoothstep(0.78, 1.0, t)
+	return Vector3(0, side * t * HALF_HEIGHT, curve + pull * 0.055 * sin(t * PI))
+
 static func bow(parent: Node3D) -> Dictionary:
-	var points := [Vector3(0, -0.52, 0.04), Vector3(-0.10, -0.35, -0.06), Vector3(-0.13, -0.16, -0.15), Vector3(-0.10, 0, -0.18), Vector3(-0.13, 0.16, -0.15), Vector3(-0.10, 0.35, -0.06), Vector3(0, 0.52, 0.04)]
-	for i in range(points.size() - 1):
-		segment(parent, points[i], points[i + 1], 0.024, Color("b0804e"))
-	for i in range(5):
-		Model.cylinder(parent, Vector3(-0.10, -0.07 + i * 0.035, -0.18), 0.033, 0.025, Color("465c4c"))
-	var lower := segment(parent, points[0], Vector3.ZERO, 0.004, Color("e4d4ab"))
-	var upper := segment(parent, Vector3.ZERO, points[-1], 0.004, Color("e4d4ab"))
-	return {"lower": lower, "upper": upper}
+	var limbs: Array[MeshInstance3D] = []
+	for side in [-1.0, 1.0]:
+		for i in range(12):
+			var t := float(i) / 12
+			var limb := segment(parent, limb_point(t, side, 0), limb_point(t + 1.0 / 12, side, 0), lerpf(0.027, 0.010, t), Color("aa7547"))
+			limb.name = "Limb_%s_%d" % [side, i]
+			limbs.append(limb)
+		# Pale horn tips and contrasting bindings make the recurve silhouette readable.
+		segment(parent, limb_point(0.94, side, 0), limb_point(1, side, 0), 0.014, Color("d4c5a0"))
+		for y in [0.12, 0.15]:
+			Model.cylinder(parent, limb_point(y / HALF_HEIGHT, side, 0), 0.029, 0.012, Color("d0b481"))
+	for i in range(7):
+		Model.cylinder(parent, Vector3(0, -0.075 + i * 0.025, 0), 0.034, 0.021, Color("465c4c"))
+	var lower := segment(parent, limb_point(1, -1, 0), ARROW_REST + Vector3(0, 0, STRING_REST), 0.003, Color("eee0bb"))
+	var upper := segment(parent, ARROW_REST + Vector3(0, 0, STRING_REST), limb_point(1, 1, 0), 0.003, Color("eee0bb"))
+	return {"lower": lower, "upper": upper, "limbs": limbs}
+
+static func pose_bow(parts: Dictionary, pull: float) -> Vector3:
+	var center := ARROW_REST + Vector3(0, 0, STRING_REST + pull * DRAW_LENGTH)
+	place_segment(parts.lower, limb_point(1, -1, pull), center)
+	place_segment(parts.upper, center, limb_point(1, 1, pull))
+	for side_index in range(2):
+		var side := -1.0 if side_index == 0 else 1.0
+		for i in range(12):
+			place_segment(parts.limbs[side_index * 12 + i], limb_point(float(i) / 12, side, pull), limb_point(float(i + 1) / 12, side, pull))
+	return center
