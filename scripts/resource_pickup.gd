@@ -16,6 +16,9 @@ func _ready() -> void:
 	collision.shape = shape
 	add_child(collision)
 	match item_id:
+		"bellmaw_hide":
+			Model.oval(self, Vector3(0, 0.09, 0), Vector3(0.55, 0.17, 0.42), Color("be914f"))
+			Model.box(self, Vector3(0, 0.16, 0), Vector3(0.05, 0.02, 0.44), Color("626d4c"))
 		"boar_hide":
 			Model.box(self, Vector3(0, 0.06, 0), Vector3(0.45, 0.08, 0.34), Color("805138"))
 			Model.box(self, Vector3(0, 0.107, 0), Vector3(0.05, 0.015, 0.36), Color("c5af7f"))

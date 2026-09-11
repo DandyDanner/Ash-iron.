@@ -5,8 +5,11 @@ extends RefCounted
 ## nothing is consumed unless the whole recipe, including its output, fits.
 signal changed
 const CAPACITY := 8
+const EXPLORER_CAPACITY := 12
 const CHEST_CAPACITY := 12
 const ITEMS := {
+	"bellmaw_hide": {"name": "Bellmaw hide", "stack": 10, "description": "Supple, strong hide from the Bellmaw at Echo Hollow. Bring it to a workbench for an Explorer Pack."},
+	"explorer_pack": {"name": "Explorer Pack", "stack": 1, "description": "A permanent backpack upgrade from eight to twelve slots. Crafted and fitted at your workbench; uses no inventory slot."},
 	"boar_hide": {"name": "Boar hide", "stack": 10, "description": "A hide from a Bristleback. Keep it for future leather equipment; no hide recipes yet."},
 	"bench": {"name": "Simple workbench", "stack": 1, "description": "A portable crafting table. Select it and choose Place workbench here on clear, level ground. Craft tools nearby; pick it back up to move camp."},
 	"stick": {"name": "Sticks", "stack": 10, "description": "Fallen branches. Gather by hand to make a bench and simple tools."},
@@ -25,6 +28,7 @@ const ITEMS := {
 }
 const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch", "bow", "stone_spear"]
 const RECIPES := {
+	"explorer_pack": {"name": "Explorer Pack", "cost": {"bellmaw_hide": 1, "wood": 2, "stick": 4}, "output": "explorer_pack", "amount": 1, "upgrade": true, "description": "Permanently adds four backpack slots (8 to 12). Find the Bellmaw beyond the archery target along the ochre trail markers. Crafted and fitted here; no empty slot needed."},
 	"stone_spear": {"name": "Stone spear", "cost": {"wood": 2, "stone": 2}, "output": "stone_spear", "amount": 1, "description": "A melee weapon for short forward thrusts. Left click to strike the practice target within 2.8 meters. Does not harvest trees or rocks."},
 	"bow": {"name": "Woodland bow", "cost": {"wood": 3, "stick": 2}, "output": "bow", "amount": 1, "description": "Hold left click to draw, release to fire. A longer draw shoots farther. Uses arrows from your backpack."},
 	"arrows": {"name": "5 stone-tipped arrows", "cost": {"stick": 2, "stone": 1}, "output": "arrow", "amount": 5, "description": "Ammunition for your bow. Recover landed arrows with E. Arrows stack to ten."},
@@ -205,4 +209,9 @@ static func clean_slots(raw: Variant, slot_count: int) -> Array[Dictionary]:
 
 func restore(raw: Variant) -> void:
 	slots.assign(clean_slots(raw, slots.size()))
+	changed.emit()
+
+func expand_backpack() -> void:
+	while slots.size() < EXPLORER_CAPACITY:
+		slots.append({})
 	changed.emit()

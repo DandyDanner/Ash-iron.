@@ -35,7 +35,7 @@ func setup(owner_player: Node3D) -> void:
 	left.add_theme_constant_override("separation", 10)
 	columns.add_child(left)
 	pack_label = _label(left, "", 16, GOLD)
-	pack = _slot_grid(left, Inventory.CAPACITY, 4, func(i: int): selected_pack = i; selected_chest = -1; refresh(), Vector2(118, 100))
+	pack = _slot_grid(left, Inventory.EXPLORER_CAPACITY, 4, func(i: int): selected_pack = i; selected_chest = -1; refresh(), Vector2(118, 100))
 	var middle := VBoxContainer.new()
 	middle.alignment = BoxContainer.ALIGNMENT_CENTER
 	middle.add_theme_constant_override("separation", 12)
@@ -94,7 +94,7 @@ func _move(source: RefCounted, index: int, target: RefCounted, verb: String) -> 
 func refresh() -> void:
 	if not is_instance_valid(chest):
 		return
-	pack_label.text = "YOUR BACKPACK    %d / %d slots" % [player.inventory.used_slots(), Inventory.CAPACITY]
+	pack_label.text = "YOUR BACKPACK    %d / %d slots" % [player.inventory.used_slots(), player.inventory.slots.size()]
 	chest_label.text = "STORAGE CHEST    %d / %d slots" % [chest.storage.used_slots(), Inventory.CHEST_CAPACITY]
 	_refresh_grid(pack, player.inventory, selected_pack, player.equipped_item)
 	_refresh_grid(store, chest.storage, selected_chest)

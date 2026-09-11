@@ -41,6 +41,9 @@ func _slot_grid(parent: Node, count: int, columns: int, on_select: Callable, cel
 
 func _refresh_grid(grid: Dictionary, inventory: RefCounted, selected: int, held_item: String = "") -> void:
 	for i in range(grid.buttons.size()):
+		grid.buttons[i].visible = i < inventory.slots.size()
+		if i >= inventory.slots.size():
+			continue
 		var slot: Dictionary = inventory.slots[i]
 		var item: String = slot.get("item", "")
 		grid.buttons[i].set_pressed_no_signal(i == selected)

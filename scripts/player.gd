@@ -378,7 +378,7 @@ func _interaction_target() -> Node3D:
 	return best
 
 func _update_hud() -> void:
-	resource_label.text = "%s   /   PACK %d / 8" % [Inventory.ITEMS[equipped_item].name.to_upper() if not equipped_item.is_empty() else "EMPTY HANDS", inventory.used_slots()]
+	resource_label.text = "%s   /   PACK %d / %d" % [Inventory.ITEMS[equipped_item].name.to_upper() if not equipped_item.is_empty() else "EMPTY HANDS", inventory.used_slots(), inventory.slots.size()]
 	resource_label.text += "   /   HEALTH %d / 100" % health
 	if equipped_item == "bow":
 		resource_label.text += "   /   ARROWS %d" % inventory.count("arrow")
@@ -401,9 +401,9 @@ func _update_hud() -> void:
 		else:
 			prompt_label.text = hit.collider.prompt()
 	elif equipped_item == "stone_spear":
-		prompt_label.text = "Left click to thrust • Practice target at the far right of camp"
+		prompt_label.text = "Left click to thrust • Beyond the target: ochre markers lead to Echo Hollow"
 	elif equipped_item == "bow":
-		prompt_label.text = "Hold left click to draw • Release to fire • Target at the far right of camp"
+		prompt_label.text = "Hold to draw • Release to fire • Beyond the target: follow ochre markers to Echo Hollow"
 	elif inventory.count("bench") > 0:
 		prompt_label.text = "Open your backpack [I] to place your workbench."
 	elif not is_instance_valid(workbench):
@@ -566,11 +566,13 @@ func recipe_requirement(id: String) -> String:
 	if not workbench.within_reach(self):
 		return "Stand close to your workbench."
 	var recipe: Dictionary = Inventory.RECIPES[id]
+	if id == "explorer_pack" and inventory.slots.size() >= Inventory.EXPLORER_CAPACITY:
+		return "Explorer Pack already fitted (12 slots)."
 	if recipe.output in Inventory.EQUIPPABLE and inventory.count(recipe.output) > 0:
 		return "You already carry this tool."
 	if not Inventory.can_afford_across(containers(), recipe.cost):
 		return "Gather the missing materials."
-	if not Inventory.can_craft_across(containers(), recipe.cost, recipe.output, recipe.amount):
+	if not Inventory.can_craft_across(containers(), recipe.cost, "" if recipe.get("upgrade", false) else recipe.output, recipe.amount):
 		return "Make room in your backpack first."
 	return ""
 
@@ -580,8 +582,11 @@ func craft_recipe(id: String) -> String:
 		return reason
 	var recipe: Dictionary = Inventory.RECIPES[id]
 	var before := _pack_counts(recipe.cost)
-	if not Inventory.craft_across(containers(), recipe.cost, recipe.output, recipe.amount):
+	if not Inventory.craft_across(containers(), recipe.cost, "" if recipe.get("upgrade", false) else recipe.output, recipe.amount):
 		return "Couldn't craft: check materials and backpack space."
+	if id == "explorer_pack":
+		inventory.expand_backpack()
+		return "Explorer Pack fitted! You now have twelve backpack slots." + _storage_note(before, recipe.cost)
 	if recipe.output in Inventory.EQUIPPABLE:
 		equip_item(recipe.output)
 	return "Crafted %d %s." % [recipe.amount, Inventory.ITEMS[recipe.output].name.to_lower()] + _storage_note(before, recipe.cost)
@@ -637,7 +642,7 @@ func craft_axe() -> String:
 	return "Stone axe crafted and equipped. Close your pack to try it." + _storage_note(pack_before, Inventory.AXE_COST)
 
 func drop_slot(index: int) -> String:
-	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].is_empty():
+	if index < 0 or index >= inventory.slots.size() or inventory.slots[index].is_empty():
 		return "Select an item first."
 	# Use the player's horizontal facing; looking straight up or down is safe.
 	var ahead := global_position - global_basis.z * 1.15
@@ -737,7 +742,7 @@ func _storage_note(pack_before: Dictionary, cost: Dictionary) -> String:
 	return ""
 
 func place_selected(index: int) -> String:
-	if index < 0 or index >= Inventory.CAPACITY:
+	if index < 0 or index >= inventory.slots.size():
 		return "Select a workbench or chest first."
 	match inventory.slots[index].get("item", ""):
 		"bench":
@@ -807,7 +812,7 @@ static func _furniture_footprint(spot: Vector3, rotation_basis: Basis, dimension
 	return polygon
 
 func place_chest(index: int) -> String:
-	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "chest":
+	if index < 0 or index >= inventory.slots.size() or inventory.slots[index].get("item", "") != "chest":
 		return "Select the chest in your backpack first."
 	var placement := _placement_spot(Vector3(0.92, 0.62, 0.58), 1.7)
 	if placement.has("error"):
@@ -821,7 +826,7 @@ func place_chest(index: int) -> String:
 	return "Chest placed. Walk up to it and press E to store items."
 
 func place_workbench(index: int) -> String:
-	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "bench":
+	if index < 0 or index >= inventory.slots.size() or inventory.slots[index].get("item", "") != "bench":
 		return "Select the workbench in your backpack first."
 	var placement := _placement_spot(Vector3(1.9, 1.05, 1.0), 2.2)
 	if placement.has("error"):
@@ -848,7 +853,7 @@ func pickup_workbench(bench: Node3D) -> String:
 	return "Workbench packed up. Select it in your backpack to place it again."
 
 func place_furnace(index: int) -> String:
-	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "furnace":
+	if index < 0 or index >= inventory.slots.size() or inventory.slots[index].get("item", "") != "furnace":
 		return "Select the furnace in your backpack first."
 	var placement := _placement_spot(Furnace.SIZE, 1.9)
 	if placement.has("error"):

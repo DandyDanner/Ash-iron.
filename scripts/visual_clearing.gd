@@ -6,7 +6,10 @@ var rng := RandomNumberGenerator.new()
 
 static func terrain_height(x: float, z: float) -> float:
 	var edge := smoothstep(20.0, 31.0, maxf(absf(x), absf(z)))
-	return 0.18 + edge * (1.5 + sin(x * 0.08) * 1.2 + cos(z * 0.11) * 0.8)
+	var height := 0.18 + edge * (1.5 + sin(x * 0.08) * 1.2 + cos(z * 0.11) * 0.8)
+	# Echo Hollow has a readable flat fight floor, blended into the untouched outer hills.
+	var hollow := 1.0 - smoothstep(10.0, 15.0, Vector2(x - 42, z + 20).length())
+	return lerpf(height, 1.0, hollow)
 
 func _ready() -> void:
 	name = "VisualClearing"

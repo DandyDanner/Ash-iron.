@@ -33,7 +33,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Four selectable Blender traveler exports with a first skinning pass, existing movement/tool animation, persisted choice, and original customization retained
 - [x] Focused Willow face/hair reconstruction with matched native comparisons, preserved other models and a refreshed playable export
 - [ ] Current art priority: focus on Willow Scout first; close the illustration-fidelity gap in faces/hair/garments and animal anatomy; optimize topology/materials and improve joint deformation. Wildlife integration remains later.
-- [ ] Later: foliage refinement from play feedback; leave the world unchanged during the character/boar work
+- [ ] Later: broader foliage refinement from play feedback; the September 11 Echo Hollow excursion is the only new world slice in this pass
 - [x] Add terrain variation
 - [ ] Add basic footsteps/ambient audio
 - [x] Establish initial forest lighting/fog/sky direction
@@ -62,20 +62,22 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Loose stone gathering
 - [x] Iron ore (three surface veins, four strikes each, plus a sporadic chunk from boulders)
 - [ ] Weight/encumbrance stages
-- [x] Basic backpack (slot capacity; weight and upgrades remain later work)
+- [x] Basic backpack (eight slots) and a permanent twelve-slot Explorer Pack upgrade; weight remains later
 - [x] Furnace (10 stones + 2 wood; craft at the bench, place anywhere level, load with E)
 - [x] Ore smelting into ingots (two ore + one wood per ingot, six seconds each, runs unattended)
-- [ ] Craft one meaningful upgrade
+- [x] Craft one meaningful upgrade: Bellmaw hide + wood/sticks → Explorer Pack
 - [x] Save/load (automatic snapshots, Continue / Start over, explicit Save & Quit with failure handling, migration of older saves)
 
 ## Phase 4 — Danger
 
-Current agreed order: stone spear and first Bristleback Boar are playable; next comes ore → smelter → ingots → an iron weapon upgrade. Keep the same clearing while proving this loop.
+Current order: spear and Bristleback Boar → ore/furnace → one strange creature at Echo Hollow → Explorer Pack. Iron equipment remains next in the metal chain. Dallon approved a small outer excursion on September 11; larger biomes and a full enemy roster remain deferred.
 
 - [x] Craftable stone spear, forward thrust, hotbar/save support, and practice-target melee hits
 
 - [x] First animal/enemy: territorial Bristleback Boar, warning, straight charge, recovery, and one hide reward
 - [x] Player/enemy health, safe camp recovery, and defeat returning the player with inventory intact
+- [x] Bellmaw: warned radial boom, distance/cover counterplay, recovery, single saved hide reward
+- [x] Echo Hollow trail, marked warning, cover rocks, harvestable pines and Old Lookout iron vein
 - [ ] Stamina
 - [x] Craftable bow and arrows, draw/release, ballistics, recovery, practice target, and saved flight state
 - [x] Spear and bow damage against the first animal/enemy
@@ -109,3 +111,10 @@ Do not build these until the core loop is proven:
 - Cart/wagon
 - Multiplayer
 - Background classes and abilities (background selection is cosmetic for now)
+
+## Next playtest and design boundaries — September 11
+
+- Test finding Echo Hollow from camp, reading the throat warning, retreating behind cover, and bringing its hide home for four more slots.
+- Tune this one encounter before adding Threadwing or another enemy. Bellmaw is the first strange creature; Threadwing remains an approved future concept.
+- This slice answers the three feature questions: an optional outer route adds expedition choices; a guaranteed hide buys useful carrying capacity; shared weapons, inventory and terrain keep implementation bounded.
+- [Creature direction](CREATURE_DIRECTION.md) preserves Threadwing, Night Harrow, StoneWraith, Gloam Feeder and the lantern/discovery/villager ideas. XP levels, armor, enemy respawn and additional biomes are not part of this slice.

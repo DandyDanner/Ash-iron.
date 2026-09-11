@@ -85,7 +85,7 @@ func run() -> void:
 	check(Inventory.ITEMS.has("iron_ore") and Inventory.ITEMS.has("iron_ingot") and Inventory.ITEMS.has("furnace") and Inventory.RECIPES.has("furnace"), "Iron items or the furnace recipe are missing")
 	var player := await enter()
 	var vein: Node3D = current_scene.get_node("IronVein1")
-	check(get_nodes_in_group("iron_veins").size() == 3 and vein.hits_left == 4, "Three fresh iron veins expected in the clearing")
+	check(get_nodes_in_group("iron_veins").size() == 4 and vein.hits_left == 4, "Three camp veins plus one at the old lookout expected")
 	check(vein.prompt().begins_with("Stone pickaxe"), "Vein prompt should ask for a pickaxe: %s" % vein.prompt())
 	player.inventory.add("stone_axe", 1)
 	player.inventory.add("stone_pickaxe", 1)

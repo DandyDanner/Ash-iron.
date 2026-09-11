@@ -52,6 +52,16 @@ func _draw() -> void:
 			draw_rect(Rect2(center + Vector2(-8, -26), Vector2(14, 18)), Color("5d5f59"))
 			draw_rect(Rect2(center + Vector2(-9, 4), Vector2(18, 14)), Color("1e1a17"))
 			draw_circle(center + Vector2(0, 13), 5, Color("f0a24c"))
+		"explorer_pack":
+			draw_style_box(_pack_shape(), Rect2(center + Vector2(-20, -21), Vector2(40, 46)))
+			draw_rect(Rect2(center + Vector2(-23, -25), Vector2(46, 12)), Color("667453"))
+			for x in [-12, 12]:
+				draw_line(center + Vector2(x, -21), center + Vector2(x, 22), Color("745333"), 4, true)
+				draw_rect(Rect2(center + Vector2(x - 3, -2), Vector2(6, 7)), Color("e4c589"), false, 2)
+		"bellmaw_hide":
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-24,-16), center + Vector2(-10,-23), center + Vector2(8,-19), center + Vector2(24,-9), center + Vector2(17,8), center + Vector2(22,23), center + Vector2(-9,19), center + Vector2(-24,8)]), Color("bd904c"))
+			for x in [-10,0,10]:
+				draw_line(center + Vector2(x,-12), center + Vector2(x+3,13), Color("e0b773"), 2, true)
 		"boar_hide":
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-24, -20), center + Vector2(-8, -16), center + Vector2(10, -22), center + Vector2(23, -13), center + Vector2(16, 4), center + Vector2(22, 23), center + Vector2(0, 17), center + Vector2(-21, 25), center + Vector2(-16, 2)]), Color("9b6744"))
 			draw_line(center + Vector2(-3, -14), center + Vector2(3, 15), Color("cfb786"), 3, true)
@@ -80,3 +90,9 @@ func _draw() -> void:
 				draw_line(center + Vector2(x - 9, 23), center + Vector2(x + 6, -20), Color("c9b081"), 3, true)
 				draw_colored_polygon(PackedVector2Array([center + Vector2(x + 1, -15), center + Vector2(x + 9, -26), center + Vector2(x + 12, -12)]), Color("a4b9b2"))
 				draw_line(center + Vector2(x - 11, 13), center + Vector2(x - 4, 21), Color("e6e1c9"), 5, true)
+
+func _pack_shape() -> StyleBoxFlat:
+	var shape := StyleBoxFlat.new()
+	shape.bg_color = Color("ad9463")
+	shape.set_corner_radius_all(8)
+	return shape

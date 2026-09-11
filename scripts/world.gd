@@ -6,11 +6,14 @@ const Pickup = preload("res://scripts/resource_pickup.gd")
 const Bundle = preload("res://scripts/wood_bundle.gd")
 const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const Bellmaw = preload("res://scripts/bellmaw.gd")
+const Trail = preload("res://scripts/echo_trail.gd")
 const Boar = preload("res://scripts/bristleback.gd")
 const Bench = preload("res://scripts/workbench.gd")
 const Furnace = preload("res://scripts/furnace.gd")
 const AUTOSAVE_INTERVAL := 15.0
 const DIRTY_DELAY := 1.0
+var bellmaw: Node3D
 var boar: Node3D
 var player: Node3D
 var dirty := false
@@ -27,6 +30,13 @@ func _ready() -> void:
 	boar.name = "Bristleback"
 	boar.position = Boar.HOME
 	add_child(boar)
+	var trail := Trail.new()
+	trail.name = "EchoTrail"
+	add_child(trail)
+	bellmaw = Bellmaw.new()
+	bellmaw.name = "Bellmaw"
+	bellmaw.position = Bellmaw.HOME
+	add_child(bellmaw)
 	var data := GameSave.load_state()
 	if not data.is_empty():
 		_apply(data)
@@ -104,6 +114,7 @@ func to_data() -> Dictionary:
 			arrows.append(arrow.to_data())
 	return {
 		"boar": boar.to_data(),
+		"bellmaw": bellmaw.to_data(),
 		"arrows": arrows,
 		"boulders": boulders,
 		"veins": veins,
@@ -111,6 +122,7 @@ func to_data() -> Dictionary:
 		"player": {
 			"x": player.global_position.x, "y": player.global_position.y, "z": player.global_position.z,
 			"yaw": player.rotation.y, "pitch": player.camera.rotation.x,
+			"explorer_pack": player.inventory.slots.size() == Inventory.EXPLORER_CAPACITY,
 			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped,
 			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate(),
 			"third_person": player.view_rig.third_person, "health": player.health
@@ -190,8 +202,12 @@ func _apply(data: Dictionary) -> void:
 		furnace.restore(_dict(entry))
 	var saved := _dict(data.get("player"))
 	boar.restore(_dict(data.get("boar")))
+	bellmaw.restore(_dict(data.get("bellmaw")))
 	if player:
 		player.health = clampi(int(_num(saved.get("health"), 100)), 1, 100)
+		# Only an explicit saved upgrade unlocks the extra slots; versions 1–7 stay at eight.
+		if saved.get("explorer_pack", false) == true:
+			player.inventory.expand_backpack()
 		player.inventory.restore(saved.get("slots", []))
 		player.restore_equipment(saved)
 		var spot := _vec(saved, player.global_position)

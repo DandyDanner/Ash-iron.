@@ -3,6 +3,7 @@ var player: Node3D
 var selected := -1
 var pack: Dictionary
 var capacity_label: Label
+var pack_help: Label
 var detail: Label
 var equip_button: Button
 var place_button: Button
@@ -55,8 +56,12 @@ func setup(owner_player: Node3D) -> void:
 	left.add_theme_constant_override("separation", 10)
 	columns.add_child(left)
 	capacity_label = _label(left, "", 16, GOLD)
-	_label(left, "Resources stack to 10. Each tool takes one slot.", 14, MUTED)
-	pack = _slot_grid(left, Inventory.CAPACITY, 4, func(i: int): selected = i; refresh(), Vector2(138, 96))
+	pack_help = _label(left, "Resources stack to 10. Each tool takes one slot.", 14, MUTED)
+	var pack_scroll := ScrollContainer.new()
+	pack_scroll.custom_minimum_size.y = 210
+	pack_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	left.add_child(pack_scroll)
+	pack = _slot_grid(pack_scroll, Inventory.EXPLORER_CAPACITY, 4, func(i: int): selected = i; refresh(), Vector2(138, 96))
 	detail = _label(left, "", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail.custom_minimum_size.y = 54
@@ -115,7 +120,7 @@ func setup(owner_player: Node3D) -> void:
 		"stone_axe": {"name": "Stone axe", "short": "Stone axe", "output": "stone_axe", "amount": 1, "cost": Inventory.AXE_COST, "description": Inventory.ITEMS.stone_axe.description},
 		"chest": {"name": "Storage chest", "short": "Chest", "output": "chest", "amount": 1, "cost": Inventory.CHEST_COST, "description": "Place a chest to store supplies in twelve slots. Chests near the bench supply crafting materials."}
 	}
-	var short_names := {"stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks", "furnace": "Furnace"}
+	var short_names := {"stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks", "furnace": "Furnace", "explorer_pack": "Pack +4"}
 	for id in Inventory.RECIPES:
 		catalog[id] = Inventory.RECIPES[id].duplicate(true)
 		catalog[id].short = short_names.get(id, catalog[id].name)
@@ -231,14 +236,15 @@ func show_pack() -> void:
 	pack.buttons[0].grab_focus()
 
 func _find(item: String, fallback: int) -> int:
-	for i in range(Inventory.CAPACITY):
+	for i in range(player.inventory.slots.size()):
 		if player.inventory.slots[i].get("item", "") == item:
 			return i
 	return fallback
 
 func refresh() -> void:
 	var inventory: RefCounted = player.inventory
-	capacity_label.text = "YOUR BACKPACK    %d / %d slots" % [inventory.used_slots(), Inventory.CAPACITY]
+	capacity_label.text = "YOUR BACKPACK    %d / %d slots" % [inventory.used_slots(), inventory.slots.size()]
+	pack_help.text = "Explorer Pack fitted • Scroll down for slots 9–12." if inventory.slots.size() > Inventory.CAPACITY else "Resources stack to 10. Each tool takes one slot."
 	_refresh_grid(pack, inventory, selected, player.equipped_item)
 	var chosen: Dictionary = inventory.slots[selected] if selected >= 0 else {}
 	drop_button.disabled = chosen.is_empty()
@@ -292,6 +298,8 @@ func refresh() -> void:
 		row.availability.text = "READY" if ready else "UNAVAILABLE"
 		if recipe.output in Inventory.EQUIPPABLE and inventory.count(recipe.output) > 0:
 			row.availability.text = "OWNED"
+		if id == "explorer_pack" and inventory.slots.size() >= Inventory.EXPLORER_CAPACITY:
+			row.availability.text = "FITTED"
 		row.icon.modulate.a = 1.0 if ready else 0.60
 		row.tile.tooltip_text = recipe.name + "\n\n" + recipe.description + "\n\nMATERIALS • Have / need\n" + "\n".join(amounts)
 		if not missing.is_empty():
