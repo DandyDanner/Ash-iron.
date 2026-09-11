@@ -47,6 +47,10 @@ func _ready() -> void:
 		"arrow":
 			var art := preload("res://scripts/archery_art.gd").arrow(self)
 			art.position.y = 0.08
+		"bench":
+			Model.box(self, Vector3(0, 0.16, 0), Vector3(0.60, 0.09, 0.34), Color("b18a57"))
+			for x in [-0.20, 0.20]:
+				Model.box(self, Vector3(x, 0.07, 0), Vector3(0.06, 0.14, 0.26), Color("795a3d"))
 		"chest":
 			Model.box(self, Vector3(0, 0.14, 0), Vector3(0.42, 0.24, 0.26), Color("8b6a44"))
 			Model.box(self, Vector3(0, 0.27, 0), Vector3(0.44, 0.05, 0.28), Color("9a7750"))

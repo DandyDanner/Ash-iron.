@@ -6,6 +6,7 @@ const Pickup = preload("res://scripts/resource_pickup.gd")
 const Bundle = preload("res://scripts/wood_bundle.gd")
 const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const Bench = preload("res://scripts/workbench.gd")
 const AUTOSAVE_INTERVAL := 15.0
 const DIRTY_DELAY := 1.0
 var player: Node3D
@@ -59,7 +60,10 @@ func save_game() -> Error:
 	return last_save_error
 
 func to_data() -> Dictionary:
-	var workbench: Node3D = get_tree().get_first_node_in_group("workbenches")
+	var workbenches := []
+	for bench in get_tree().get_nodes_in_group("workbenches"):
+		if not bench.is_queued_for_deletion():
+			workbenches.append(bench.to_data())
 	var trees := []
 	for tree in get_tree().get_nodes_in_group("harvest_trees"):
 		trees.append({"name": tree.name, "hits_left": tree.hits_left})
@@ -94,7 +98,7 @@ func to_data() -> Dictionary:
 			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate(),
 			"third_person": player.view_rig.third_person
 		},
-		"workbench": {"built": workbench.built if workbench else false},
+		"workbenches": workbenches,
 		"trees": trees, "pickups": pickups, "bundles": bundles, "chests": chests
 	}
 
@@ -136,9 +140,17 @@ func _apply(data: Dictionary) -> void:
 		var tree: Node3D = trees.get(str(_dict(entry).get("name", "")))
 		if tree:
 			tree.restore(int(_num(_dict(entry).get("hits_left"), float(tree.MAX_HITS))))
-	var workbench: Node3D = get_tree().get_first_node_in_group("workbenches")
-	if workbench and _dict(data.get("workbench")).get("built", false) == true:
-		workbench.build()
+	var saved_benches := _list(data.get("workbenches"))
+	# Formats 1–4 recorded only the fixed camp bench's built flag.
+	if not data.has("workbenches") and _dict(data.get("workbench")).get("built", false) == true:
+		saved_benches = [{"x": -3.5, "y": 0.2, "z": 0.3, "yaw": 0.0}]
+	for entry in saved_benches:
+		if not entry is Dictionary:
+			continue
+		var bench := Bench.new()
+		add_child(bench)
+		bench.global_position = _vec(entry, Vector3(-3.5, 0.2, 0.3))
+		bench.rotation.y = _num(entry.get("yaw"), 0.0)
 	for entry in _list(data.get("chests")):
 		var chest := Chest.new()
 		add_child(chest)

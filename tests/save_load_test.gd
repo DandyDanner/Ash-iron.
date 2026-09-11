@@ -71,9 +71,9 @@ func run() -> void:
 	check(player.inventory.count("stick") == 2 and player.inventory.count("stone") == 2, "Gathering failed before saving")
 	player.inventory.add("stick", 8)
 	player.inventory.add("stone", 4)
-	player.global_position = player.workbench.global_position + Vector3(0, 0.9, 2.0)
+	player.global_position = Vector3(-3.5, 1.1, 2.5)
 	await ticks()
-	check(player.build_bench().begins_with("Bench built") and player.craft_axe().begins_with("Stone axe crafted"), "Bench and axe setup failed")
+	check(preload("res://tests/test_paths.gd").craft_and_place_bench(player) and player.craft_axe().begins_with("Stone axe crafted"), "Bench and axe setup failed")
 	player.global_position = Vector3(0, 1.1, 2)
 	player.rotation.y = 0.0
 	player.camera.rotation = Vector3.ZERO
@@ -176,7 +176,7 @@ func run() -> void:
 	creator.find_child("BeginJourney", true, false).pressed.emit()
 	await scene_changed
 	await ticks(6)
-	check(current_scene.name == "Main" and not current_scene.loaded_from_save and get_nodes_in_group("pickups").size() == 32 and get_nodes_in_group("chests").is_empty() and current_scene.get_node("PracticePine").hits_left == 4 and not current_scene.get_node("Player").workbench.built, "Start over did not give a fresh clearing")
+	check(current_scene.name == "Main" and not current_scene.loaded_from_save and get_nodes_in_group("pickups").size() == 32 and get_nodes_in_group("chests").is_empty() and current_scene.get_node("PracticePine").hits_left == 4 and not is_instance_valid(current_scene.get_node("Player").workbench), "Start over did not give a fresh clearing")
 	GameSave.clear()
 	if FileAccess.file_exists(Profile.storage_path):
 		DirAccess.remove_absolute(Profile.storage_path)

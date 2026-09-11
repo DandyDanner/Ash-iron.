@@ -42,7 +42,8 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Wood pickup (five wood per tree, into available backpack space)
 - [x] Minimal inventory (eight slots; resource stacks of ten; equip/drop/recover)
 - [x] Gather loose sticks and stones without tools
-- [x] Build a simple bench at the camp worksite
+- [x] Hand-craft a portable workbench, place on clear ground, pick up and relocate
+- [x] Multiple saved workbenches with nearby crafting and storage connections
 - [x] Craft the first stone axe from gathered materials
 - [x] Ten saved hotbar shortcuts with equip / put-away toggles
 - [x] Craftable icon grid with hover recipes, material counts, item uses, and explicit craft action

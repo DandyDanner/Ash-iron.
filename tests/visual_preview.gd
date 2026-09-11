@@ -21,7 +21,7 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	var player: Node3D = world.get_node("Player")
 	preview_player = player
-	player.workbench.build()
+	preload("res://tests/test_paths.gd").place_bench(player.get_parent())
 	var chest := preload("res://scripts/storage_chest.gd").new()
 	world.add_child(chest)
 	chest.position = player.workbench.position + Vector3(1.6, 0, 0.8)
@@ -29,8 +29,10 @@ func _ready() -> void:
 		player.inventory.add(item, 1)
 		player.equip_item(item)
 	player.inventory.add("arrow", 10)
+	player.inventory.add("stick", 6)
+	player.inventory.add("stone", 4)
 	player.equip_item("")
-	player.global_position = Vector3(0, 1.1, 6)
+	player.global_position = Vector3(12, 1.1, 12)
 	player.camera.rotation.x = -0.12
 	player._capture_controls(true)
 	var label := Label.new()

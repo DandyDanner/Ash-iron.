@@ -63,6 +63,7 @@ func _terrain() -> void:
 	material.shader = preload("res://assets/shaders/meadow.gdshader")
 	ground.material_override = material
 	ground.create_trimesh_collision()
+	ground.get_child(0).add_to_group("placement_ground")
 	# Layered distant silhouettes are scenery beyond the playable meadow.
 	for i in range(14):
 		var a := i * TAU / 14

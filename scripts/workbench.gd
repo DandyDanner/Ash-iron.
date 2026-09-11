@@ -12,28 +12,21 @@ func _ready() -> void:
 	art = Node3D.new()
 	add_child(art)
 	collision = CollisionShape3D.new()
-	var shape := BoxShape3D.new()
-	shape.size = Vector3(0.8, 1.4, 0.15)
-	collision.shape = shape
-	collision.position.y = 0.7
 	add_child(collision)
 	sign_label = Label3D.new()
-	sign_label.text = "CAMP WORKSITE\nE • Build your first bench"
 	sign_label.font_size = 48
 	sign_label.pixel_size = 0.002
 	sign_label.position.y = 1.7
 	sign_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	sign_label.modulate = Color("efd494")
 	add_child(sign_label)
-	for side in [-1.0, 1.0]:
-		for depth in [-1.0, 1.0]:
-			Model.cylinder(art, Vector3(side * 0.8, 0.15, depth * 0.4), 0.045, 0.3, Color("bb9f68"))
-	Model.box(art, Vector3(0, 0.012, 0), Vector3(1.8, 0.025, 1.0), Color("798063"))
-	Model.cylinder(art, Vector3(0, 0.65, 0), 0.05, 1.3, Color("98754a"))
-	Model.box(art, Vector3(0, 1.15, 0), Vector3(0.8, 0.35, 0.08), Color("bc9a63"))
+	build()
 
 func within_reach(player: Node3D) -> bool:
-	return player.global_position.distance_to(global_position + Vector3(0, 0.9, 0)) <= USE_DISTANCE
+	if is_queued_for_deletion() or not built or player.global_position.distance_to(global_position + Vector3(0, 0.9, 0)) > USE_DISTANCE:
+		return false
+	var query := PhysicsRayQueryParameters3D.create(player.camera.global_position, global_position + Vector3(0, 0.9, 0), 1, [player.get_rid(), get_rid()])
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()
 
 func linked_chests() -> Array:
 	## Chests close to the bench count as connected storage: recipes can draw from them.
@@ -44,8 +37,6 @@ func linked_chests() -> Array:
 	return linked
 
 func prompt() -> String:
-	if not built:
-		return "E  •  Build a simple bench (6 sticks + 4 stones)"
 	var connected := linked_chests().size()
 	if connected == 0:
 		return "E  •  Use workbench"
@@ -79,3 +70,6 @@ func build() -> bool:
 	collision.shape = shape
 	collision.position.y = 0.525
 	return true
+
+func to_data() -> Dictionary:
+	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y}

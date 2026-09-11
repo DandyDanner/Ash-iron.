@@ -46,7 +46,7 @@ func run() -> void:
 	var player := await enter()
 	player.inventory.restore([{"item": "wood", "amount": 10}, {"item": "stick", "amount": 10}, {"item": "stone", "amount": 10}])
 	check(not player.recipe_requirement("bow").is_empty(), "Bow bypassed the bench requirement")
-	player.workbench.build()
+	preload("res://tests/test_paths.gd").place_bench(player.get_parent())
 	check(not player.recipe_requirement("bow").is_empty(), "Bow allowed remote crafting")
 	player.global_position = player.workbench.global_position + Vector3(0, 0.9, 2)
 	await ticks()

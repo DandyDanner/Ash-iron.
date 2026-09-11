@@ -73,11 +73,11 @@ func run() -> void:
 	player.inventory.add("wood", 15)
 	player.inventory.add("stick", 12)
 	player.inventory.add("stone", 4)
-	check(player.chest_requirement() == "Build the simple bench first.", "Chest was craftable without a bench")
-	player.global_position = player.workbench.global_position + Vector3(0, 0.9, 2.0)
+	check(player.chest_requirement() == "Craft and place a simple workbench first.", "Chest was craftable without a bench")
+	player.global_position = Vector3(-3.5, 1.1, 2.5)
 	await ticks()
 	player.inventory.add("stick", 6)
-	check(player.build_bench().begins_with("Bench built"), "Bench setup failed")
+	check(preload("res://tests/test_paths.gd").craft_and_place_bench(player), "Bench setup failed")
 	check(player.inventory.count("wood") == 15 and player.inventory.count("stick") == 12 and player.inventory.count("stone") == 0, "Unexpected materials before the chest craft")
 	player.inventory.add("stone", 40)
 	check(player.inventory.used_slots() == 8 and player.chest_requirement() == "Make room for the chest: drop one stack.", "A full backpack did not block the chest craft")
@@ -97,7 +97,7 @@ func run() -> void:
 	player.rotation.y = 0.0
 	player.camera.rotation = Vector3.ZERO
 	await ticks()
-	check(player.place_chest(slot_of(player.inventory, "chest")).begins_with("No room there") and player.inventory.count("chest") == 1, "Chest was placed inside a tree")
+	check(not player.place_chest(slot_of(player.inventory, "chest")).begins_with("Chest placed") and player.inventory.count("chest") == 1, "Chest was placed inside a tree")
 	player.global_position = Vector3(12, 1.1, 12)
 	await ticks()
 	check(player.place_chest(slot_of(player.inventory, "chest")).begins_with("Chest placed") and player.inventory.count("chest") == 0, "Chest could not be placed on open ground")

@@ -7,6 +7,7 @@ signal changed
 const CAPACITY := 8
 const CHEST_CAPACITY := 12
 const ITEMS := {
+	"bench": {"name": "Simple workbench", "stack": 1, "description": "A portable crafting table. Select it and choose Place workbench here on clear, level ground. Craft tools nearby; pick it back up to move camp."},
 	"stick": {"name": "Sticks", "stack": 10, "description": "Fallen branches. Gather by hand to make a bench and simple tools."},
 	"stone": {"name": "Stones", "stack": 10, "description": "Loose stones from the clearing. No tool needed to pick them up."},
 	"wood": {"name": "Wood", "stack": 10, "description": "Timber for chests, pine torches, or splitting into sticks at the bench."},

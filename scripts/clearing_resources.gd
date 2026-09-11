@@ -1,12 +1,7 @@
 extends Node3D
 const Pickup = preload("res://scripts/resource_pickup.gd")
-const Bench = preload("res://scripts/workbench.gd")
 
 func _ready() -> void:
-	var bench := Bench.new()
-	bench.name = "CampWorkbench"
-	bench.position = Vector3(-3.5, 0.2, 0.3)
-	add_child(bench)
 	var target := preload("res://scripts/archery_target.gd").new()
 	target.name = "PracticeTarget"
 	target.position = Vector3(10, 0.2, -9)

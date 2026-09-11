@@ -8,6 +8,7 @@ const InventoryPanel = preload("res://scripts/inventory_panel.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const StoragePanel = preload("res://scripts/storage_panel.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const Bench = preload("res://scripts/workbench.gd")
 const ViewRig = preload("res://scripts/view_rig.gd")
 const Bow = preload("res://scripts/starter_bow.gd")
 const Arrow = preload("res://scripts/arrow_projectile.gd")
@@ -34,7 +35,9 @@ var view_rig: Node3D
 var controls_active := true
 var inventory := Inventory.new()
 var inventory_panel: Control
-var workbench: Node3D
+var active_bench: Node3D
+var workbench: Node3D:
+	get: return _nearest_workbench()
 var equipped_item := ""
 var axe_equipped: bool:
 	get: return equipped_item == "stone_axe"
@@ -83,7 +86,6 @@ func _ready() -> void:
 	camera.add_child(bow)
 	view_rig = ViewRig.new()
 	add_child(view_rig)
-	workbench = get_tree().get_first_node_in_group("workbenches")
 	hotbar_view = Hotbar.new()
 	hud.add_child(hotbar_view)
 	hotbar_view.setup(self)
@@ -251,8 +253,8 @@ func _physics_process(delta: float) -> void:
 					_show_feedback("+%d %s" % [amount, Inventory.ITEMS[item].name.to_lower()])
 				else:
 					_show_feedback("Backpack full • Press I to drop a stack or craft.")
-			elif target == workbench:
-				open_inventory()
+			elif target.is_in_group("workbenches"):
+				open_inventory(target)
 			elif target.is_in_group("chests"):
 				open_storage(target)
 	feedback_time = maxf(0.0, feedback_time - delta)
@@ -271,7 +273,7 @@ func _show_feedback(text: String) -> void:
 func _interaction_target() -> Node3D:
 	# Precise aim takes priority, but gathering does not require looking down at a tiny collider.
 	var aimed := _aim_target()
-	if not aimed.is_empty() and (aimed.collider == workbench or aimed.collider.is_in_group("chests")):
+	if not aimed.is_empty() and (aimed.collider.is_in_group("workbenches") or aimed.collider.is_in_group("chests")):
 		return aimed.collider
 	var forward := -camera.global_basis.z
 	forward.y = 0.0
@@ -303,6 +305,20 @@ func _interaction_target() -> Node3D:
 		if distance < best_distance:
 			best = candidate
 			best_distance = distance
+	if best != null:
+		return best
+	# A waist-high table should be usable while looking level in either camera mode.
+	for bench in get_tree().get_nodes_in_group("workbenches"):
+		if not bench.within_reach(self):
+			continue
+		var offset: Vector3 = bench.global_position - global_position
+		offset.y = 0
+		var distance := offset.length()
+		if distance > 1.1 and forward.dot(offset.normalized()) < cos(deg_to_rad(pickup_half_angle)):
+			continue
+		if distance < best_distance:
+			best = bench
+			best_distance = distance
 	return best
 
 func _update_hud() -> void:
@@ -329,7 +345,9 @@ func _update_hud() -> void:
 			prompt_label.text = hit.collider.prompt()
 	elif equipped_item == "bow":
 		prompt_label.text = "Hold left click to draw • Release to fire • Target at the far right of camp"
-	elif not workbench.built:
+	elif inventory.count("bench") > 0:
+		prompt_label.text = "Open your backpack [I] to place your workbench."
+	elif not is_instance_valid(workbench):
 		prompt_label.text = "Walk near sticks and stones • E Gather • I Backpack"
 	elif inventory.count("stone_axe") == 0:
 		prompt_label.text = "Return to your workbench to craft a stone axe."
@@ -340,11 +358,13 @@ func _update_hud() -> void:
 	else:
 		prompt_label.text = "Aim at a nearby pine to chop • I Backpack"
 
-func open_inventory() -> void:
+func open_inventory(bench: Node3D = null) -> void:
+	active_bench = bench
 	_enter_menu()
 	inventory_panel.show_pack()
 
 func close_inventory() -> void:
+	active_bench = null
 	inventory_panel.hide()
 	_leave_menu()
 
@@ -466,8 +486,8 @@ func restore_equipment(saved: Dictionary) -> void:
 func recipe_requirement(id: String) -> String:
 	if not Inventory.RECIPES.has(id):
 		return "Unknown recipe."
-	if not workbench.built:
-		return "Build the simple bench first."
+	if not is_instance_valid(workbench):
+		return "Craft and place a simple workbench first."
 	if not workbench.within_reach(self):
 		return "Stand close to your workbench."
 	var recipe: Dictionary = Inventory.RECIPES[id]
@@ -502,17 +522,15 @@ func show_quit_error() -> void:
 	inventory_panel.message_label.text = "Couldn't save. Your game is still open. Free disk space or check folder access, then retry."
 
 func bench_requirement() -> String:
-	if workbench.built:
-		return "Your bench is ready in the clearing."
 	if not Inventory.can_afford_across(containers(), Inventory.BENCH_COST):
 		return "Gather more sticks and stones by hand."
-	if not workbench.within_reach(self):
-		return "Stand near the marked CAMP WORKSITE."
+	if not Inventory.can_craft_across(containers(), Inventory.BENCH_COST, "bench"):
+		return "Make room for the workbench: drop one stack."
 	return ""
 
 func axe_requirement() -> String:
-	if not workbench.built:
-		return "Build the simple bench first."
+	if not is_instance_valid(workbench):
+		return "Craft and place a simple workbench first."
 	if not workbench.within_reach(self):
 		return "Stand close to your workbench."
 	if inventory.count("stone_axe") > 0:
@@ -523,16 +541,15 @@ func axe_requirement() -> String:
 		return "Make room for the axe: drop one stack."
 	return ""
 
-func build_bench() -> String:
+func craft_bench() -> String:
 	var reason := bench_requirement()
 	if not reason.is_empty():
 		return reason
 	var pack_before := _pack_counts(Inventory.BENCH_COST)
-	if not Inventory.craft_across(containers(), Inventory.BENCH_COST):
-		return "Not enough supplies."
-	workbench.build()
+	if not Inventory.craft_across(containers(), Inventory.BENCH_COST, "bench"):
+		return "Couldn't craft: check materials and backpack space."
 	_update_hud()
-	return "Bench built! Gather 3 sticks + 2 stones for your first axe." + _storage_note(pack_before, Inventory.BENCH_COST)
+	return "Workbench crafted. Select it and choose Place workbench here." + _storage_note(pack_before, Inventory.BENCH_COST)
 
 func craft_axe() -> String:
 	var reason := axe_requirement()
@@ -578,8 +595,8 @@ func save_game_now() -> String:
 	return "Progress saved." if world.save_game() == OK else "Couldn't save. Check that the game can write to its user folder."
 
 func chest_requirement() -> String:
-	if not workbench.built:
-		return "Build the simple bench first."
+	if not is_instance_valid(workbench):
+		return "Craft and place a simple workbench first."
 	if not workbench.within_reach(self):
 		return "Stand close to your workbench."
 	if not Inventory.can_afford_across(containers(), Inventory.CHEST_COST):
@@ -597,10 +614,35 @@ func craft_chest() -> String:
 		return "Couldn't craft: check materials and backpack space."
 	return "Storage chest crafted. Select it and choose Place chest here." + _storage_note(pack_before, Inventory.CHEST_COST)
 
+func _nearest_workbench() -> Node3D:
+	if not is_inside_tree():
+		return null
+	if is_instance_valid(active_bench) and not active_bench.is_queued_for_deletion() and active_bench.within_reach(self):
+		return active_bench
+	var closest: Node3D = null
+	var best := INF
+	var usable: Node3D = null
+	var usable_distance := INF
+	for bench in get_tree().get_nodes_in_group("workbenches"):
+		if bench.is_queued_for_deletion() or not bench.built:
+			continue
+		var distance: float = global_position.distance_squared_to(bench.global_position + Vector3(0, 0.9, 0))
+		if distance < best:
+			closest = bench
+			best = distance
+		if distance < usable_distance and bench.within_reach(self):
+			usable = bench
+			usable_distance = distance
+	return usable if usable != null else closest
+
+func linked_chests() -> Array:
+	var bench := workbench
+	return bench.linked_chests() if is_instance_valid(bench) and bench.within_reach(self) else []
+
 func containers() -> Array:
-	## Recipes draw from the backpack first, then from chests within reach of the bench.
+	# Hand crafting works anywhere; chest materials require a usable placed bench.
 	var sources := [inventory]
-	for chest in workbench.linked_chests():
+	for chest in linked_chests():
 		sources.append(chest.storage)
 	return sources
 
@@ -619,32 +661,103 @@ func _storage_note(pack_before: Dictionary, cost: Dictionary) -> String:
 			return " Some materials came from a chest by the bench."
 	return ""
 
-func place_chest(index: int) -> String:
-	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "chest":
-		return "Select the chest in your backpack first."
-	# Same horizontal facing rule as dropping, a little farther out so the lid has room to open.
-	var ahead := global_position - global_basis.z * 1.7
-	var query := PhysicsRayQueryParameters3D.create(ahead + Vector3.UP, ahead + Vector3.DOWN * 4, 1, [get_rid()])
-	var ground := get_world_3d().direct_space_state.intersect_ray(query)
-	if ground.is_empty() or ground.normal.y < 0.7:
-		return "Face level ground before placing the chest."
+func place_selected(index: int) -> String:
+	if index < 0 or index >= Inventory.CAPACITY:
+		return "Select a workbench or chest first."
+	return place_workbench(index) if inventory.slots[index].get("item", "") == "bench" else place_chest(index)
+
+func _placement_spot(dimensions: Vector3, distance: float) -> Dictionary:
+	var ahead := global_position - global_basis.z * distance
+	var state := get_world_3d().direct_space_state
+	var rotation_basis := Basis(Vector3.UP, rotation.y)
+	var low := INF
+	var high := -INF
+	# Check center and the four corners, so furniture cannot hang off an edge.
+	for offset in [Vector3.ZERO, Vector3(-dimensions.x, 0, -dimensions.z) * 0.5, Vector3(dimensions.x, 0, -dimensions.z) * 0.5, Vector3(-dimensions.x, 0, dimensions.z) * 0.5, Vector3(dimensions.x, 0, dimensions.z) * 0.5]:
+		var sample: Vector3 = ahead + rotation_basis * offset
+		var query := PhysicsRayQueryParameters3D.create(sample + Vector3.UP, sample + Vector3.DOWN * 4, 1, [get_rid()])
+		var ground := state.intersect_ray(query)
+		if ground.is_empty() or ground.normal.y < 0.9 or not ground.collider.is_in_group("placement_ground"):
+			return {"error": "Face clear, level ground before placing it."}
+		low = minf(low, ground.position.y)
+		high = maxf(high, ground.position.y)
+	if high - low > 0.12:
+		return {"error": "The ground is too uneven. Find a flatter spot."}
+	var spot := Vector3(ahead.x, high, ahead.z)
+	# Newly placed bodies may not enter the physics broadphase until the next tick.
+	# Compare furniture footprints too, preventing two placements in the same frame.
+	var polygon := _furniture_footprint(spot, rotation_basis, dimensions + Vector3(0.1, 0, 0.1))
+	for furniture in get_tree().get_nodes_in_group("workbenches") + get_tree().get_nodes_in_group("chests"):
+		if furniture.is_queued_for_deletion():
+			continue
+		var other_size := Vector3(1.9, 1.05, 1.0) if furniture.is_in_group("workbenches") else Vector3(0.92, 0.62, 0.58)
+		if spot.y + dimensions.y < furniture.global_position.y or furniture.global_position.y + other_size.y < spot.y:
+			continue
+		var other := _furniture_footprint(furniture.global_position, furniture.global_basis, other_size)
+		if not Geometry2D.intersect_polygons(polygon, other).is_empty():
+			return {"error": "No room there. Find a clearer spot."}
+	var sight := PhysicsRayQueryParameters3D.create(camera.global_position, spot + Vector3.UP * 0.5, 1, [get_rid()])
+	if not state.intersect_ray(sight).is_empty():
+		return {"error": "Something blocks that spot. Move around it first."}
 	var footprint := PhysicsShapeQueryParameters3D.new()
 	var box := BoxShape3D.new()
-	box.size = Vector3(0.8, 0.5, 0.45)
+	box.size = dimensions + Vector3(0.10, 0, 0.10)
 	footprint.shape = box
-	footprint.transform = Transform3D(Basis(Vector3.UP, rotation.y), ground.position + Vector3(0, 0.34, 0))
+	footprint.transform = Transform3D(rotation_basis, spot + Vector3.UP * (dimensions.y * 0.5 + 0.025))
 	footprint.collision_mask = 3
 	footprint.collide_with_areas = true
 	footprint.exclude = [get_rid()]
-	if not get_world_3d().direct_space_state.intersect_shape(footprint, 1).is_empty():
-		return "No room there. Find a clearer spot."
+	if not state.intersect_shape(footprint, 1).is_empty():
+		return {"error": "No room there. Find a clearer spot."}
+	return {"position": spot}
+
+static func _furniture_footprint(spot: Vector3, rotation_basis: Basis, dimensions: Vector3) -> PackedVector2Array:
+	var polygon := PackedVector2Array()
+	for corner in [Vector3(-1, 0, -1), Vector3(1, 0, -1), Vector3(1, 0, 1), Vector3(-1, 0, 1)]:
+		var vertex: Vector3 = spot + rotation_basis * (corner * dimensions * 0.5)
+		polygon.append(Vector2(vertex.x, vertex.z))
+	return polygon
+
+func place_chest(index: int) -> String:
+	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "chest":
+		return "Select the chest in your backpack first."
+	var placement := _placement_spot(Vector3(0.92, 0.62, 0.58), 1.7)
+	if placement.has("error"):
+		return placement.error
 	inventory.take_slot(index)
 	var chest := Chest.new()
 	get_parent().add_child(chest)
-	chest.global_position = ground.position
+	chest.global_position = placement.position
 	chest.rotation.y = rotation.y
 	_progress_changed()
 	return "Chest placed. Walk up to it and press E to store items."
+
+func place_workbench(index: int) -> String:
+	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "bench":
+		return "Select the workbench in your backpack first."
+	var placement := _placement_spot(Vector3(1.9, 1.05, 1.0), 2.2)
+	if placement.has("error"):
+		return placement.error
+	inventory.take_slot(index)
+	var bench := Bench.new()
+	get_parent().add_child(bench)
+	bench.global_position = placement.position
+	bench.rotation.y = rotation.y
+	active_bench = bench
+	_progress_changed()
+	return "Workbench placed. Stand nearby and press E to craft tools."
+
+func pickup_workbench(bench: Node3D) -> String:
+	if not is_instance_valid(bench) or bench.is_queued_for_deletion():
+		return "That workbench is gone."
+	if not bench.within_reach(self):
+		return "Stand close to the workbench to pick it up."
+	if inventory.add("bench", 1) != 1:
+		return "Your backpack is full. Make room for the workbench first."
+	bench.queue_free()
+	active_bench = null
+	_progress_changed()
+	return "Workbench packed up. Select it in your backpack to place it again."
 
 func pickup_chest(chest: Node3D) -> String:
 	if not is_instance_valid(chest):

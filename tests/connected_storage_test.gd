@@ -54,7 +54,7 @@ func run() -> void:
 	player.set_third_person(false)
 	player._capture_controls(true)
 	await ticks(6)
-	var bench: Node3D = player.workbench
+	var bench: Node3D = preload("res://tests/test_paths.gd").place_bench(current_scene)
 	var near := place_chest_at(bench.global_position + Vector3(2.5, 0, 1.5))
 	var far := place_chest_at(bench.global_position + Vector3(12, 0, 0))
 	await ticks()
@@ -67,8 +67,9 @@ func run() -> void:
 	near.storage.add("stick", 6)
 	near.storage.add("stone", 4)
 	check(player.bench_requirement().is_empty() and player.stock("stick") == 6, "A connected chest did not supply the bench")
-	var built: String = player.build_bench()
-	check(built.begins_with("Bench built") and built.ends_with("chest by the bench.") and bench.built and near.storage.is_empty() and far.storage.count("stick") == 10, "Bench build did not draw from the connected chest only")
+	var built: String = player.craft_bench()
+	check(built.begins_with("Workbench crafted") and built.ends_with("chest by the bench.") and bench.built and near.storage.is_empty() and far.storage.count("stick") == 10, "Bench build did not draw from the connected chest only")
+	player.inventory.take_slot(0) # Remove the extra portable bench from this storage-capacity fixture.
 	check(bench.prompt().ends_with("(1 chest connected)"), "Workbench prompt does not show connected storage: %s" % bench.prompt())
 	player.inventory.add("stick", 2)
 	near.storage.add("stick", 10)

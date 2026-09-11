@@ -41,7 +41,7 @@ rotation_degrees = Vector3(-55, -35, 0)
 light_energy = 1.1
 shadow_enabled = true
 
-[node name="Ground" type="StaticBody3D" parent="."]
+[node name="Ground" type="StaticBody3D" parent="." groups=["placement_ground"]]
 
 [node name="Mesh" type="MeshInstance3D" parent="Ground"]
 mesh = SubResource("MeshGround")

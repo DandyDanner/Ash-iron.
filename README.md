@@ -35,7 +35,7 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `F11` — toggle full screen in a standalone game window (some Mac keyboards need Fn)
 - Left click — swing your equipped axe or pickaxe; with a bow, hold to draw and release to fire (while the mouse is captured)
 - Right click — cancel a bow draw without spending an arrow
-- `E` — gather sticks, loose stones, or wood; use the camp worksite or bench; open a storage chest
+- `E` — gather sticks, loose stones, or wood; use a placed workbench; open a storage chest
 - `I` — open or close your backpack and crafting panel
 - `Esc` — open the backpack and save controls; close an open panel
 - Click game window — capture mouse again
@@ -67,12 +67,16 @@ Every background now starts with **eight empty inventory slots and no tools**. Y
 
 1. Walk near fallen sticks and loose stones and press **E** to gather. Pickup assist reaches three meters across a broad area in front of you, including items at your feet, so you can keep looking forward. Direct aim takes priority; otherwise the nearest eligible item is chosen. Solid obstacles block collection. Each starting pile contains two items.
 2. Press **I** to see your backpack. Sticks, stones, and wood stack to **10** per slot. A tool occupies one slot.
-3. Collect **6 sticks + 4 stones**, then approach the marked **Camp Worksite**, ahead and left of the starting point. Press **E**, or open **I** while standing nearby, and choose **Build simple bench**.
+3. Collect **6 sticks + 4 stones**. Open **I** anywhere, select the workbench icon under **Craftables**, and click **Craft workbench**. It goes into your backpack and uses one slot. Face a clear, level spot, select the bench in your backpack, and click **Place workbench here**. It appears in front of you, facing the same direction. No marked campsite is required.
 4. At the built bench, spend **3 sticks + 2 stones** on **Craft & equip stone axe**. Starting from scratch, that is nine sticks and six stones total; gathering five stick piles and three stone piles is enough.
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
 6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
 
-The **Craftables** icon grid shows all eight recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, OWNED, and BUILT labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
+You can have multiple workbenches. Stand close and press **E** to use a particular bench; opening **I** uses the nearest reachable one. Tool recipes still require a placed bench. **Pick up this workbench** returns it to an empty backpack slot so you can move camp; its connected chests stay in place with their contents. Hand crafting can use nearby linked stock while at a bench, but cannot draw from distant chests.
+
+Both benches and chests require clear, level ground beneath their whole footprint. Placement rejects obstacles, overlapping furniture, ledges, steep/uneven ground, and placing through walls. Failed crafting, placement, or packing never consumes the item or ingredients.
+
+The **Craftables** icon grid shows all eight recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, and OWNED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
 
 | Recipe | Materials | Use |
 | --- | --- | --- |
@@ -96,12 +100,13 @@ Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby 
 
 **Your progress is kept.** Your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree and boulder damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
 
-Save format 4 accepts existing format 1, 2, and 3 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. The added grove pines begin uncut and subsequently save like the original trees. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
+Save format 5 accepts existing format 1, 2, 3, and 4 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. Format 5 stores every placed workbench with its position and rotation. An older built camp bench becomes a movable bench at its original location; an unbuilt worksite disappears without granting a free bench. The added grove pines begin uncut and subsequently save like the original trees. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
 ## Verification
 
 Use your Godot executable in these commands:
 
+- `Godot --headless --path . --script res://tests/placeable_workbench_test.gd` — hand crafting, placement/obstruction/overlap/slope checks, selected bench and linked storage, packing and relocation, multiple-bench snapshots, older saves, and dropped bench recovery.
 - `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — eight craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
 - `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation, terrain collision, saved camera choice, and format 3 migration.
 - `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
@@ -116,7 +121,7 @@ Use your Godot executable in these commands:
 
 The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. The hotbar test accepts the same screenshot option. Every test uses isolated profile and save paths in the OS temporary folder through `tests/test_paths.gd`, so none touch your character or clearing. On restricted hosts, add `--log-file /absolute/writable/path.log`.
 
-For an isolated visual playground, open `scenes/visual_preview.tscn` and **Run Current Scene** (Command + R on Mac). It supplies temporary tools and a bench/chest, uses temporary saves, and never edits your real traveler or clearing. O toggles a front portrait; P captures the viewport into the temporary test folder and prints the path and current frame rate. Use **Run Project** afterward to return to the real game.
+For an isolated visual playground, open `scenes/visual_preview.tscn` and **Run Current Scene** (Command + R on Mac). It supplies temporary tools, six sticks, four stones, and a bench/chest fixture, uses temporary saves, and never edits your real traveler or clearing. O toggles a front portrait; P captures the viewport into the temporary test folder and prints the path and current frame rate. Use **Run Project** afterward to return to the real game.
 
 ## First milestone
 

@@ -64,7 +64,7 @@ func run() -> void:
 	check(not player.recipe_requirement("torch").is_empty(), "Torch allowed before bench")
 	player.craft_recipe("torch")
 	check(player.inventory.to_data() == before, "Failed recipe spent materials")
-	player.workbench.build()
+	preload("res://tests/test_paths.gd").place_bench(player.get_parent())
 	check(not player.recipe_requirement("torch").is_empty(), "Remote crafting allowed")
 	player.global_position = player.workbench.global_position + Vector3(0, 0.9, 2)
 	await ticks()
