@@ -25,7 +25,7 @@ func setup(owner_player: Node3D) -> void:
 	header.add_child(heading)
 	_label(heading, "ASH & IRON  /  CAMP STORAGE", 13, GOLD)
 	_label(heading, "Somewhere to keep what you carry home.", 27)
-	var close_button := _button(header, "Close  [E / Esc]")
+	var close_button := _button(header, "Close  [Tab / Esc]")
 	close_button.pressed.connect(func(): player.close_storage())
 	var columns := HBoxContainer.new()
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -53,6 +53,7 @@ func setup(owner_player: Node3D) -> void:
 	columns.add_child(right)
 	chest_label = _label(right, "", 16, GOLD)
 	store = _slot_grid(right, Inventory.CHEST_CAPACITY, 4, func(i: int): selected_chest = i; selected_pack = -1; refresh(), Vector2(118, 100))
+	_label(layout, "Hover a stack and press T to transfer it  •  Works in both directions", 14, GOLD)
 	detail = _label(layout, "", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail.custom_minimum_size.y = 44
@@ -69,9 +70,35 @@ func setup(owner_player: Node3D) -> void:
 	visible = false
 
 func _input(event: InputEvent) -> void:
-	if visible and event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode == KEY_E or event.physical_keycode == KEY_I or event.keycode == KEY_ESCAPE):
+	if not visible or not event is InputEventKey or not event.pressed or event.echo: return
+	if event.physical_keycode in [KEY_E, KEY_TAB, KEY_I] or event.keycode == KEY_ESCAPE:
 		player.close_storage()
 		get_viewport().set_input_as_handled()
+	elif event.physical_keycode == KEY_T:
+		_transfer_hovered()
+		get_viewport().set_input_as_handled()
+
+func _transfer_hovered() -> void:
+	if not is_instance_valid(chest) or chest.is_queued_for_deletion(): return
+	# Ask the GUI for the current hit, respecting clipping and overlays; never use stale selection.
+	var hovered := get_viewport().gui_get_hovered_control()
+	while hovered != null and hovered != self:
+		var index: int = pack.buttons.find(hovered)
+		if index >= 0:
+			selected_pack = index
+			selected_chest = -1
+			message_label.text = _move(player.inventory, index, chest.storage, "Stored")
+			refresh()
+			return
+		index = store.buttons.find(hovered)
+		if index >= 0:
+			selected_chest = index
+			selected_pack = -1
+			message_label.text = _move(chest.storage, index, player.inventory, "Took")
+			refresh()
+			return
+		hovered = hovered.get_parent() as Control
+	message_label.text = "Hover over a stack in either inventory, then press T."
 
 func open(target_chest: Node3D) -> void:
 	chest = target_chest

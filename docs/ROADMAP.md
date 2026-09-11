@@ -56,6 +56,7 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Craftable icon grid with hover recipes, material counts, item uses, and explicit craft action
 - [x] Stone pickaxe, mineable boulders, pine torch, and wood-to-sticks recipes
 - [x] Placeable storage chest at camp (twelve slots; store, take, pick up and move)
+- [x] Hover + T transfers chest/backpack stacks both ways; Tab toggles inventory, I stays an alias, arrow keys navigate
 - [x] Crafting pulls from connected home storage (chests near the bench, backpack first)
 - [x] Mining fragments fall to terrain, ignoring player/furniture collision tops
 

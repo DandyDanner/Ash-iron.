@@ -44,7 +44,7 @@ func setup(owner_player: Node3D) -> void:
 	save_button.pressed.connect(func(): message_label.text = player.save_game_now())
 	quit_button = _button(header, "Save & Quit")
 	quit_button.pressed.connect(player.save_and_quit)
-	var close_button := _button(header, "Close  [I / Esc]")
+	var close_button := _button(header, "Close  [Tab / Esc]")
 	close_button.pressed.connect(player.close_inventory)
 	var columns := HBoxContainer.new()
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -202,13 +202,13 @@ func setup(owner_player: Node3D) -> void:
 	_select_recipe(selected_recipe)
 	message_label = _label(layout, "", 15, GOLD)
 	message_label.custom_minimum_size.y = 22
-	_label(layout, "E  Gather / bench / chest / furnace     •     I  Backpack     •     Your progress in the clearing is saved as you play.", 13, MUTED)
+	_label(layout, "E  Gather / bench / chest / furnace     •     Tab  Backpack     •     Your progress in the clearing is saved as you play.", 13, MUTED)
 	visible = false
 
 func _input(event: InputEvent) -> void:
 	if not visible or not event is InputEventKey or not event.pressed or event.echo:
 		return
-	if event.physical_keycode == KEY_I or event.keycode == KEY_ESCAPE:
+	if event.physical_keycode in [KEY_TAB, KEY_I] or event.keycode == KEY_ESCAPE:
 		player.close_inventory()
 		get_viewport().set_input_as_handled()
 	else:

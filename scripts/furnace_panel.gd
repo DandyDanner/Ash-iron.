@@ -27,7 +27,7 @@ func setup(owner_player: Node3D) -> void:
 	header.add_child(heading)
 	_label(heading, "ASH & IRON  /  SMELTING", 13, GOLD)
 	_label(heading, "Stone furnace", 27)
-	var close_button := _button(header, "Close  [E / Esc]")
+	var close_button := _button(header, "Close  [Tab / Esc]")
 	close_button.pressed.connect(func(): player.close_furnace())
 	state_label = _label(layout, "", 20, GOLD)
 	progress_bar = ProgressBar.new()
@@ -96,7 +96,7 @@ func _bay(parent: Node, title: String, caption: String) -> Dictionary:
 	return {"count": count, "button": button}
 
 func _input(event: InputEvent) -> void:
-	if visible and event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode == KEY_E or event.physical_keycode == KEY_I or event.keycode == KEY_ESCAPE):
+	if visible and event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode in [KEY_E, KEY_TAB, KEY_I] or event.keycode == KEY_ESCAPE):
 		player.close_furnace()
 		get_viewport().set_input_as_handled()
 

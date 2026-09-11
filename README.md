@@ -38,7 +38,8 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - Left click — swing your equipped axe, or your pickaxe at boulders and iron veins; thrust with a spear; with a bow, hold to draw and release to fire (while the mouse is captured)
 - Right click — cancel a bow draw without spending an arrow
 - `E` — gather sticks, loose stones, wood, or ore; use a placed workbench; open a storage chest; use a furnace
-- `I` — open or close your backpack and crafting panel
+- `Tab` — open or close your backpack and crafting panel (`I` also works); closes an open chest or furnace
+- `T` — with a chest open, transfer the stack under the mouse pointer to the other side; no click needed
 - `Esc` — open the backpack and save controls; close an open panel
 - Click game window — capture mouse again
 - `C` — return to character creation (your progress is saved first)
@@ -76,18 +77,18 @@ If the game is already running, click the editor's square **Stop** button, then 
 Every background now starts with **eight empty inventory slots and no tools**. Your keepsake stays part of your character identity and does not consume a slot.
 
 1. Walk near fallen sticks and loose stones and press **E** to gather. Pickup assist reaches three meters across a broad area in front of you, including items at your feet, so you can keep looking forward. Direct aim takes priority; otherwise the nearest eligible item is chosen. Solid obstacles block collection. Each starting pile contains two items.
-2. Press **I** to see your backpack. Sticks, stones, and wood stack to **10** per slot. A tool occupies one slot.
-3. Collect **6 sticks + 4 stones**. Open **I** anywhere, select the workbench icon under **Craftables**, and click **Craft workbench**. It goes into your backpack and uses one slot. Face a clear, level spot, select the bench in your backpack, and click **Place workbench here**. It appears in front of you, facing the same direction. No marked campsite is required.
+2. Press **Tab** to see your backpack. Sticks, stones, and wood stack to **10** per slot. A tool occupies one slot.
+3. Collect **6 sticks + 4 stones**. Open **Tab** anywhere, select the workbench icon under **Craftables**, and click **Craft workbench**. It goes into your backpack and uses one slot. Face a clear, level spot, select the bench in your backpack, and click **Place workbench here**. It appears in front of you, facing the same direction. No marked campsite is required.
 4. At the built bench, spend **3 sticks + 2 stones** on **Craft & equip stone axe**. Starting from scratch, that is nine sticks and six stones total; gathering five stick piles and three stone piles is enough.
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
-6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
+6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. Hover any backpack or chest stack and press **T** to transfer it to the other side. It moves as much as fits and leaves the remainder in place; hovering an empty slot or outside the grids cannot move another selected stack. The Store/Take buttons still work. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
 7. Take your pickaxe to a rusty **iron vein**. Three sit at the edges of the clearing: north-east beyond the archery target, east past the first pine, and south-west of camp. Four strikes free four **iron ore**, and ordinary boulders sometimes shed a chunk as well. Back at the bench, spend **10 stones + 2 wood** on **Craft stone furnace**, place it like a chest, then press **E** at it to load ore and wood. A furnace automatically draws **wood and ore from chests within 8 meters of the furnace**. It reserves only the next complete batch, leaving other supplies in storage. Its panel shows connected chests and lets you turn auto-feed off; manual Load buttons use your backpack first, then connected chests. Two ore and one wood become an **iron ingot** every twelve seconds while you do other things; take the ingots from the same panel, and pack the furnace up when it is empty. Ingots have no recipes yet: iron tools and weapons are the next milestone.
 
-You can have multiple workbenches. Stand close and press **E** to use a particular bench; opening **I** uses the nearest reachable one. Tool recipes still require a placed bench. **Pick up this workbench** returns it to an empty backpack slot so you can move camp; its connected chests stay in place with their contents. Hand crafting can use nearby linked stock while at a bench, but cannot draw from distant chests.
+You can have multiple workbenches. Stand close and press **E** to use a particular bench; opening **Tab** uses the nearest reachable one. Tool recipes still require a placed bench. **Pick up this workbench** returns it to an empty backpack slot so you can move camp; its connected chests stay in place with their contents. Hand crafting can use nearby linked stock while at a bench, but cannot draw from distant chests.
 
 Benches, chests, and furnaces require clear, level ground beneath their whole footprint. Placement rejects obstacles, overlapping furniture, ledges, steep/uneven ground, and placing through walls. Failed crafting, placement, or packing never consumes the item or ingredients.
 
-The **Craftables** icon grid shows all eleven recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, OWNED, and FITTED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
+The **Craftables** icon grid shows all eleven recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with the arrow keys) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, OWNED, and FITTED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
 
 | Recipe | Materials | Use |
 | --- | --- | --- |
@@ -132,7 +133,7 @@ Take your spear or bow past the **archery target on the right side of camp**. An
 
 The **Bellmaw** has a broad, four-legged body and an amber throat that swells before its attack. It plants its feet for a **1.2-second warning**, then booms once inside the visible **4.5-meter ring**. Back outside the ring or put solid rock cover between you and it. Strike during its **1.25-second recovery**. It has **160 health** and approaches at **3.3 m/s**. During recovery it takes **20 spear / 10 axe / 15 arrow damage**; its thick hide halves incoming damage at all other times (rounded down). The boom deals **34 damage**, enough for three hits to defeat a fully healthy traveler. Eight perfectly timed spear hits can win; attacks against its guarded hide take sixteen. Watch for **SOFT THROAT — strike now!** after the boom. It returns home and heals when you leave its territory. Panels/focus loss pause it. This daytime prototype does not require a night cycle or lantern.
 
-Defeat it and gather **one Bellmaw hide with E**. At your workbench, open **I → Pack +4** and craft with **1 Bellmaw hide + 2 wood + 4 sticks** (nearby chests count). It permanently fits the **Explorer Pack**, expanding your backpack from **8 to 12 slots**. No spare slot is required. Scroll down in the pack grid to see slots 9–12; chest transfers, dropping, tool shortcuts and placement work from those slots. The upgrade and contents save. The existing character backpack appearance is unchanged in this first capacity upgrade. Bellmaw uses the same two-minute respawn rule as the boar, so you can return to practice.
+Defeat it and gather **one Bellmaw hide with E**. At your workbench, open **Tab → Pack +4** and craft with **1 Bellmaw hide + 2 wood + 4 sticks** (nearby chests count). It permanently fits the **Explorer Pack**, expanding your backpack from **8 to 12 slots**. No spare slot is required. Scroll down in the pack grid to see slots 9–12; chest transfers, dropping, tool shortcuts and placement work from those slots. The upgrade and contents save. The existing character backpack appearance is unchanged in this first capacity upgrade. Bellmaw uses the same two-minute respawn rule as the boar, so you can return to practice.
 
 The [latest actual graphics review](docs/art/SURVIVAL_REFINEMENT_REVIEW.md) shows rebuilt first-person hands, subtler traveler surface materials, finer boar fur/cloven hooves and Bellmaw body/face refinements. These remain prototype models; the traveler face geometry has not been resculpted in this pass.
 
@@ -144,7 +145,7 @@ For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (C
 
 For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
-Use your Godot executable in these commands (twenty-one suites):
+Use your Godot executable in these commands (twenty-two suites):
 
 - `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four previews and skins, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
 
@@ -171,6 +172,8 @@ Use your Godot executable in these commands (twenty-one suites):
 - `Godot --headless --path . --script res://tests/survival_refinement_test.gd` — guarded/recovery damage, respawn delay/pause/clearance/persistence, falling mining drops, furnace chest range/atomic feed/output cap/12-second timing/toggle save, first-person grips and format 8 migration.
 
 - `Godot --headless --path . --script res://tests/player_vitals_test.gd` — live health/stamina bars, damage/healing/defeat, actual sprint input, exhaustion/recovery, pause, camera views, layout bounds and save migration. With graphics enabled, add `-- --screenshots=/absolute/output/folder` for HUD captures.
+
+- `Godot --headless --path . --script res://tests/inventory_shortcuts_test.gd` — real Tab/I toggle input, arrow focus, hover-and-T transfers both ways, partial/full/empty cases, key repeats, expanded pack, held-tool safety, closed panels and saved results. Add `-- --screenshots=/absolute/output/folder` with graphics enabled for the chest UI.
 
 For native hand/Bellmaw/furnace captures, run `Godot --path . --script res://tests/refinement_preview.gd -- --output=/absolute/output/folder`. It uses isolated saves and closes its own window.
 

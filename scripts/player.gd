@@ -148,7 +148,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.physical_keycode == KEY_V:
 			set_third_person(not view_rig.third_person)
 			return
-		if event.physical_keycode == KEY_I:
+		if event.physical_keycode in [KEY_TAB, KEY_I]:
 			open_inventory()
 			return
 		if event.physical_keycode == KEY_C:
@@ -290,7 +290,7 @@ func _physics_process(delta: float) -> void:
 						equip_axe(true)
 					_show_feedback("+%d %s" % [amount, Inventory.ITEMS[item].name.to_lower()])
 				else:
-					_show_feedback("Backpack full • Press I to drop a stack or craft.")
+					_show_feedback("Backpack full • Press Tab to drop a stack or craft.")
 			elif target.is_in_group("workbenches"):
 				open_inventory(target)
 			elif target.is_in_group("chests"):
@@ -410,7 +410,7 @@ func _update_hud() -> void:
 	var hit := _aim_target()
 	if not hit.is_empty() and hit.collider.has_method("prompt"):
 		if hit.collider.has_method("chop") and not axe_equipped:
-			prompt_label.text = "Equip your axe in the backpack [I]." if inventory.count("stone_axe") > 0 else "A pine needs an axe • Gather loose sticks and stones first."
+			prompt_label.text = "Equip your axe in the backpack [Tab]." if inventory.count("stone_axe") > 0 else "A pine needs an axe • Gather loose sticks and stones first."
 		else:
 			prompt_label.text = hit.collider.prompt()
 	elif equipped_item == "stone_spear":
@@ -418,21 +418,21 @@ func _update_hud() -> void:
 	elif equipped_item == "bow":
 		prompt_label.text = "Hold to draw • Release to fire • Beyond the target: follow ochre markers to Echo Hollow"
 	elif inventory.count("bench") > 0:
-		prompt_label.text = "Open your backpack [I] to place your workbench."
+		prompt_label.text = "Open your backpack [Tab] to place your workbench."
 	elif not is_instance_valid(workbench):
-		prompt_label.text = "Walk near sticks and stones • E Gather • I Backpack"
+		prompt_label.text = "Walk near sticks and stones • E Gather • Tab Backpack"
 	elif inventory.count("stone_axe") == 0:
 		prompt_label.text = "Return to your workbench to craft a stone axe."
 	elif inventory.count("chest") > 0:
-		prompt_label.text = "Open your backpack [I] to place your storage chest."
+		prompt_label.text = "Open your backpack [Tab] to place your storage chest."
 	elif get_tree().get_nodes_in_group("chests").is_empty() and inventory.can_afford(Inventory.CHEST_COST):
 		prompt_label.text = "Return to your workbench to craft a storage chest."
 	elif inventory.count("furnace") > 0:
-		prompt_label.text = "Open your backpack [I] to place your furnace."
+		prompt_label.text = "Open your backpack [Tab] to place your furnace."
 	elif inventory.count("iron_ore") > 0 and get_tree().get_nodes_in_group("furnaces").is_empty():
 		prompt_label.text = "Iron ore needs a furnace • Craft one at your workbench (10 stones + 2 wood)."
 	else:
-		prompt_label.text = "Aim at a nearby pine to chop • I Backpack"
+		prompt_label.text = "Aim at a nearby pine to chop • Tab Backpack"
 
 func open_inventory(bench: Node3D = null) -> void:
 	active_bench = bench

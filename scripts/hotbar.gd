@@ -35,7 +35,7 @@ func setup(owner_player: Node3D) -> void:
 		var caption := _label(button, str((i + 1) % 10), 13, GOLD)
 		caption.position = Vector2(8, 3)
 		captions.append(caption)
-	var hint := _label(self, "1–9, 0  Equip / holster    •    I  Backpack    •    V  View    •    F11  Full screen", 13, INK)
+	var hint := _label(self, "1–9, 0  Equip / holster    •    Tab  Backpack    •    V  View    •    F11  Full screen", 13, INK)
 	hint.position = Vector2(0, 72)
 	hint.size.x = 703
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
