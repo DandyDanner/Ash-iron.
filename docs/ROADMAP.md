@@ -45,6 +45,7 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Build a simple bench at the camp worksite
 - [x] Craft the first stone axe from gathered materials
 - [x] Ten saved hotbar shortcuts with equip / put-away toggles
+- [x] Craftable icon grid with hover recipes, material counts, item uses, and explicit craft action
 - [x] Stone pickaxe, mineable boulders, pine torch, and wood-to-sticks recipes
 - [x] Placeable storage chest at camp (twelve slots; store, take, pick up and move)
 - [x] Crafting pulls from connected home storage (chests near the bench, backpack first)

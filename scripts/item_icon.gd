@@ -4,6 +4,14 @@ var item_id := ""
 func _draw() -> void:
 	var center := size / 2.0
 	match item_id:
+		"bench":
+			for x in [-17.0, 17.0]:
+				draw_line(center + Vector2(x, 0), center + Vector2(x - 3, 22), Color("987348"), 6, true)
+			draw_line(center + Vector2(-19, 14), center + Vector2(17, 14), Color("795b3e"), 4, true)
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-27, -9), center + Vector2(14, -18), center + Vector2(27, -5), center + Vector2(-16, 5)]), Color("d0ac73"))
+			draw_line(center + Vector2(-16, 5), center + Vector2(27, -5), Color("987348"), 5, true)
+			for i in range(2):
+				draw_line(center + Vector2(-23 + i * 4, -5 + i * 4), center + Vector2(18 + i * 4, -14 + i * 4), Color("ae8958"), 1.5, true)
 		"stick":
 			draw_line(center + Vector2(-20, 14), center + Vector2(18, -14), Color("bd965e"), 7, true)
 			draw_line(center + Vector2(-9, 18), center + Vector2(24, -7), Color("8e7148"), 5, true)

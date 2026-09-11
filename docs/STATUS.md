@@ -4,12 +4,21 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 
 ## Now
 
-- Build: Godot 4.7.2 on Apple Silicon. Ten headless tests, all passing (see `README.md`, Verification). Native Godot visual review now works; reviewed clearing, front/back scout, backpack, and creator. The isolated clearing preview reported 60 FPS on the M2 at 1278 × 799; this is one scene sample, not a performance guarantee.
+- Build: Godot 4.7.2 on Apple Silicon. Eleven headless tests, all passing (see `README.md`, Verification). Native Godot visual review now works; reviewed clearing, front/back scout, backpack, and creator. The isolated clearing preview reported 60 FPS on the M2 at 1278 × 799; this is one scene sample, not a performance guarantee.
 - Playable loop: create a traveler, gather sticks/stones, build the bench, craft tools, chop pines and mine boulders, store in chests, craft using linked chest materials, and practice with a craftable bow and recoverable arrows. Eight backpack slots and ten saved hotbar shortcuts. Automatic progress saves, Continue / Start over, and Save & Quit.
+- Crafting UI: eight recipe icons with hover cards for use, have/need totals, missing ingredients, and availability. Click or keyboard-focus to inspect; use the separate craft button. Disabled recipes remain browsable. Arrow/stick icons show output amounts.
 - Presentation: approved Willow Scout implemented as an articulated procedural model shared by the creator and world. Third person starts by default; V switches views and saves the preference. Walking, jumping, tool gestures, bow drawing, and cape movement. Forest paths, grass, flowers, hills, fuller pines, lichen boulders, planked bench/chest, warm sky/light, and shorter HUD. F11 toggles standalone full screen.
 - Suggested next for visuals: refine the face/hair/cape and animation hand contact against `docs/art/willow-scout-turnaround.png`, replace simple distant silhouettes, vary foliage density, then add footsteps/ambient audio. This is a coordinated first procedural pass, not the finished concept-art model.
 - Suggested next for systems (Phase 3): choose one meaningful expedition upgrade (ore → furnace → improved tool) or one animal for the existing bow, before expanding the map.
 - Known gaps: chests can be placed on top of the bench or a boulder if the surface is flat; no confirmation before dropping a stack. Torch fuel, ore, resource regrowth, enemy damage, and background abilities remain deferred. Animation is a node rig without foot IK, skeletal skinning, or cloth simulation. The editor's embedded game controls its own window size; F11 is primarily for standalone play.
+
+## 2026-09-10 — ChatGPT / Codex: craftable icons and hover recipes
+
+- Dallon requested icons for craftables with recipe and item-use information on hover. Started from clean `d01cddd`, verified origin and personal commit identity.
+- Replaced the long recipe list with an eight-icon grid. Reused the game's existing item icons and added an original workbench icon. Batch arrows/sticks show ×5/×4; READY, UNAVAILABLE, OWNED, and BUILT labels accompany visual dimming.
+- Hover cards show purpose, have/need materials, missing quantities, and current station/capacity requirements. Click or keyboard-focus a tile to retain details beneath the grid; a separate build/craft button spends materials. Unavailable icons stay enabled for inspection.
+- Uses the existing recipes and atomic crafting functions, with live backpack/linked-storage counts; no save or progression changes. Added an isolated integration test for browsing without spending, focus, exact build/craft outcomes, linked storage, quantities, and viewport bounds.
+- Verification: all eleven headless suites pass; reviewed grid and hover presentation in the isolated native Godot preview. The detailed character model requested in the preceding discussion remains a future focused art milestone.
 
 ## 2026-09-10 — ChatGPT / Codex: Willow Scout and coordinated graphics pass
 

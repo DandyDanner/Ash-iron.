@@ -89,7 +89,7 @@ func run() -> void:
 	check(player.craft_chest().begins_with("Storage chest crafted") and player.inventory.count("chest") == 1 and near.storage.count("wood") == 0 and near.storage.count("stick") == 9, "Chest craft from storage went wrong")
 	player.open_inventory()
 	check(player.inventory_panel.storage_note.text.begins_with("Connected storage: 1 chest"), "Backpack panel does not report connected storage")
-	check(player.inventory_panel.axe_cost.text.begins_with("Sticks  9 / 3"), "Panel costs do not include chest stock: %s" % player.inventory_panel.axe_cost.text)
+	check(player.inventory_panel.axe_cost.text.contains("Sticks  9 / 3"), "Panel costs do not include chest stock: %s" % player.inventory_panel.axe_cost.text)
 	player.close_inventory()
 	check(current_scene.save_game() == OK, "Save failed")
 	change_scene_to_file("res://scenes/main.tscn")

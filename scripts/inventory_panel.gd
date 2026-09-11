@@ -22,6 +22,9 @@ var storage_note: Label
 var shortcut_buttons: Array[Button] = []
 var recipe_rows := {}
 var quit_button: Button
+var craftables := {}
+var selected_recipe := "bench"
+const CraftableTile = preload("res://scripts/craftable_tile.gd")
 
 func setup(owner_player: Node3D) -> void:
 	player = owner_player
@@ -95,52 +98,94 @@ func setup(owner_player: Node3D) -> void:
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 6)
 	scroll.add_child(right)
-	_label(right, "RECIPES  •  SCROLL FOR MORE", 14, GOLD)
-	_label(right, "01  Simple workbench", 20)
-	var bench_note := _label(right, "Gather supplies by hand, then build at the marked camp worksite.", 14, MUTED)
-	bench_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	bench_cost = _label(right, "", 15)
-	bench_status = _label(right, "", 13, MUTED)
-	bench_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	bench_button = _button(right, "Build simple bench")
-	bench_button.pressed.connect(func(): message_label.text = player.build_bench(); refresh())
-	right.add_child(HSeparator.new())
-	_label(right, "02  Stone axe", 20)
-	var axe_note := _label(right, "Craft at your bench. Chop trees to unlock a supply of wood.", 14, MUTED)
-	axe_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	axe_cost = _label(right, "", 15)
-	axe_status = _label(right, "", 13, MUTED)
-	axe_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	axe_button = _button(right, "Craft & equip stone axe")
-	axe_button.pressed.connect(func():
-		message_label.text = player.craft_axe()
-		selected = _find("stone_axe", selected)
-		refresh())
-	right.add_child(HSeparator.new())
-	_label(right, "03  Storage chest", 20)
-	var chest_note := _label(right, "Craft from felled timber, then place it near camp to keep supplies between trips.", 14, MUTED)
-	chest_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	chest_cost = _label(right, "", 15)
-	chest_status = _label(right, "", 13, MUTED)
-	chest_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	chest_button = _button(right, "Craft storage chest")
-	chest_button.pressed.connect(func():
-		message_label.text = player.craft_chest()
-		selected = _find("chest", selected)
-		refresh())
+	_label(right, "CRAFTABLES", 16, GOLD)
+	var help := _label(right, "Hover for recipe & use. Select an icon, then craft below.", 14, MUTED)
+	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var grid := GridContainer.new()
+	grid.name = "CraftableGrid"
+	grid.columns = 4
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	right.add_child(grid)
+	var cards := VBoxContainer.new()
+	cards.name = "RecipeDetails"
+	var catalog := {
+		"bench": {"name": "Simple workbench", "short": "Workbench", "output": "bench", "amount": 1, "cost": Inventory.BENCH_COST, "description": "Build at the marked camp worksite. Unlocks tools, storage, and other recipes."},
+		"stone_axe": {"name": "Stone axe", "short": "Stone axe", "output": "stone_axe", "amount": 1, "cost": Inventory.AXE_COST, "description": Inventory.ITEMS.stone_axe.description},
+		"chest": {"name": "Storage chest", "short": "Chest", "output": "chest", "amount": 1, "cost": Inventory.CHEST_COST, "description": "Place a chest to store supplies in twelve slots. Chests near the bench supply crafting materials."}
+	}
+	var short_names := {"bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks"}
 	for id in Inventory.RECIPES:
-		var recipe: Dictionary = Inventory.RECIPES[id]
-		right.add_child(HSeparator.new())
-		_label(right, recipe.name, 20)
-		var note := _label(right, recipe.description, 14, MUTED)
+		catalog[id] = Inventory.RECIPES[id].duplicate(true)
+		catalog[id].short = short_names.get(id, catalog[id].name)
+	for id in catalog:
+		var recipe: Dictionary = catalog[id]
+		var tile := CraftableTile.new()
+		tile.name = "Recipe_" + id
+		tile.custom_minimum_size = Vector2(86, 94)
+		tile.toggle_mode = true
+		tile.pressed.connect(_select_recipe.bind(id))
+		tile.focus_entered.connect(_select_recipe.bind(id))
+		grid.add_child(tile)
+		var icon := Icon.new()
+		icon.item_id = recipe.output
+		icon.position = Vector2(13, 3)
+		icon.size = Vector2(60, 56)
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tile.add_child(icon)
+		var title := _label(tile, recipe.short, 12)
+		title.position = Vector2(2, 60)
+		title.size.x = 82
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var availability := _label(tile, "", 10, MUTED)
+		availability.position = Vector2(2, 77)
+		availability.size.x = 82
+		availability.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if int(recipe.amount) > 1:
+			var amount := _label(tile, "×%d" % recipe.amount, 13, GOLD)
+			amount.position = Vector2(63, 4)
+		var card := VBoxContainer.new()
+		card.add_theme_constant_override("separation", 8)
+		cards.add_child(card)
+		var card_title := _label(card, recipe.name, 20)
+		card_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var note := _label(card, recipe.description, 14, MUTED)
 		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var cost := _label(right, "", 15)
+		var cost := _label(card, "", 15)
 		cost.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var status := _label(right, "", 13, MUTED)
+		var status := _label(card, "", 14, MUTED)
 		status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var button := _button(right, "Craft " + recipe.name.to_lower())
-		button.pressed.connect(_craft_recipe.bind(id))
-		recipe_rows[id] = {"cost": cost, "status": status, "button": button}
+		var button := _button(card, "Craft " + recipe.short.to_lower())
+		craftables[id] = {"tile": tile, "icon": icon, "availability": availability, "card": card, "recipe": recipe, "cost": cost, "status": status, "button": button}
+		match id:
+			"bench":
+				bench_button = button
+				bench_cost = cost
+				bench_status = status
+				button.pressed.connect(func(): message_label.text = player.build_bench(); refresh())
+			"stone_axe":
+				axe_button = button
+				axe_cost = cost
+				axe_status = status
+				button.text = "Craft & equip stone axe"
+				button.pressed.connect(func():
+					message_label.text = player.craft_axe()
+					selected = _find("stone_axe", selected)
+					refresh())
+			"chest":
+				chest_button = button
+				chest_cost = cost
+				chest_status = status
+				button.pressed.connect(func():
+					message_label.text = player.craft_chest()
+					selected = _find("chest", selected)
+					refresh())
+			_:
+				button.pressed.connect(_craft_recipe.bind(id))
+				recipe_rows[id] = craftables[id]
+	right.add_child(HSeparator.new())
+	right.add_child(cards)
+	_select_recipe(selected_recipe)
 	message_label = _label(layout, "", 15, GOLD)
 	message_label.custom_minimum_size.y = 22
 	_label(layout, "E  Gather / bench / chest     •     I  Backpack     •     Your progress in the clearing is saved as you play.", 13, MUTED)
@@ -197,33 +242,53 @@ func refresh() -> void:
 		storage_note.text = "Recipes use your backpack. A chest placed within a few steps of the bench is connected and supplies materials too."
 	else:
 		storage_note.text = "Connected storage: %d chest%s near the bench. Recipes take from your backpack first, then from the chest%s." % [connected, "" if connected == 1 else "s", "" if connected == 1 else "s"]
-	bench_cost.text = "Sticks  %d / 6     Stones  %d / 4" % [player.stock("stick"), player.stock("stone")]
-	axe_cost.text = "Sticks  %d / 3     Stones  %d / 2" % [player.stock("stick"), player.stock("stone")]
-	chest_cost.text = "Wood  %d / 5     Sticks  %d / 2" % [player.stock("wood"), player.stock("stick")]
-	bench_status.text = player.bench_requirement()
-	axe_status.text = player.axe_requirement()
-	chest_status.text = player.chest_requirement()
-	bench_button.disabled = not player.bench_requirement().is_empty()
-	axe_button.disabled = not player.axe_requirement().is_empty()
-	chest_button.disabled = not player.chest_requirement().is_empty()
-	bench_button.text = "Bench built" if player.workbench.built else "Build simple bench"
-	if bench_status.text.is_empty():
-		bench_status.text = "Ready to build here."
-	if axe_status.text.is_empty():
-		axe_status.text = "Ready to craft. Takes one slot."
-	if chest_status.text.is_empty():
-		chest_status.text = "Ready to craft. Carry it, then place it where you like."
-
 	for i in range(shortcut_buttons.size()):
 		var item: String = player.hotbar[i]
 		shortcut_buttons[i].text = str((i + 1) % 10) + (" •" if not item.is_empty() else "")
 		shortcut_buttons[i].tooltip_text = Inventory.ITEMS[item].name if not item.is_empty() else "Empty shortcut"
-	for id in recipe_rows:
-		var recipe: Dictionary = Inventory.RECIPES[id]
+	for id in craftables:
+		var row: Dictionary = craftables[id]
+		var recipe: Dictionary = row.recipe
 		var amounts := PackedStringArray()
+		var missing := PackedStringArray()
 		for item in recipe.cost:
-			amounts.append("%s  %d / %d" % [Inventory.ITEMS[item].name, player.stock(item), recipe.cost[item]])
-		recipe_rows[id].cost.text = "    ".join(amounts)
-		var reason: String = player.recipe_requirement(id)
-		recipe_rows[id].status.text = reason if not reason.is_empty() else "Ready to craft here."
-		recipe_rows[id].button.disabled = not reason.is_empty()
+			var have: int = player.stock(item)
+			var need: int = recipe.cost[item]
+			amounts.append("%s  %d / %d" % [Inventory.ITEMS[item].name, have, need])
+			if have < need:
+				var missing_name: String = Inventory.ITEMS[item].name.to_lower()
+				if need - have == 1:
+					missing_name = missing_name.trim_suffix("s")
+				missing.append("%d %s" % [need - have, missing_name])
+		row.cost.text = "MATERIALS  •  Have / need\n" + "    ".join(amounts)
+		var reason := ""
+		match id:
+			"bench": reason = player.bench_requirement()
+			"stone_axe": reason = player.axe_requirement()
+			"chest": reason = player.chest_requirement()
+			_: reason = player.recipe_requirement(id)
+		var ready := reason.is_empty()
+		var status := reason if not ready else ("Ready to build here." if id == "bench" else "Ready to craft here.")
+		row.status.text = status
+		row.status.add_theme_color_override("font_color", GOLD if ready else MUTED)
+		row.button.disabled = not ready
+		row.availability.text = "READY" if ready else "UNAVAILABLE"
+		if id == "bench" and player.workbench.built:
+			row.availability.text = "BUILT"
+		elif recipe.output in Inventory.EQUIPPABLE and inventory.count(recipe.output) > 0:
+			row.availability.text = "OWNED"
+		row.icon.modulate.a = 1.0 if ready else 0.60
+		row.tile.tooltip_text = recipe.name + "\n\n" + recipe.description + "\n\nMATERIALS • Have / need\n" + "\n".join(amounts)
+		if not missing.is_empty() and not (id == "bench" and player.workbench.built):
+			row.tile.tooltip_text += "\nMissing: " + ", ".join(missing)
+		row.tile.tooltip_text += "\n\n" + status
+		row.tile.tooltip_text += "\nMaterials include connected storage.\nSelect this icon, then use the craft button."
+	bench_button.text = "Bench built" if player.workbench.built else "Build simple bench"
+
+func _select_recipe(id: String) -> void:
+	if not craftables.has(id):
+		return
+	selected_recipe = id
+	for key in craftables:
+		craftables[key].card.visible = key == id
+		craftables[key].tile.set_pressed_no_signal(key == id)

@@ -72,7 +72,7 @@ Every background now starts with **eight empty inventory slots and no tools**. Y
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
 6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
 
-Scroll the recipe column for additional bench recipes. They use nearby connected chests too:
+The **Craftables** icon grid shows all eight recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, OWNED, and BUILT labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
 
 | Recipe | Materials | Use |
 | --- | --- | --- |
@@ -102,6 +102,7 @@ Save format 4 accepts existing format 1, 2, and 3 saves without resetting the cl
 
 Use your Godot executable in these commands:
 
+- `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — eight craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
 - `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation, terrain collision, saved camera choice, and format 3 migration.
 - `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
 - `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
