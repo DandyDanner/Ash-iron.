@@ -18,6 +18,7 @@ var bench_status: Label
 var axe_status: Label
 var chest_status: Label
 var message_label: Label
+var storage_note: Label
 
 func setup(owner_player: Node3D) -> void:
 	player = owner_player
@@ -63,6 +64,8 @@ func setup(owner_player: Node3D) -> void:
 		var result: String = player.drop_slot(selected)
 		message_label.text = result
 		refresh())
+	storage_note = _label(left, "", 14, MUTED)
+	storage_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var right := VBoxContainer.new()
 	right.custom_minimum_size.x = 380
 	right.add_theme_constant_override("separation", 6)
@@ -132,9 +135,14 @@ func refresh() -> void:
 	equip_button.text = "Put axe away" if player.axe_equipped else "Equip axe"
 	place_button.disabled = chosen.get("item", "") != "chest"
 	detail.text = Inventory.ITEMS[chosen.item].description if not chosen.is_empty() else "Choose a slot to inspect an item. If your pack fills up, drop a stack on the ground to make room."
-	bench_cost.text = "Sticks  %d / 6     Stones  %d / 4" % [inventory.count("stick"), inventory.count("stone")]
-	axe_cost.text = "Sticks  %d / 3     Stones  %d / 2" % [inventory.count("stick"), inventory.count("stone")]
-	chest_cost.text = "Wood  %d / 5     Sticks  %d / 2" % [inventory.count("wood"), inventory.count("stick")]
+	var connected: int = player.workbench.linked_chests().size()
+	if connected == 0:
+		storage_note.text = "Recipes use your backpack. A chest placed within a few steps of the bench is connected and supplies materials too."
+	else:
+		storage_note.text = "Connected storage: %d chest%s near the bench. Recipes take from your backpack first, then from the chest%s." % [connected, "" if connected == 1 else "s", "" if connected == 1 else "s"]
+	bench_cost.text = "Sticks  %d / 6     Stones  %d / 4" % [player.stock("stick"), player.stock("stone")]
+	axe_cost.text = "Sticks  %d / 3     Stones  %d / 2" % [player.stock("stick"), player.stock("stone")]
+	chest_cost.text = "Wood  %d / 5     Sticks  %d / 2" % [player.stock("wood"), player.stock("stick")]
 	bench_status.text = player.bench_requirement()
 	axe_status.text = player.axe_requirement()
 	chest_status.text = player.chest_requirement()

@@ -43,7 +43,7 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Build a simple bench at the camp worksite
 - [x] Craft the first stone axe from gathered materials
 - [x] Placeable storage chest at camp (twelve slots; store, take, pick up and move)
-- [ ] Crafting pulls from connected home storage
+- [x] Crafting pulls from connected home storage (chests near the bench, backpack first)
 
 ## Phase 3 — First expedition loop
 

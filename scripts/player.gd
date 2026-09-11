@@ -345,7 +345,7 @@ func toggle_axe() -> void:
 func bench_requirement() -> String:
 	if workbench.built:
 		return "Your bench is ready in the clearing."
-	if not inventory.can_afford(Inventory.BENCH_COST):
+	if not Inventory.can_afford_across(containers(), Inventory.BENCH_COST):
 		return "Gather more sticks and stones by hand."
 	if not workbench.within_reach(self):
 		return "Stand near the marked CAMP WORKSITE."
@@ -358,9 +358,9 @@ func axe_requirement() -> String:
 		return "Stand close to your workbench."
 	if inventory.count("stone_axe") > 0:
 		return "You already have an axe in your backpack."
-	if not inventory.can_afford(Inventory.AXE_COST):
+	if not Inventory.can_afford_across(containers(), Inventory.AXE_COST):
 		return "Gather more sticks and stones."
-	if not inventory.can_craft(Inventory.AXE_COST, "stone_axe"):
+	if not Inventory.can_craft_across(containers(), Inventory.AXE_COST, "stone_axe"):
 		return "Make room for the axe: drop one stack."
 	return ""
 
@@ -368,20 +368,22 @@ func build_bench() -> String:
 	var reason := bench_requirement()
 	if not reason.is_empty():
 		return reason
-	if not inventory.craft(Inventory.BENCH_COST):
+	var pack_before := _pack_counts(Inventory.BENCH_COST)
+	if not Inventory.craft_across(containers(), Inventory.BENCH_COST):
 		return "Not enough supplies."
 	workbench.build()
 	_update_hud()
-	return "Bench built! Gather 3 sticks + 2 stones for your first axe."
+	return "Bench built! Gather 3 sticks + 2 stones for your first axe." + _storage_note(pack_before, Inventory.BENCH_COST)
 
 func craft_axe() -> String:
 	var reason := axe_requirement()
 	if not reason.is_empty():
 		return reason
-	if not inventory.craft(Inventory.AXE_COST, "stone_axe"):
+	var pack_before := _pack_counts(Inventory.AXE_COST)
+	if not Inventory.craft_across(containers(), Inventory.AXE_COST, "stone_axe"):
 		return "Couldn't craft: check materials and backpack space."
 	equip_axe(true)
-	return "Stone axe crafted and equipped. Close your pack to try it."
+	return "Stone axe crafted and equipped. Close your pack to try it." + _storage_note(pack_before, Inventory.AXE_COST)
 
 func drop_slot(index: int) -> String:
 	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].is_empty():
@@ -421,9 +423,9 @@ func chest_requirement() -> String:
 		return "Build the simple bench first."
 	if not workbench.within_reach(self):
 		return "Stand close to your workbench."
-	if not inventory.can_afford(Inventory.CHEST_COST):
+	if not Inventory.can_afford_across(containers(), Inventory.CHEST_COST):
 		return "Chop a pine for wood, then bring 5 wood and 2 sticks."
-	if not inventory.can_craft(Inventory.CHEST_COST, "chest"):
+	if not Inventory.can_craft_across(containers(), Inventory.CHEST_COST, "chest"):
 		return "Make room for the chest: drop one stack."
 	return ""
 
@@ -431,9 +433,32 @@ func craft_chest() -> String:
 	var reason := chest_requirement()
 	if not reason.is_empty():
 		return reason
-	if not inventory.craft(Inventory.CHEST_COST, "chest"):
+	var pack_before := _pack_counts(Inventory.CHEST_COST)
+	if not Inventory.craft_across(containers(), Inventory.CHEST_COST, "chest"):
 		return "Couldn't craft: check materials and backpack space."
-	return "Storage chest crafted. Select it and choose Place chest here."
+	return "Storage chest crafted. Select it and choose Place chest here." + _storage_note(pack_before, Inventory.CHEST_COST)
+
+func containers() -> Array:
+	## Recipes draw from the backpack first, then from chests within reach of the bench.
+	var sources := [inventory]
+	for chest in workbench.linked_chests():
+		sources.append(chest.storage)
+	return sources
+
+func stock(item: String) -> int:
+	return Inventory.count_across(containers(), item)
+
+func _pack_counts(cost: Dictionary) -> Dictionary:
+	var counts := {}
+	for item in cost:
+		counts[item] = inventory.count(item)
+	return counts
+
+func _storage_note(pack_before: Dictionary, cost: Dictionary) -> String:
+	for item in cost:
+		if int(pack_before[item]) - inventory.count(item) < int(cost[item]):
+			return " Some materials came from a chest by the bench."
+	return ""
 
 func place_chest(index: int) -> String:
 	if index < 0 or index >= Inventory.CAPACITY or inventory.slots[index].get("item", "") != "chest":

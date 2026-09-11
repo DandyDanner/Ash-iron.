@@ -1,0 +1,1 @@
+Follow `AGENTS.md`. It is the shared working agreement between Claude Code and ChatGPT/Codex for this repository: session start and end checklists, the DandyDanner-only commit identity, lanes, and conventions.

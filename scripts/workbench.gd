@@ -1,6 +1,7 @@
 extends StaticBody3D
 const Model = preload("res://scripts/traveler_model.gd")
 const USE_DISTANCE := 3.2
+const STORAGE_RANGE := 8.0
 var built := false
 var art: Node3D
 var sign_label: Label3D
@@ -34,8 +35,21 @@ func _ready() -> void:
 func within_reach(player: Node3D) -> bool:
 	return player.global_position.distance_to(global_position + Vector3(0, 0.9, 0)) <= USE_DISTANCE
 
+func linked_chests() -> Array:
+	## Chests close to the bench count as connected storage: recipes can draw from them.
+	var linked := []
+	for chest in get_tree().get_nodes_in_group("chests"):
+		if not chest.is_queued_for_deletion() and chest.global_position.distance_to(global_position) <= STORAGE_RANGE:
+			linked.append(chest)
+	return linked
+
 func prompt() -> String:
-	return "E  •  Use workbench" if built else "E  •  Build a simple bench (6 sticks + 4 stones)"
+	if not built:
+		return "E  •  Build a simple bench (6 sticks + 4 stones)"
+	var connected := linked_chests().size()
+	if connected == 0:
+		return "E  •  Use workbench"
+	return "E  •  Use workbench   (%d chest%s connected)" % [connected, "" if connected == 1 else "s"]
 
 func build() -> bool:
 	if built:

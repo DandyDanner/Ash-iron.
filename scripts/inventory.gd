@@ -1,6 +1,8 @@
 extends RefCounted
 ## Inventory and recipes share the same transactional slot rules.
 ## The backpack and storage chests are both instances of this class with different sizes.
+## Recipes can draw from several inventories at once (backpack first, then connected chests);
+## nothing is consumed unless the whole recipe, including its output, fits.
 signal changed
 const CAPACITY := 8
 const CHEST_CAPACITY := 12
@@ -9,7 +11,7 @@ const ITEMS := {
 	"stone": {"name": "Stones", "stack": 10, "description": "Loose stones from the clearing. No tool needed to pick them up."},
 	"wood": {"name": "Wood", "stack": 10, "description": "Timber from felled trees. Keep it for later building recipes."},
 	"stone_axe": {"name": "Stone axe", "stack": 1, "description": "A shaped stone head on a wooden handle. Equip it to chop trees."},
-	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips."}
+	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips. Chests near the bench feed its recipes."}
 }
 const BENCH_COST := {"stick": 6, "stone": 4}
 const AXE_COST := {"stick": 3, "stone": 2}
@@ -45,7 +47,7 @@ func add(item: String, amount: int) -> int:
 		changed.emit()
 	return received
 
-func _add_to(target: Array[Dictionary], item: String, amount: int) -> int:
+static func _add_to(target: Array, item: String, amount: int) -> int:
 	var remaining := amount
 	var maximum: int = ITEMS[item].stack
 	# Fill existing stacks before consuming an empty slot.
@@ -63,42 +65,74 @@ func _add_to(target: Array[Dictionary], item: String, amount: int) -> int:
 			remaining -= added
 	return amount - remaining
 
+static func _take_from(planned: Array, item: String, amount: int) -> int:
+	var remaining := amount
+	for i in range(planned.size()):
+		if remaining == 0:
+			break
+		if planned[i].get("item", "") != item:
+			continue
+		var taken := mini(remaining, int(planned[i].amount))
+		planned[i].amount -= taken
+		remaining -= taken
+		if planned[i].amount == 0:
+			planned[i] = {}
+	return amount - remaining
+
 func can_afford(cost: Dictionary) -> bool:
+	return can_afford_across([self], cost)
+
+func can_craft(cost: Dictionary, output: String = "", amount: int = 1) -> bool:
+	return can_craft_across([self], cost, output, amount)
+
+func craft(cost: Dictionary, output: String = "", amount: int = 1) -> bool:
+	return craft_across([self], cost, output, amount)
+
+static func count_across(containers: Array, item: String) -> int:
+	var total := 0
+	for container in containers:
+		total += container.count(item)
+	return total
+
+static func can_afford_across(containers: Array, cost: Dictionary) -> bool:
 	for item in cost:
-		if count(item) < int(cost[item]):
+		if count_across(containers, item) < int(cost[item]):
 			return false
 	return true
 
-func can_craft(cost: Dictionary, output: String = "", amount: int = 1) -> bool:
-	return not _plan(cost, output, amount).is_empty()
+static func can_craft_across(containers: Array, cost: Dictionary, output: String = "", amount: int = 1) -> bool:
+	return not _plan_across(containers, cost, output, amount).is_empty()
 
-func craft(cost: Dictionary, output: String = "", amount: int = 1) -> bool:
-	var planned := _plan(cost, output, amount)
-	if planned.is_empty():
+static func craft_across(containers: Array, cost: Dictionary, output: String = "", amount: int = 1) -> bool:
+	## Spends the recipe across the given inventories in order and puts the output in the first one.
+	var plans := _plan_across(containers, cost, output, amount)
+	if plans.is_empty():
 		return false
-	slots.assign(planned)
-	changed.emit()
+	for i in range(containers.size()):
+		if containers[i].slots != plans[i]:
+			containers[i].slots.assign(plans[i])
+			containers[i].changed.emit()
 	return true
 
-func _plan(cost: Dictionary, output: String, amount: int) -> Array[Dictionary]:
-	if not can_afford(cost) or amount < 1 or (not output.is_empty() and not ITEMS.has(output)):
+static func _plan_across(containers: Array, cost: Dictionary, output: String, amount: int) -> Array:
+	if containers.is_empty() or not can_afford_across(containers, cost) or amount < 1 or (not output.is_empty() and not ITEMS.has(output)):
 		return []
-	var planned: Array[Dictionary] = slots.duplicate(true)
+	var plans := []
+	for container in containers:
+		plans.append(container.slots.duplicate(true))
 	for item in cost:
 		if not ITEMS.has(item) or int(cost[item]) < 0:
 			return []
 		var remaining: int = cost[item]
-		for i in range(planned.size()):
-			if planned[i].get("item", "") != item:
-				continue
-			var taken := mini(remaining, int(planned[i].amount))
-			planned[i].amount -= taken
-			remaining -= taken
-			if planned[i].amount == 0:
-				planned[i] = {}
-	if not output.is_empty() and _add_to(planned, output, amount) != amount:
+		for planned in plans:
+			remaining -= _take_from(planned, item, remaining)
+			if remaining == 0:
+				break
+		if remaining > 0:
+			return []
+	if not output.is_empty() and _add_to(plans[0], output, amount) != amount:
 		return []
-	return planned
+	return plans
 
 func take_slot(index: int) -> Dictionary:
 	if index < 0 or index >= slots.size() or slots[index].is_empty():
