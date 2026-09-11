@@ -28,4 +28,5 @@ window/size/min_height=680
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+anti_aliasing/quality/msaa_3d=1
 environment/defaults/default_clear_color=Color(0.53, 0.72, 0.87, 1)

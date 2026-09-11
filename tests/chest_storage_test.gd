@@ -66,6 +66,7 @@ func run() -> void:
 	await scene_changed
 	await ticks(6)
 	var player := current_scene.get_node("Player")
+	player.set_third_person(false)
 	player._capture_controls(true)
 	await ticks(8)
 	check(current_scene.has_method("save_game"), "The clearing lost its world script")

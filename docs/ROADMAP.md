@@ -25,10 +25,12 @@ If it fails two of the three, cut or defer it.
 Goal: make simply moving through the prototype world feel competent.
 
 - [ ] Tune player speed and camera feel
-- [ ] Replace placeholder cylinders/boxes with simple stylized test assets
-- [ ] Add terrain variation
+- [x] First coordinated stylized asset pass: Willow Scout, trees, rocks, bench, chest, and shared materials
+- [x] Third-person camera with wall collision, first-person toggle, walking/jumping/tool/bow poses
+- [ ] Refine the character sculpt, animation contacts, and foliage from play feedback
+- [x] Add terrain variation
 - [ ] Add basic footsteps/ambient audio
-- [ ] Establish initial forest lighting/fog/sky direction
+- [x] Establish initial forest lighting/fog/sky direction
 
 ## Phase 2 — One resource loop
 
@@ -82,7 +84,6 @@ Goal: walk out, collect one thing, bring it home.
 
 Do not build these until the core loop is proven:
 
-- Third-person camera mode
 - Rideable sled physics
 - Pack animals
 - NPC settlement growth

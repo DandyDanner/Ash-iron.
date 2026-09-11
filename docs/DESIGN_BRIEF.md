@@ -137,3 +137,8 @@ After credits, the player can continue in the homestead.
 ## Camera
 
 First-person is the prototype priority. Architect the character so third-person can be added later, but do not double the initial animation/camera workload before the core loop is proven.
+
+
+## Approved presentation update — September 10, 2026
+
+The original first-person foundation now also supports a third-person starting view, as requested by Dallon. V keeps first-person play available. Willow Scout (approved character concept 1) sets the character and forest art direction. This changes presentation, not backgrounds, starting resources, crafting progression, or the core expedition and homestead design.

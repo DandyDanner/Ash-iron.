@@ -45,8 +45,8 @@ func _ready() -> void:
 	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(title)
 	label(title, "ASH & IRON   /   A NEW BEGINNING", 13, GOLD)
-	label(title, "Every trail starts with someone.", 30)
-	var subtitle := label(header, "Make a traveler. Find a home.", 16, MUTED)
+	label(title, "Your story starts in the wild.", 30)
+	var subtitle := label(header, "Willow Scout • Make this traveler yours.", 16, MUTED)
 	subtitle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var columns := HBoxContainer.new()
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -93,8 +93,8 @@ func _ready() -> void:
 	zoom.text = "Face / outfit"
 	zoom.toggle_mode = true
 	zoom.toggled.connect(func(close: bool):
-		camera.position = Vector3(0, 1.95, 3.3) if close else Vector3(0, 1.65, 5.5)
-		camera.size = 1.15 if close else 2.95
+		camera.position = Vector3(0, 1.92, 3.3) if close else Vector3(0, 1.55, 5.5)
+		camera.size = 0.85 if close else 2.65
 		camera.look_at(Vector3(0, 1.85, 0) if close else Vector3(0, 1.1, 0)))
 	turn.add_child(zoom)
 	var right := VBoxContainer.new()
@@ -291,10 +291,10 @@ func _build_stage(parent: Control) -> void:
 	var environment := WorldEnvironment.new()
 	var settings := Environment.new()
 	settings.background_mode = Environment.BG_COLOR
-	settings.background_color = Color("273b33")
+	settings.background_color = Color("b6c0a5")
 	settings.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	settings.ambient_light_color = Color("ced9c3")
-	settings.ambient_light_energy = 0.5
+	settings.ambient_light_energy = 0.65
 	environment.environment = settings
 	world.add_child(environment)
 	var sun := DirectionalLight3D.new()
@@ -310,11 +310,11 @@ func _build_stage(parent: Control) -> void:
 	world.add_child(rim)
 	Traveler.cylinder(world, Vector3(0, -0.13, 0), 1.35, 0.22, Color("52664d"), 1.25)
 	Traveler.cylinder(world, Vector3(0, -0.3, 0), 1.36, 0.18, Color("3b4636"))
-	for i in range(7):
-		var x := -3.0 + i * 0.95
-		var z := -1.4 - (i % 3) * 0.5
-		Traveler.cylinder(world, Vector3(x, 1.2, z), 0.12, 3.1, Color("394638"), 0.065)
-		Traveler.cylinder(world, Vector3(x, 2.3, z), 0.95, 2.2, Color("344c3c"), 0.02)
+	for i in range(5):
+		var pine := Node3D.new()
+		pine.position = Vector3(-3.0 + i * 1.5, -0.2, -3.0 - i % 2)
+		world.add_child(pine)
+		preload("res://scripts/forest_art.gd").pine(pine, i)
 	for i in range(8):
 		var angle := i * 0.8
 		Traveler.oval(world, Vector3(sin(angle) * 1.0, 0.03, cos(angle) * 0.9), Vector3(0.16, 0.13, 0.24), Color("89917b"))
@@ -323,7 +323,7 @@ func _build_stage(parent: Control) -> void:
 	world.add_child(traveler)
 	camera = Camera3D.new()
 	camera.projection = Camera3D.PROJECTION_ORTHOGONAL
-	camera.size = 2.95
+	camera.size = 2.65
 	camera.position = Vector3(0, 1.65, 5.5)
 	world.add_child(camera)
 	camera.look_at(Vector3(0, 1.1, 0))

@@ -72,7 +72,7 @@ func _style(fill: Color, border: Color) -> StyleBoxFlat:
 	style.bg_color = fill
 	style.border_color = border
 	style.set_border_width_all(1)
-	style.set_corner_radius_all(5)
+	style.set_corner_radius_all(8)
 	style.content_margin_left = 12
 	style.content_margin_right = 12
 	style.content_margin_top = 8

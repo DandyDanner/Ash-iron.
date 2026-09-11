@@ -8,7 +8,7 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 
 ## Design pillars
 
-- First-person exploration and combat
+- Exploration and combat with a third-person starting view and an optional first-person view
 - Medium survival pressure without constant meter babysitting
 - Safer homestead, increasing danger and richer resources toward the mountains
 - Raw ore must be hauled home and smelted into usable metal
@@ -30,7 +30,9 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `W A S D` — move
 - `Shift` — sprint
 - `Space` — jump
-- Mouse — look
+- Mouse — look / orbit the traveler while standing still
+- `V` — switch third person / first person; the choice is saved
+- `F11` — toggle full screen in a standalone game window (some Mac keyboards need Fn)
 - Left click — swing your equipped axe or pickaxe; with a bow, hold to draw and release to fire (while the mouse is captured)
 - Right click — cancel a bow draw without spending an arrow
 - `E` — gather sticks, loose stones, or wood; use the camp worksite or bench; open a storage chest
@@ -47,9 +49,15 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 1. Install the current stable Godot 4 release for Apple Silicon.
 2. Open `project.godot` in Godot.
 3. Press **F5** or the **Run Project** button in the top-right. On some Mac keyboards use **Fn + F5**.
-4. Create your traveler, then enter the tiny placeholder 3D test area.
+4. Create your traveler, or choose **Continue your journey**, then enter the stylized forest clearing. On Mac, **Command + B** also runs the project.
 
 Your name and appearance are saved locally between launches. They are separate from the clearing save. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
+
+## Coordinated visual pass
+
+The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. Saved skin, hair, build, clothing color, and keepsake choices still apply. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler.
+
+The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The bench has a planked top and braces; chests have planks, rivets, and an opening lid; boulders have lichen. The HUD is shorter, with camera and full-screen hints beside the hotbar. These are original procedural prototype assets, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
 
 ## Start with empty hands
 
@@ -88,12 +96,13 @@ Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby 
 
 **Your progress is kept.** Your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree and boulder damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
 
-Save format 3 accepts existing format 1 and 2 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
+Save format 4 accepts existing format 1, 2, and 3 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. The added grove pines begin uncut and subsequently save like the original trees. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
 ## Verification
 
 Use your Godot executable in these commands:
 
+- `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation, terrain collision, saved camera choice, and format 3 migration.
 - `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
 - `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
 - `Godot --headless --path . --script res://tests/pickup_assist_test.gd` — generous pickup targeting, reach limits, priority, and blocked sight lines.
@@ -105,6 +114,8 @@ Use your Godot executable in these commands:
 - `Godot --headless --path . --script res://tests/save_load_test.gd` — malformed saves, a full snapshot round trip (pose, backpack, axe, bench, trees, pickups, dropped stacks, chests), no duplicated wood, checkpoints on closing panels, C keeping progress, Continue, and Start over.
 
 The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. The hotbar test accepts the same screenshot option. Every test uses isolated profile and save paths in the OS temporary folder through `tests/test_paths.gd`, so none touch your character or clearing. On restricted hosts, add `--log-file /absolute/writable/path.log`.
+
+For an isolated visual playground, open `scenes/visual_preview.tscn` and **Run Current Scene** (Command + R on Mac). It supplies temporary tools and a bench/chest, uses temporary saves, and never edits your real traveler or clearing. O toggles a front portrait; P captures the viewport into the temporary test folder and prints the path and current frame rate. Use **Run Project** afterward to return to the real game.
 
 ## First milestone
 

@@ -15,7 +15,12 @@ func _ready() -> void:
 	mesh.height = 1.0
 	mesh.radial_segments = 7
 	mesh.rings = 3
-	Model.part(art, mesh, Vector3.ZERO, Color("798375"), dimensions)
+	Model.part(art, mesh, Vector3.ZERO, Color("929b89"), dimensions)
+	# Lichen patches sit on the upper facets; all decoration follows depletion.
+	for i in range(5):
+		var angle := i * 2.4
+		var patch := Model.oval(art, Vector3(sin(angle) * dimensions.x * 0.16, dimensions.y * (0.41 - (i % 2) * 0.035), cos(angle) * dimensions.z * 0.13), Vector3(dimensions.x * 0.22, dimensions.y * 0.065, dimensions.z * 0.19), Color("788b50").lightened((i % 3) * 0.04))
+		patch.rotation.z = -sin(angle) * 0.30
 	var vertices: PackedVector3Array = mesh.get_mesh_arrays()[Mesh.ARRAY_VERTEX]
 	for i in range(vertices.size()):
 		vertices[i] *= dimensions

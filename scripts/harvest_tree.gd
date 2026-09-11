@@ -11,9 +11,7 @@ func _ready() -> void:
 	add_to_group("harvest_trees")
 	crown = Node3D.new()
 	add_child(crown)
-	Model.cylinder(crown, Vector3(0, 2.0, 0), 0.38, 4.0, Color("69503a"), 0.22)
-	for i in range(3):
-		Model.cylinder(crown, Vector3(0, 3.3 + i * 0.8, 0), 1.65 - i * 0.35, 2.0, Color("456b45").lightened(i * 0.065), 0.05)
+	preload("res://scripts/forest_art.gd").pine(crown, absi(hash(str(name))) % 7)
 	trunk_collision = CollisionShape3D.new()
 	var shape := CylinderShape3D.new()
 	shape.radius = 0.38

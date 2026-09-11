@@ -75,6 +75,7 @@ func run() -> void:
 	await scene_changed
 	await ticks(6)
 	var player := current_scene.get_node("Player")
+	player.set_third_person(false)
 	player._capture_controls(true)
 	await ticks(8)
 	check(player.inventory.used_slots() == 0 and not player.axe_equipped and not player.axe.get_node("Tool").visible, "Player did not start with empty hands")

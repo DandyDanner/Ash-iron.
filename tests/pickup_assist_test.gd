@@ -29,6 +29,7 @@ func run() -> void:
 	await ticks()
 	var player := current_scene.get_node("Player")
 	player.global_position = Vector3(12, 1.1, 12)
+	player.set_third_person(false)
 	player._capture_controls(true)
 	player.camera.rotation = Vector3.ZERO
 	var item := Pickup.new()

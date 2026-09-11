@@ -91,7 +91,8 @@ func to_data() -> Dictionary:
 			"x": player.global_position.x, "y": player.global_position.y, "z": player.global_position.z,
 			"yaw": player.rotation.y, "pitch": player.camera.rotation.x,
 			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped,
-			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate()
+			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate(),
+			"third_person": player.view_rig.third_person
 		},
 		"workbench": {"built": workbench.built if workbench else false},
 		"trees": trees, "pickups": pickups, "bundles": bundles, "chests": chests
@@ -158,6 +159,8 @@ func _apply(data: Dictionary) -> void:
 		player.rotation.y = _num(saved.get("yaw"), 0.0)
 		player.camera.rotation.x = clampf(_num(saved.get("pitch"), 0.0), deg_to_rad(-85.0), deg_to_rad(85.0))
 		player.velocity = Vector3.ZERO
+		player.set_third_person(saved.get("third_person", true) != false)
+		player.view_rig.facing = player.rotation.y + PI
 	for entry in _list(data.get("arrows")):
 		var saved_arrow := _dict(entry)
 		var arrow := Arrow.new()

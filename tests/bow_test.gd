@@ -31,6 +31,7 @@ func enter() -> Node3D:
 	await scene_changed
 	await ticks(5)
 	var player: Node3D = current_scene.get_node("Player")
+	player.set_third_person(false)
 	player._capture_controls(true)
 	return player
 

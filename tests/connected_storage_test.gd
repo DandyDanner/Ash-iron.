@@ -51,6 +51,7 @@ func run() -> void:
 	await scene_changed
 	await ticks(6)
 	var player: Node3D = current_scene.get_node("Player")
+	player.set_third_person(false)
 	player._capture_controls(true)
 	await ticks(6)
 	var bench: Node3D = player.workbench

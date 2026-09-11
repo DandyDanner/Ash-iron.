@@ -8,6 +8,7 @@ const InventoryPanel = preload("res://scripts/inventory_panel.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const StoragePanel = preload("res://scripts/storage_panel.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const ViewRig = preload("res://scripts/view_rig.gd")
 const Bow = preload("res://scripts/starter_bow.gd")
 const Arrow = preload("res://scripts/arrow_projectile.gd")
 const Hotbar = preload("res://scripts/hotbar.gd")
@@ -29,6 +30,7 @@ var resource_label: Label
 var prompt_label: Label
 var axe: Node3D
 var bow: Node3D
+var view_rig: Node3D
 var controls_active := true
 var inventory := Inventory.new()
 var inventory_panel: Control
@@ -59,8 +61,8 @@ func _ready() -> void:
 	var hud := CanvasLayer.new()
 	add_child(hud)
 	identity_label = _label(hud, Vector2(24, 20), 17)
-	identity_label.text = "%s · %s\nKeepsake: %s\n\nWASD Move · Shift Sprint · Space Jump\nE Gather / bench / chest · I Backpack / craft\n1–9, 0 Equip · Left click Use · Esc Backpack / save" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
-	resource_label = _label(hud, Vector2(24, 175), 22)
+	identity_label.text = "%s  ·  %s\nKeepsake: %s" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
+	resource_label = _label(hud, Vector2(24, 79), 18)
 	resource_label.add_theme_color_override("font_color", Color("f4d79a"))
 	prompt_label = _label(hud, Vector2.ZERO, 21)
 	prompt_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
@@ -79,6 +81,8 @@ func _ready() -> void:
 	axe.set_equipped(false)
 	bow = Bow.new()
 	camera.add_child(bow)
+	view_rig = ViewRig.new()
+	add_child(view_rig)
 	workbench = get_tree().get_first_node_in_group("workbenches")
 	hotbar_view = Hotbar.new()
 	hud.add_child(hotbar_view)
@@ -114,9 +118,16 @@ func _label(parent: Node, pos: Vector2, font_size: int) -> Label:
 	return label
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.physical_keycode == KEY_F11:
+		var fullscreen := DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED if fullscreen else DisplayServer.WINDOW_MODE_FULLSCREEN)
+		return
 	if inventory_panel.visible or storage_panel.visible:
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.physical_keycode == KEY_V:
+			set_third_person(not view_rig.third_person)
+			return
 		if event.physical_keycode == KEY_I:
 			open_inventory()
 			return
@@ -249,7 +260,7 @@ func _physics_process(delta: float) -> void:
 
 func _aim_target() -> Dictionary:
 	var origin := camera.global_position
-	var query := PhysicsRayQueryParameters3D.create(origin, origin - camera.global_basis.z * REACH, 3, [get_rid()])
+	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(3) * REACH, 3, [get_rid()])
 	query.collide_with_areas = true
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
@@ -653,9 +664,14 @@ func fire_bow() -> void:
 		return
 	var projectile := Arrow.new()
 	projectile.shooter_rid = get_rid()
-	projectile.velocity = -camera.global_basis.z * lerpf(12.0, 32.0, power)
+	projectile.velocity = view_rig.shot_direction() * lerpf(12.0, 32.0, power)
 	get_parent().add_child(projectile)
 	# Starting at the camera makes even a wall right in front of the player block the shot.
 	projectile.global_position = camera.global_position
 	axe.whoosh.play()
+	_progress_changed()
+
+func set_third_person(enabled: bool) -> void:
+	_cancel_actions()
+	view_rig.set_mode(enabled)
 	_progress_changed()
