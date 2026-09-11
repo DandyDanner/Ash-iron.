@@ -81,6 +81,7 @@ Current order: spear and Bristleback Boar → ore/furnace → one strange creatu
 - [ ] Stamina
 - [x] Craftable bow and arrows, draw/release, ballistics, recovery, practice target, and saved flight state
 - [x] Spear and bow damage against the first animal/enemy
+- [x] Axe as a backup melee weapon: 10 damage versus spear 20, existing chopping retained; durability/breakage deferred
 - [x] Basic hit recoil and health feedback
 - [ ] Death + recoverable carried loot
 - [ ] Basic day/night pressure

@@ -248,14 +248,14 @@ func _physics_process(delta: float) -> void:
 		_cancel_actions()
 		_show_feedback("Back in the clearing")
 	if axe.advance(delta):
-		var hit := _spear_target() if equipped_item == "stone_spear" else _aim_target()
-		if equipped_item == "stone_spear":
-			if not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
-				var message: String = hit.collider.receive_melee_hit(Axe.SPEAR_DAMAGE, hit.position)
-				axe.impact.play()
-				_show_feedback(message)
-			elif not hit.is_empty():
-				_show_feedback("Spear blocked • Practice on the target at the far right of camp.")
+		var hit := _spear_target() if equipped_item == "stone_spear" else (_melee_target(REACH) if axe_equipped else _aim_target())
+		if equipped_item in ["stone_spear", "stone_axe"] and not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
+			var damage := Axe.SPEAR_DAMAGE if equipped_item == "stone_spear" else Axe.AXE_DAMAGE
+			var message: String = hit.collider.receive_melee_hit(damage, hit.position)
+			axe.impact.play()
+			_show_feedback(message)
+		elif equipped_item == "stone_spear" and not hit.is_empty():
+			_show_feedback("Spear blocked • Practice on the target at the far right of camp.")
 		elif axe_equipped and not hit.is_empty() and hit.collider.has_method("chop"):
 			if hit.collider.chop(hit.position):
 				axe.impact.play()
@@ -298,9 +298,12 @@ func _aim_target() -> Dictionary:
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
 func _spear_target() -> Dictionary:
+	return _melee_target(Axe.SPEAR_REACH)
+
+func _melee_target(reach: float) -> Dictionary:
 	# Resolve the first solid contact from the traveler, never from the chase camera.
 	var origin := camera.global_position
-	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(1) * Axe.SPEAR_REACH, 1, [get_rid()])
+	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(1) * reach, 1, [get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
 func receive_damage(amount: int) -> bool:

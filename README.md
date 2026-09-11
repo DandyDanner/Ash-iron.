@@ -102,7 +102,7 @@ The spear, bow, and tools automatically take the first unused hotbar shortcut wh
 
 The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
-Select a backpack slot to inspect an item, equip or put away a tool, or **Drop selected stack**. Dropped items can be recovered. Equipped tools still occupy their backpack slots. Axes chop pines; pickaxes mine boulders and iron veins. Depleted boulders and worked-out veins stay that way after loading.
+Select a backpack slot to inspect an item, equip or put away a tool, or **Drop selected stack**. Dropped items can be recovered. Equipped tools still occupy their backpack slots. Axes chop pines and can also hit enemies for **10 damage**, half the spear’s **20**. Equip the axe from your hotbar and left-click to swing; each swing hits once at contact, within 2.6 meters, and solid obstacles block it. It works as a backup against both Bristleback and Bellmaw. Durability and weapon breakage are not implemented yet. Pickaxes mine boulders and iron veins. Depleted boulders and worked-out veins stay that way after loading.
 
 An **archery target** stands at the far right of the clearing, beyond the rocks. With a bow equipped and arrows in the backpack, hold left click for up to 0.85 seconds, then release. The HUD shows draw strength and arrow count. A quick tap does not shoot; right click, changing equipment, opening a panel, or losing window focus cancels the draw without spending ammunition. The target reports bullseye, inner ring, or target hit. Its practice hit counter resets on entering the clearing.
 
@@ -160,6 +160,7 @@ Use your Godot executable in these commands (fifteen suites):
 - `Godot --headless --path . --script res://tests/iron_furnace_test.gd` — iron veins that need a pickaxe and free four ore, the boulder ore chance, the furnace recipe and placement, opening with E, loading ore and wood, timed smelting with carried progress and stopping, taking ingots, persistence of furnaces and veins, format 6 saves, and packing up.
 - `Godot --headless --path . --script res://tests/save_load_test.gd` — malformed saves, a full snapshot round trip (pose, backpack, axe, bench, trees, pickups, dropped stacks, chests), no duplicated wood, checkpoints on closing panels, C keeping progress, Continue, and Start over.
 
+- `Godot --headless --path . --script res://tests/axe_combat_test.gd` — axe hits both enemies in both views, 10 versus 20 spear damage, contact timing, reach/solid cover, cancellation, no pickaxe combat damage, and normal kill rewards.
 - `Godot --headless --path . --script res://tests/echo_hollow_test.gd` — route ground, warning, radius, cover, pause, recovery/leash, real spear/arrow hits, one hide and persistence.
 - `Godot --headless --path . --script res://tests/explorer_pack_test.gd` — workbench/linked costs, full-pack fitting, capacity, scrollable final slot, drop/transfer, hotbar, save and version 7 migration.
 

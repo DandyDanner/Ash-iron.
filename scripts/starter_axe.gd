@@ -5,6 +5,7 @@ const CONTACT_TIME := 0.22
 const SWING_DURATION := 0.6
 const SPEAR_REACH := 2.8
 const SPEAR_DAMAGE := 20
+const AXE_DAMAGE := 10
 var elapsed := -1.0
 var contact_sent := false
 var selected_item := ""
