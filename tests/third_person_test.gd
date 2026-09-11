@@ -110,8 +110,14 @@ func run() -> void:
 	# Tools stay outside the forearm while their gripping hand follows the animation.
 	check(rig.avatar.closed_right_fingers.visible and not rig.avatar.open_right_fingers.visible, "Equipped axe did not close the gripping fingers")
 	for held_item in rig.held:
-		for pose in [-1.0, 0.0, 0.08, 0.22, 0.30, 0.59]:
+		var head_x := 0.0
+		for frame in range(61):
+			var pose := float(frame) / 100
 			rig.avatar.animate_movement(0.1, 5, true, 0, held_item, pose, 0)
+			var head_point: Vector3 = rig.avatar.to_local(rig.held[held_item].to_global(Vector3(0, 0.46, 0)))
+			if frame == 0: head_x = head_point.x
+			if held_item != "torch":
+				check(absf(head_point.x - head_x) < 0.001, "%s sweeps sideways in third person" % held_item)
 			check(tool_clears_forearm(rig.held[held_item], rig.avatar.forearms[1]), "%s intersects the forearm during pose %.2f" % [held_item, pose])
 	player.equip_item("")
 	rig._sync_equipment()

@@ -43,6 +43,27 @@ func capture(filename: String) -> void:
 		await RenderingServer.frame_post_draw
 		check(root.get_texture().get_image().save_png(screenshot_dir.path_join(filename)) == OK, "Screenshot failed")
 
+func check_swing_path(player: Node3D) -> void:
+	for tool_name in ["Tool", "Pickaxe"]:
+		var tool: Node3D = player.axe.get_node(tool_name)
+		var head := Vector3(0, 0.46 if tool_name == "Tool" else 0.42, 0)
+		var raised := Vector3.ZERO
+		var impact := Vector3.ZERO
+		var start_x := 0.0
+		for frame in range(61):
+			var time := float(frame) / 100
+			player.axe.pose_swing(time)
+			var point: Vector3 = player.camera.to_local(tool.to_global(head))
+			if frame == 0: start_x = point.x
+			check(absf(point.x - start_x) < 0.001, "%s sweeps sideways in first person" % tool_name)
+			if frame == 8: raised = point
+			if frame == 22:
+				impact = point
+				var edge: Vector3 = player.camera.global_basis.inverse() * -tool.global_basis.x.normalized()
+				check(edge.dot(Vector3.FORWARD) > 0.8, "%s cutting edge does not face forward at impact" % tool_name)
+		check(impact.z < raised.z - 0.5 and impact.y < raised.y, "%s does not strike forward and down from its backswing" % tool_name)
+	player.axe.cancel_swing()
+
 func run() -> void:
 	change_scene_to_file("res://scenes/main.tscn")
 	await scene_changed
@@ -55,6 +76,7 @@ func run() -> void:
 	# This regression verifies axe mechanics after crafting; the starting-loop test covers earning it.
 	player.inventory.add("stone_axe", 1)
 	player.equip_axe(true)
+	check_swing_path(player)
 	check(player.is_on_floor(), "Player did not settle on the ground")
 	await capture("jump-and-axe.png")
 	var start_height: float = player.position.y

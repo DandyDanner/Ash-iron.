@@ -18,6 +18,7 @@ func setup(cloth: Color, skin: Color) -> void:
 	hand.name = "RightHand"
 	var tool := Node3D.new()
 	tool.name = "Tool"
+	tool.rotation.y = -PI / 2 # Cutting edge faces camera-forward (-Z).
 	tool.scale = Vector3.ONE * 0.85
 	add_child(tool)
 	Model.cylinder(tool, Vector3(0, 0.18, 0), 0.025, 0.66, Color("86603c"), 0.02)
@@ -38,6 +39,7 @@ func setup(cloth: Color, skin: Color) -> void:
 		Model.box(tool, Vector3(0, 0.415 + i * 0.035, 0.06), Vector3(0.135, 0.021, 0.035), Color("c2ac7c"))
 	var pick := Node3D.new()
 	pick.name = "Pickaxe"
+	pick.rotation.y = -PI / 2
 	add_child(pick)
 	Model.cylinder(pick, Vector3(0, 0.18, 0), 0.025, 0.65, Color("916b44"), 0.02)
 	var head := Model.oval(pick, Vector3(0, 0.42, 0), Vector3(0.48, 0.10, 0.10), Color("8a9c99"))
@@ -66,7 +68,7 @@ func setup(cloth: Color, skin: Color) -> void:
 	torch.hide()
 	for mesh in find_children("*", "MeshInstance3D", true, false):
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	rotation_degrees = Vector3(0, -12, -12)
+	rotation = Vector3.ZERO
 	whoosh = _sound(false)
 	impact = _sound(true)
 
@@ -114,22 +116,45 @@ func start_swing() -> bool:
 func cancel_swing() -> void:
 	elapsed = -1.0
 	position = rest_position
-	rotation_degrees = Vector3(0, -12, -12)
+	rotation = Vector3.ZERO
 
 func advance(delta: float) -> bool:
 	if elapsed < 0.0:
 		return false
 	elapsed += delta
-	var angle: float
-	if elapsed < CONTACT_TIME:
-		angle = lerpf(-12.0, 72.0, pow(elapsed / CONTACT_TIME, 2.0))
-	else:
-		angle = lerpf(72.0, -12.0, smoothstep(CONTACT_TIME, SWING_DURATION, elapsed))
-	rotation_degrees = Vector3(-sin(elapsed / SWING_DURATION * PI) * 24.0, -12, angle)
-	position = rest_position + Vector3(-sin(elapsed / SWING_DURATION * PI) * 0.18, 0, -0.03)
+	pose_swing(elapsed)
 	var contact := elapsed >= CONTACT_TIME and not contact_sent
 	if contact:
 		contact_sent = true
 	if elapsed >= SWING_DURATION:
 		cancel_swing()
 	return contact
+
+func pose_swing(time: float) -> void:
+	# Pitch only: keep the head in a vertical plane beside the crosshair.
+	var pitch: float
+	var hand_offset: Vector3
+	var raised := Vector3(0, 0.14, 0.12)
+	var contact := Vector3(0, -0.02, -0.16)
+	var follow_through := Vector3(0, -0.10, -0.20)
+	if time < 0:
+		pitch = 0
+		hand_offset = Vector3.ZERO
+	elif time < 0.08:
+		var t := smoothstep(0, 0.08, time)
+		pitch = lerpf(0, 0.9, t)
+		hand_offset = Vector3.ZERO.lerp(raised, t)
+	elif time < CONTACT_TIME:
+		var t := smoothstep(0.08, CONTACT_TIME, time)
+		pitch = lerpf(0.9, -0.55, t)
+		hand_offset = raised.lerp(contact, t)
+	elif time < 0.32:
+		var t := smoothstep(CONTACT_TIME, 0.32, time)
+		pitch = lerpf(-0.55, -1.0, t)
+		hand_offset = contact.lerp(follow_through, t)
+	else:
+		var t := smoothstep(0.32, SWING_DURATION, time)
+		pitch = lerpf(-1.0, 0, t)
+		hand_offset = follow_through.lerp(Vector3.ZERO, t)
+	rotation = Vector3(pitch, 0, 0)
+	position = rest_position + hand_offset

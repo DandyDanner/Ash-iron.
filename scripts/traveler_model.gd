@@ -310,7 +310,7 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		arms[1].rotation.z = -0.25 * draw + 0.10
 		forearms[1].rotation.x = -1.3 * draw
 	else:
-		arms[1].rotation.z = 0.20 if item in ["stone_axe", "stone_pickaxe", "torch"] else 0.10
+		arms[1].rotation.z = 0.0 if item in ["stone_axe", "stone_pickaxe"] else (0.20 if item == "torch" else 0.10)
 	body.position.y = absf(sin(gait)) * 0.025 * motion if grounded else 0.02
 	torso.rotation.x = motion * 0.035
 	cape.rotation.x = sin(elapsed * 2.1) * 0.025 + motion * 0.08 + clampf(-vertical_speed * 0.025, -0.12, 0.16)
