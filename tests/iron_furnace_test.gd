@@ -166,11 +166,11 @@ func run() -> void:
 	check(furnace.fuel == 3 and player.inventory.count("wood") == 0 and furnace.is_burning() and furnace.glow.visible, "Fuel loading or ignition is wrong")
 	await capture("furnace-panel.png")
 	furnace.progress = 0.0 # With rendering on, real frame time already advanced the furnace during the capture.
-	furnace.advance(6.0)
+	furnace.advance(12.0)
 	check(furnace.ingots == 1 and furnace.ore == 4 and furnace.fuel == 2 and furnace.progress < 0.05, "The first ingot was not produced correctly")
-	furnace.advance(9.0)
+	furnace.advance(18.0)
 	check(furnace.ingots == 2 and furnace.ore == 2 and furnace.fuel == 1 and absf(furnace.progress - 0.5) < 0.05, "Smelting did not carry partial progress into the next ingot")
-	furnace.advance(3.0)
+	furnace.advance(6.0)
 	check(furnace.ingots == 3 and furnace.ore == 0 and furnace.fuel == 0 and not furnace.is_burning(), "The furnace did not stop when it ran out")
 	furnace.advance(10.0)
 	check(furnace.ingots == 3, "A cold furnace kept producing")
@@ -183,7 +183,7 @@ func run() -> void:
 	player.inventory.add("wood", 2)
 	panel.ore_button.pressed.emit()
 	panel.fuel_button.pressed.emit()
-	furnace.advance(2.0)
+	furnace.advance(4.0)
 	check(furnace.is_burning() and absf(furnace.progress - 1.0 / 3.0) < 0.01, "Mid-smelt state not set up")
 	var furnace_spot: Vector3 = furnace.global_position
 	player.close_furnace()

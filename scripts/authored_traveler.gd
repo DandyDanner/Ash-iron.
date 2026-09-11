@@ -65,6 +65,8 @@ func build(owner_model: Node3D, design: int) -> void:
 		# Godot's importer retains COLOR_0 but does not always enable it on the material.
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material: StandardMaterial3D = mesh.get_active_material(surface)
+			if material.resource_name in ["Game Skin", "Game Fabric"]:
+				material = preload("res://scripts/surface_detail.gd").refine(material, "skin" if material.resource_name == "Game Skin" else "fabric")
 			material.vertex_color_use_as_albedo = true
 			material.vertex_color_is_srgb = false
 			mesh.set_surface_override_material(surface, material)

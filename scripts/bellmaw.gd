@@ -3,11 +3,13 @@ extends CharacterBody3D
 const Art = preload("res://scripts/bellmaw_model.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const HOME := Vector3(42, 1.03, -20)
-const MAX_HEALTH := 80
+const MAX_HEALTH := 160
+const BOOM_DAMAGE := 34
 const BOOM_RADIUS := 4.5
-const WARNING_TIME := 1.45
-const RECOVERY_TIME := 2.2
+const WARNING_TIME := 1.2
+const RECOVERY_TIME := 1.25
 const LEASH_RADIUS := 12.0
+var respawn := preload("res://scripts/enemy_respawn.gd").new()
 var health := MAX_HEALTH
 var state := "idle"
 var state_time := 0.0
@@ -51,7 +53,10 @@ func _ready() -> void:
 	_refresh()
 
 func _physics_process(delta: float) -> void:
-	if health <= 0 or not is_instance_valid(player) or not player.controls_active:
+	if health <= 0:
+		respawn.advance(self, player, delta)
+		return
+	if not is_instance_valid(player) or not player.controls_active:
 		return
 	state_time += delta
 	hit_flash = maxf(0, hit_flash - delta)
@@ -67,7 +72,7 @@ func _physics_process(delta: float) -> void:
 			if distance < 9 and _sees_player(): _set_state("approach")
 		"approach":
 			direction = offset.normalized()
-			speed = 2.0
+			speed = 3.3
 			if distance < 4.2 and _sees_player(): _set_state("warn")
 		"warn":
 			if state_time >= WARNING_TIME:
@@ -118,7 +123,7 @@ func _boom() -> void:
 	var offset: Vector3 = player.global_position - global_position
 	# Cover and height matter. No damage is applied through rocks, or beyond the warned radius.
 	if Vector2(offset.x, offset.z).length() <= BOOM_RADIUS and absf(offset.y) < 2.5 and _sees_player():
-		player.receive_damage(12)
+		player.receive_damage(BOOM_DAMAGE, "Bellmaw boom! • Back away or use rock cover.")
 
 func _set_state(next: String) -> void:
 	state = next
@@ -130,7 +135,7 @@ func _set_state(next: String) -> void:
 
 func _refresh() -> void:
 	label.visible = health > 0 and state in ["approach", "warn", "recover"]
-	var cue := "THROAT SWELLING — back away or take cover!" if state == "warn" else ("Recovering — strike now" if state == "recover" else "")
+	var cue := "THROAT SWELLING — back away or take cover!" if state == "warn" else ("SOFT THROAT — strike now!" if state == "recover" else "Thick hide • half damage until recovery")
 	label.text = "Bellmaw  %d / %d\n%s" % [health, MAX_HEALTH, cue]
 	label.modulate = Color("f9c26b") if state == "warn" else Color("f0e5c5")
 
@@ -142,9 +147,11 @@ func hit_by_arrow(_point: Vector3) -> String:
 
 func _take_hit(damage: int) -> String:
 	if health <= 0 or damage <= 0: return ""
-	health = maxi(0, health - damage)
+	var applied := damage if state == "recover" else maxi(1, int(damage * 0.5))
+	health = maxi(0, health - applied)
 	hit_flash = 0.25
 	if health == 0:
+		respawn.start()
 		_set_state("dead")
 		hide()
 		sound.stop()
@@ -162,10 +169,11 @@ func _take_hit(damage: int) -> String:
 
 func to_data() -> Dictionary:
 	# Resume in its clear home territory, with health/death preserved and a fresh warning.
-	return {"health": health}
+	return {"respawn_remaining": respawn.remaining, "health": health}
 
 func restore(data: Dictionary) -> void:
 	health = clampi(int(get_parent()._num(data.get("health"), MAX_HEALTH)), 0, MAX_HEALTH)
+	respawn.restore(data, health <= 0)
 	global_position = HOME
 	velocity = Vector3.ZERO
 	_set_state("idle" if health > 0 else "dead")

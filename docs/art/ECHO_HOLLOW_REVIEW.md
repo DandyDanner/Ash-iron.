@@ -1,5 +1,8 @@
 # Bellmaw: concept and playable prototype
 
+Historical first-encounter review. Balance, respawn and model refinements superseding this pass are recorded in [Survival refinement review](SURVIVAL_REFINEMENT_REVIEW.md).
+
+
 The [Bellmaw concept sheet](bellmaw-concept-v1.png) was generated with the built-in imagegen tool. Its [exact generation prompt](bellmaw-concept-prompt.txt) is preserved. It establishes a broad, four-legged body, leathery surface and amber throat, with a backpack as the proposed progression reward. It is labeled concept art, not gameplay.
 
 ![Bellmaw concept](bellmaw-concept-v1.png)

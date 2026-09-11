@@ -10,15 +10,17 @@ var elapsed := -1.0
 var contact_sent := false
 var selected_item := ""
 var rest_position := Vector3(0.36, -0.34, -0.7)
+var hand: Node3D
 var whoosh: AudioStreamPlayer
 var impact: AudioStreamPlayer
 
 func setup(cloth: Color, skin: Color) -> void:
 	name = "StarterAxe"
 	position = rest_position
-	Model.oval(self, Vector3(0.02, -0.13, 0.22), Vector3(0.15, 0.17, 0.43), cloth)
-	var hand := Model.oval(self, Vector3.ZERO, Vector3(0.12, 0.13, 0.16), skin)
+	hand = preload("res://scripts/first_person_hand.gd").new()
 	hand.name = "RightHand"
+	add_child(hand)
+	hand.build(skin, cloth)
 	var tool := Node3D.new()
 	tool.name = "Tool"
 	tool.rotation.y = -PI / 2 # Cutting edge faces camera-forward (-Z).
@@ -103,6 +105,7 @@ func set_equipped(equipped: bool) -> void:
 
 func set_item(item: String) -> void:
 	selected_item = item
+	hand.set_grip(not item.is_empty())
 	$Tool.visible = item == "stone_axe"
 	$Pickaxe.visible = item == "stone_pickaxe"
 	$Torch.visible = item == "torch"

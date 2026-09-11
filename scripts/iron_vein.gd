@@ -47,13 +47,12 @@ func mine(hit_position: Vector3) -> bool:
 	outward.y = 0
 	outward = outward.normalized() if outward.length_squared() > 0.001 else Vector3.FORWARD
 	var spot := global_position + outward * 1.35 + Vector3(cos(hits_left * 2.1), 0, sin(hits_left * 2.1)) * 0.3
-	var query := PhysicsRayQueryParameters3D.create(spot + Vector3.UP * 3, spot + Vector3.DOWN * 6, 1, [get_rid()])
-	var ground := get_world_3d().direct_space_state.intersect_ray(query)
 	var pickup := preload("res://scripts/resource_pickup.gd").new()
 	pickup.item_id = "iron_ore"
 	pickup.amount = 1
 	get_parent().add_child(pickup)
-	pickup.global_position = ground.position + Vector3(0, 0.04, 0) if not ground.is_empty() else Vector3(spot.x, 0.24, spot.z)
+	pickup.global_position = spot + Vector3.UP * 0.3
+	pickup.fall_speed = -1.2
 	pickup.rotation.y = hits_left * 1.3
 	restore(hits_left)
 	return true

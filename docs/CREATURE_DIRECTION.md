@@ -8,11 +8,15 @@ September 11, 2026. Direction from Dallon's discussion; implemented details are 
 
 The Bristleback remains the first animal. Bellmaw is the first strange creature: a broad, squat four-legged form with an expandable amber throat. A planted sonic attack, readable radius and rock cover distinguish its encounter from the boar's straight charge. Its warning is visible as well as audible. It needs no night cycle to test.
 
+The current balance is 160 HP, 3.3 m/s approach, a 1.2-second warning, a 34-damage boom inside 4.5 m and a 1.25-second recovery. Thick hide halves damage outside recovery. Spear hits deal 20 during recovery and 10 while guarded; axe hits remain a weaker fallback at 10/5. The HUD identifies the soft-throat window. This needs playtesting for fairness, not just a longer health bar.
+
+Both creatures return after 120 seconds of active play once their home is clear and the player is at least 8 m away. Menus and offline time do not count; remaining time is saved. Each defeat gives one hide.
+
 Echo Hollow is an optional destination beyond the archery target. A short onward route reaches the Old Lookout and a fourth iron vein. The guaranteed hide reward buys a meaningful capacity increase instead of random loot or tiny stat increments. The route is open to exploration; killing Bellmaw is not an invisible gate.
 
 The Explorer Pack increases eight slots to twelve for one Bellmaw hide, two wood and four sticks at a nearby workbench. It is fitted permanently, including with a full pack, and uses connected stock. Existing traveler models keep their backpack appearance. Armor and numerical character levels remain future decisions.
 
-See [concept art](art/bellmaw-concept-v1.png) and [actual implementation review](art/ECHO_HOLLOW_REVIEW.md). The model is a replaceable first gameplay sculpt, not an illustration-fidelity character asset.
+See [concept art](art/bellmaw-concept-v1.png) and [initial implementation review](art/ECHO_HOLLOW_REVIEW.md) and [latest actual refinement review](art/SURVIVAL_REFINEMENT_REVIEW.md). The model is a replaceable first gameplay sculpt, not an illustration-fidelity character asset.
 
 ## Keep these creature concepts
 

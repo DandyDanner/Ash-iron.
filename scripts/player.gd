@@ -35,6 +35,7 @@ var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var identity_label: Label
 var resource_label: Label
 var prompt_label: Label
+var first_left_hand: Node3D
 var axe: Node3D
 var bow: Node3D
 var view_rig: Node3D
@@ -83,9 +84,11 @@ func _ready() -> void:
 	prompt_label.offset_bottom = -110
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt_label.add_theme_color_override("font_color", Color("fff1cb"))
-	Traveler.oval(camera, Vector3(-0.28, -0.35, -0.43), Vector3(0.14, 0.16, 0.38), Profile.clothing_color(profile))
-	var left_hand := Traveler.oval(camera, Vector3(-0.27, -0.32, -0.62), Vector3(0.105, 0.115, 0.15), Profile.skin_color(profile))
-	left_hand.name = "LeftHand"
+	first_left_hand = preload("res://scripts/first_person_hand.gd").new()
+	first_left_hand.name = "LeftHand"
+	camera.add_child(first_left_hand)
+	first_left_hand.build(Profile.skin_color(profile), Profile.clothing_color(profile), true)
+	first_left_hand.position = Vector3(-0.32,-0.32,-0.65)
 	axe = Axe.new()
 	camera.add_child(axe)
 	axe.setup(Profile.clothing_color(profile), Profile.skin_color(profile))
@@ -216,6 +219,7 @@ func _physics_process(delta: float) -> void:
 			health = mini(100, health + 1)
 			_progress_changed()
 	bow.advance(delta)
+	update_first_person_hands()
 	grounded_grace = JUMP_GRACE if is_on_floor() else maxf(0.0, grounded_grace - delta)
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -306,7 +310,7 @@ func _melee_target(reach: float) -> Dictionary:
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(1) * reach, 1, [get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
-func receive_damage(amount: int) -> bool:
+func receive_damage(amount: int, message: String = "Boar hit! • Sidestep its charge, then counterattack.") -> bool:
 	if not controls_active or amount <= 0 or damage_grace > 0: return false
 	health = maxi(0, health - amount)
 	damage_grace = 1.0
@@ -320,7 +324,7 @@ func receive_damage(amount: int) -> bool:
 		_show_feedback("Back at camp • Your backpack is safe. Prepare and try again.")
 		feedback_time = 4.0
 	else:
-		_show_feedback("Boar hit! • Sidestep its charge, then counterattack.")
+		_show_feedback(message)
 	_progress_changed()
 	_update_hud()
 	return true
@@ -911,3 +915,17 @@ func set_third_person(enabled: bool) -> void:
 	_cancel_actions()
 	view_rig.set_mode(enabled)
 	_progress_changed()
+
+func update_first_person_hands() -> void:
+	first_left_hand.position = Vector3(-0.32,-0.32,-0.65)
+	first_left_hand.set_grip(equipped_item == "bow")
+	axe.hand.set_draw_pose(equipped_item == "bow" and bow.drawing)
+	axe.hand.position = Vector3.ZERO
+	axe.hand.rotation = Vector3.ZERO
+	if equipped_item == "bow":
+		first_left_hand.global_position = bow.global_position
+		if bow.drawing:
+			var nock: Vector3 = bow.nocked.position + Vector3(0,0,0.39)
+			axe.hand.global_position = bow.to_global(nock)
+	elif equipped_item == "stone_spear":
+		axe.hand.rotation.x = PI / 2

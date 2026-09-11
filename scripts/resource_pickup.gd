@@ -4,6 +4,8 @@ const Inventory = preload("res://scripts/inventory.gd")
 @export var item_id := "stick"
 @export var amount := 2
 var collected := false
+var fall_speed := 0.0
+var settled := false
 
 func _ready() -> void:
 	add_to_group("pickups")
@@ -100,3 +102,23 @@ func collect_into(inventory: RefCounted) -> int:
 		collected = true
 		queue_free()
 	return received
+
+func _physics_process(delta: float) -> void:
+	if collected or settled or not item_id in ["stone", "iron_ore"]: return
+	# Only terrain can support a mined fragment. Characters and furniture must not leave it floating.
+	var ground := terrain_below(self, global_position)
+	fall_speed += 9.8 * delta
+	global_position.y -= fall_speed * delta
+	if not ground.is_empty() and global_position.y <= ground.position.y + 0.025:
+		global_position.y = ground.position.y + 0.025
+		fall_speed = 0.0
+		settled = true
+
+static func terrain_below(node: Node3D, spot: Vector3) -> Dictionary:
+	var excluded: Array[RID] = []
+	for attempt in range(24):
+		var query := PhysicsRayQueryParameters3D.create(spot + Vector3.UP * 3, spot + Vector3.DOWN * 40, 1, excluded)
+		var hit := node.get_world_3d().direct_space_state.intersect_ray(query)
+		if hit.is_empty() or hit.collider.is_in_group("placement_ground"): return hit
+		excluded.append(hit.rid)
+	return {}

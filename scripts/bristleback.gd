@@ -6,6 +6,7 @@ const MAX_HEALTH := 60
 const HOME := Vector3(-15, 0.22, -13)
 const NOTICE_RADIUS := 8.0
 const LEASH_RADIUS := 13.0
+var respawn := preload("res://scripts/enemy_respawn.gd").new()
 var health := MAX_HEALTH
 var state := "idle"
 var state_time := 0.0
@@ -42,7 +43,10 @@ func _ready() -> void:
 	_refresh()
 
 func _physics_process(delta: float) -> void:
-	if health <= 0 or not is_instance_valid(player) or not player.controls_active:
+	if health <= 0:
+		respawn.advance(self, player, delta)
+		return
+	if not is_instance_valid(player) or not player.controls_active:
 		return
 	state_time += delta
 	hit_flash = maxf(0, hit_flash - delta)
@@ -142,6 +146,7 @@ func _take_hit(damage: int) -> String:
 	health = maxi(0, health - damage)
 	hit_flash = 0.22
 	if health == 0:
+		respawn.start()
 		state = "dead"
 		hide()
 		collider.set_deferred("disabled", true)
@@ -157,10 +162,11 @@ func _take_hit(damage: int) -> String:
 	return "Bristleback defeated • E to gather its hide" if health == 0 else "Bristleback: %d / %d" % [health, MAX_HEALTH]
 
 func to_data() -> Dictionary:
-	return {"health": health, "x": global_position.x, "y": global_position.y, "z": global_position.z}
+	return {"respawn_remaining": respawn.remaining, "health": health, "x": global_position.x, "y": global_position.y, "z": global_position.z}
 
 func restore(data: Dictionary) -> void:
 	health = clampi(int(get_parent()._num(data.get("health"), MAX_HEALTH)), 0, MAX_HEALTH)
+	respawn.restore(data, health <= 0)
 	global_position = get_parent()._vec(data, HOME)
 	if global_position.distance_to(HOME) > 20: global_position = HOME
 	velocity = Vector3.ZERO

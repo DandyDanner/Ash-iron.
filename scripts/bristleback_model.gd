@@ -24,20 +24,21 @@ func _ready() -> void:
 		for z in [-0.45, 0.38]:
 			var leg := Model.joint(body, "Leg", Vector3(side * 0.28, 0.45, z))
 			legs.append(leg)
-			Detail.loft(leg, [Vector4(-0.35, 0.078, 0.082, 0), Vector4(-0.18, 0.092, 0.09, 0.035), Vector4(0.08, 0.12, 0.12, 0)], Color("5c4030"), 8)
+			Detail.loft(leg, [Vector4(-0.35, 0.078, 0.082, 0), Vector4(-0.18, 0.092, 0.09, 0.035), Vector4(0.08, 0.12, 0.12, 0)], Color("5c4030"), 20)
 			for hoof_side in [-1.0, 1.0]:
-				Model.box(leg, Vector3(hoof_side * 0.04, -0.39, 0.035), Vector3(0.069, 0.12, 0.15), Color("33352d"))
+				var hoof := Detail.loft(leg, [Vector4(-0.45,0.031,0.068,0.02),Vector4(-0.42,0.039,0.08,0.03),Vector4(-0.36,0.033,0.069,0.015),Vector4(-0.32,0.025,0.05,0)], Color("33352d"), 16)
+				hoof.position.x = hoof_side * 0.037
 		# Overlapping curved fur clumps lie against the flank, with backward tips.
-		for row in range(4):
-			for i in range(7):
-				var z := -0.51 + i * 0.145
-				var angle := 0.60 + row * 0.39
+		for row in range(6):
+			for i in range(14):
+				var z := -0.51 + i * 0.072 + (row % 2) * 0.025
+				var angle := 0.55 + row * 0.25
 				var normal := Vector3(side * sin(angle), cos(angle), 0)
 				var root := _fur_surface(z, angle, side) - normal * 0.012
-				var middle := _fur_surface(z - 0.055, angle + 0.09, side) + normal * 0.020
+				var middle := _fur_surface(z - 0.055, angle + 0.09, side) + normal * 0.008
 				var tip := _fur_surface(z - 0.12, angle + 0.15, side) + normal * 0.008
 				var fur_color := Color("a7683c").darkened(row * 0.035 + (i % 3) * 0.025)
-				Detail.strand(body, [root, middle, tip], [0.028, 0.044, 0.0007], fur_color, 0.19, normal)
+				Detail.strand(body, [root, middle, tip], [0.009, 0.013, 0.0007], fur_color, 0.12, normal)
 
 	head = Model.joint(body, "Head", Vector3(0, 0.69, 0.47))
 	var skull := Detail.loft(head, [Vector4(0, 0.29, 0.31, -0.03), Vector4(0.23, 0.25, 0.25, 0.005), Vector4(0.48, 0.17, 0.15, 0.08), Vector4(0.68, 0.15, 0.11, 0.10)], Color("91603b"), 32)
@@ -66,14 +67,18 @@ func _ready() -> void:
 		var tusk := Detail.strand(head, tusk_points, [0.043, 0.033, 0.020, 0.0005], Color("e0cea5"), 1.0)
 		tusk.material_override.roughness = 0.50
 	# A layered swept mane, tallest over the shoulders, rather than upright spikes.
-	for row in range(3):
-		for i in range(10):
-			var z := -0.57 + i * 0.113
-			var y := _fur_surface(z, 0, 1).y - 0.018 - absf(row - 1) * 0.010
-			var root := Vector3((row - 1) * 0.080, y, z)
-			var height := 0.065 + sin(i / 9.0 * PI) * 0.045
-			Detail.strand(body, [root, root + Vector3((row - 1) * 0.012, height, -0.055), root + Vector3((row - 1) * 0.018, height + 0.01, -0.155)], [0.035, 0.034, 0.0006], Color("44372b").lightened((i % 3) * 0.022), 0.40)
-	Model.segment(body, Vector3(0, 0.63, -0.68), Vector3(0.08, 0.53, -0.90), 0.018, Color("5b3b2b"))
+	for row in range(5):
+		for i in range(15):
+			var z := -0.57 + i * 0.075
+			var y := _fur_surface(z, 0, 1).y - 0.018 - absf(row - 2) * 0.010
+			var root := Vector3((row - 2) * 0.035, y, z)
+			var height := 0.045 + sin(i / 14.0 * PI) * 0.025
+			Detail.strand(body, [root, root + Vector3((row - 1) * 0.012, height, -0.055), root + Vector3((row - 1) * 0.018, height + 0.01, -0.155)], [0.016, 0.014, 0.0006], Color("44372b").lightened((i % 3) * 0.022), 0.40)
+	Detail.strand(body, [Vector3(0,0.68,-0.66),Vector3(0.04,0.61,-0.84),Vector3(0.1,0.51,-0.88),Vector3(0.13,0.53,-0.84)], [0.021,0.018,0.011,0.004], Color("5b3b2b"))
+	for mesh in body.find_children("*", "MeshInstance3D", true, false):
+		var material: StandardMaterial3D = mesh.material_override
+		if material.albedo_color.r > 0.25 and material.albedo_color.b < 0.4:
+			mesh.material_override = preload("res://scripts/surface_detail.gd").refine(material, "fur")
 
 func pose(delta: float, speed: float, state: String, hit_flash: float) -> void:
 	time += delta

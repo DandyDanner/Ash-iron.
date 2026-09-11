@@ -91,7 +91,7 @@ func run() -> void:
 	file.store_string(JSON.stringify(old))
 	file.close()
 	player = await enter()
-	check(player.inventory.slots.size() == 8 and player.inventory.count("stone_axe") == 8 and current_scene.bellmaw.health == 80 and current_scene.get_node("EchoTrail/EchoIronVein").hits_left == 4, "Version 7 migration lost equipment or did not add fresh encounter")
+	check(player.inventory.slots.size() == 8 and player.inventory.count("stone_axe") == 8 and current_scene.bellmaw.health == current_scene.bellmaw.MAX_HEALTH and current_scene.get_node("EchoTrail/EchoIronVein").hits_left == 4, "Version 7 migration lost equipment or did not add fresh encounter")
 	Save.clear()
 	print("EXPLORER PACK: %s" % ("PASS — workbench, exact linked costs, full-pack fitting, capacity, scrolling, final-slot drop/transfer, hotbar, save and v7 migration" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)

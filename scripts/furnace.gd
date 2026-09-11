@@ -3,9 +3,12 @@ extends StaticBody3D
 const Model = preload("res://scripts/traveler_model.gd")
 const ORE_PER_INGOT := 2
 const FUEL_PER_INGOT := 1
-const SMELT_TIME := 6.0
+const SMELT_TIME := 12.0
+const CHEST_RANGE := 8.0
+const Inventory = preload("res://scripts/inventory.gd")
 const CAPACITY := 10
 const SIZE := Vector3(1.0, 1.3, 1.0)
+var auto_feed := true
 var ore := 0
 var fuel := 0
 var ingots := 0
@@ -58,6 +61,7 @@ func _process(delta: float) -> void:
 
 func advance(delta: float) -> void:
 	## Smelting is driven by time; partial progress waits for more ore or fuel rather than resetting.
+	refill_from_chests()
 	if not is_burning():
 		_refresh_fire()
 		return
@@ -70,6 +74,7 @@ func advance(delta: float) -> void:
 		fuel -= FUEL_PER_INGOT
 		ingots += 1
 		finished += 1
+		refill_from_chests()
 	if not is_burning():
 		progress = 0.0
 	if finished > 0:
@@ -125,9 +130,10 @@ func is_empty() -> bool:
 	return ore == 0 and fuel == 0 and ingots == 0
 
 func to_data() -> Dictionary:
-	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y, "ore": ore, "fuel": fuel, "ingots": ingots, "progress": progress}
+	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y, "ore": ore, "fuel": fuel, "ingots": ingots, "progress": progress, "auto_feed": auto_feed}
 
 func restore(data: Dictionary) -> void:
+	auto_feed = data.get("auto_feed", true) != false
 	ore = clampi(int(_num(data.get("ore"))), 0, CAPACITY)
 	fuel = clampi(int(_num(data.get("fuel"))), 0, CAPACITY)
 	ingots = clampi(int(_num(data.get("ingots"))), 0, CAPACITY)
@@ -136,3 +142,38 @@ func restore(data: Dictionary) -> void:
 
 static func _num(value: Variant) -> float:
 	return float(value) if (value is float or value is int) else 0.0
+
+func linked_chests() -> Array:
+	var result := []
+	for chest in get_tree().get_nodes_in_group("chests"):
+		if not chest.is_queued_for_deletion() and global_position.distance_to(chest.global_position) <= CHEST_RANGE:
+			result.append(chest)
+	result.sort_custom(func(a: Node3D, b: Node3D): return global_position.distance_squared_to(a.global_position) < global_position.distance_squared_to(b.global_position))
+	return result
+
+func sources(backpack: RefCounted = null) -> Array:
+	var result := []
+	if backpack != null: result.append(backpack)
+	for chest in linked_chests(): result.append(chest.storage)
+	return result
+
+func refill_from_chests() -> void:
+	# Reserve only the next complete batch. Never drain wood when there is no ore, or hoard stock.
+	if not auto_feed or ingots >= CAPACITY: return
+	var cost := {}
+	if ore < ORE_PER_INGOT: cost.iron_ore = ORE_PER_INGOT - ore
+	if fuel < FUEL_PER_INGOT: cost.wood = FUEL_PER_INGOT - fuel
+	if cost.is_empty(): return
+	if Inventory.craft_across(sources(), cost):
+		ore += int(cost.get("iron_ore", 0))
+		fuel += int(cost.get("wood", 0))
+		_notify()
+
+func load_from_sources(backpack: RefCounted, item: String) -> int:
+	var moved := 0
+	for source in sources(backpack): moved += load_item(source, item)
+	return moved
+
+func set_auto_feed(enabled: bool) -> void:
+	auto_feed = enabled
+	_notify()

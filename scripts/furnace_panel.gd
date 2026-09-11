@@ -13,11 +13,13 @@ var fuel_button: Button
 var take_button: Button
 var pickup_button: Button
 var message_label: Label
+var supply_label: Label
+var auto_button: CheckButton
 
 func setup(owner_player: Node3D) -> void:
 	player = owner_player
 	name = "FurnacePanel"
-	var layout := _shell(880, 470)
+	var layout := _shell(880, 550)
 	var header := HBoxContainer.new()
 	layout.add_child(header)
 	var heading := VBoxContainer.new()
@@ -44,15 +46,15 @@ func setup(owner_player: Node3D) -> void:
 	ore_label = ore_bay.count
 	ore_button = ore_bay.button
 	ore_button.pressed.connect(func():
-		var moved: int = furnace.load_item(player.inventory, "iron_ore")
-		message_label.text = "Loaded %d iron ore." % moved if moved > 0 else "No room in the furnace, or no ore in your backpack."
+		var moved: int = furnace.load_from_sources(player.inventory, "iron_ore")
+		message_label.text = "Loaded %d iron ore." % moved if moved > 0 else "No room in the furnace, or no ore in your backpack or connected chests."
 		refresh())
 	var fuel_bay := _bay(columns, "WOOD", "One piece of timber fires each ingot.")
 	fuel_label = fuel_bay.count
 	fuel_button = fuel_bay.button
 	fuel_button.pressed.connect(func():
-		var moved: int = furnace.load_item(player.inventory, "wood")
-		message_label.text = "Loaded %d wood." % moved if moved > 0 else "No room in the furnace, or no wood in your backpack."
+		var moved: int = furnace.load_from_sources(player.inventory, "wood")
+		message_label.text = "Loaded %d wood." % moved if moved > 0 else "No room in the furnace, or no wood in your backpack or connected chests."
 		refresh())
 	var ingot_bay := _bay(columns, "IRON INGOTS", "Refined iron, ready for tools to come.")
 	ingot_label = ingot_bay.count
@@ -61,7 +63,13 @@ func setup(owner_player: Node3D) -> void:
 		var taken: int = furnace.take_ingots(player.inventory)
 		message_label.text = "Took %d iron ingot%s." % [taken, "" if taken == 1 else "s"] if taken > 0 else "Your backpack is full. Make room first."
 		refresh())
-	var note := _label(layout, "Two ore and one wood become one ingot every six seconds. The furnace keeps working while you are away and stops when it runs out or fills up.", 14, MUTED)
+	auto_button = CheckButton.new()
+	auto_button.text = "Automatically feed from chests within 8 meters"
+	auto_button.toggled.connect(func(enabled: bool):
+		if is_instance_valid(furnace): furnace.set_auto_feed(enabled))
+	layout.add_child(auto_button)
+	supply_label = _label(layout, "", 14, GOLD)
+	var note := _label(layout, "Two ore + one wood → one ingot in 12 seconds. Auto-feed reserves one batch at a time from nearby chests and stops when ingredients run out or ingots fill up.", 14, MUTED)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var footer := HBoxContainer.new()
 	layout.add_child(footer)
@@ -116,10 +124,12 @@ func refresh() -> void:
 	ore_label.text = "%d / %d" % [furnace.ore, Furnace.CAPACITY]
 	fuel_label.text = "%d / %d" % [furnace.fuel, Furnace.CAPACITY]
 	ingot_label.text = "%d / %d" % [furnace.ingots, Furnace.CAPACITY]
-	var pack_ore: int = player.inventory.count("iron_ore")
-	var pack_wood: int = player.inventory.count("wood")
-	ore_button.text = "Add ore from backpack (%d)" % pack_ore
-	fuel_button.text = "Add wood from backpack (%d)" % pack_wood
+	auto_button.set_pressed_no_signal(furnace.auto_feed)
+	supply_label.text = "CONNECTED STORAGE  •  %d chest(s) within 8 m of this furnace" % furnace.linked_chests().size()
+	var pack_ore: int = Inventory.count_across(furnace.sources(player.inventory), "iron_ore")
+	var pack_wood: int = Inventory.count_across(furnace.sources(player.inventory), "wood")
+	ore_button.text = "Load ore (%d available)" % pack_ore
+	fuel_button.text = "Load wood (%d available)" % pack_wood
 	ore_button.disabled = pack_ore == 0 or furnace.ore >= Furnace.CAPACITY
 	fuel_button.disabled = pack_wood == 0 or furnace.fuel >= Furnace.CAPACITY
 	take_button.text = "Take ingots"

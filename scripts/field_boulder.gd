@@ -59,13 +59,12 @@ func mine(hit_position: Vector3) -> bool:
 	return true
 
 func _shed(item: String, amount: int, spot: Vector3) -> void:
-	var query := PhysicsRayQueryParameters3D.create(spot + Vector3.UP * 3, spot + Vector3.DOWN * 6, 1, [get_rid()])
-	var ground := get_world_3d().direct_space_state.intersect_ray(query)
 	var pickup := preload("res://scripts/resource_pickup.gd").new()
 	pickup.item_id = item
 	pickup.amount = amount
 	get_parent().add_child(pickup)
-	pickup.global_position = ground.position + Vector3(0, 0.04, 0) if not ground.is_empty() else Vector3(spot.x, 0.24, spot.z)
+	pickup.global_position = spot + Vector3.UP * 0.3
+	pickup.fall_speed = -1.2
 
 func restore(hits: int) -> void:
 	hits_left = clampi(hits, 0, 4)

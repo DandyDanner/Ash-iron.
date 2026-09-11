@@ -9,7 +9,7 @@ var nocked: Node3D
 
 func _ready() -> void:
 	name = "StarterBow"
-	position = Vector3(-0.28, -0.12, -0.78)
+	position = Vector3(-0.28, -0.12, -1.12)
 	strings = Art.bow(self)
 	nocked = Art.arrow(self)
 	cancel_draw()

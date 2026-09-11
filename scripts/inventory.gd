@@ -24,7 +24,7 @@ const ITEMS := {
 	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips. Chests near the bench feed its recipes."},
 	"iron_ore": {"name": "Iron ore", "stack": 10, "description": "Rusty chunks chipped from an iron vein, or a lucky find inside a boulder. Smelt two with one wood in a furnace to make an ingot."},
 	"iron_ingot": {"name": "Iron ingot", "stack": 10, "description": "Refined iron from the furnace. The first real metal; iron tools and weapons are the next milestone."},
-	"furnace": {"name": "Stone furnace", "stack": 1, "description": "A squat stone furnace. Select it and choose Place furnace here on clear ground, then load iron ore and wood with E. It smelts on its own."}
+	"furnace": {"name": "Stone furnace", "stack": 1, "description": "A squat stone furnace. Select it and choose Place furnace here on clear ground, then load iron ore and wood with E or use chests within eight meters. It smelts on its own."}
 }
 const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch", "bow", "stone_spear"]
 const RECIPES := {
@@ -35,7 +35,7 @@ const RECIPES := {
 	"stone_pickaxe": {"name": "Stone pickaxe", "cost": {"stick": 3, "stone": 4}, "output": "stone_pickaxe", "amount": 1, "description": "Break boulders into loose stones. Four swings yield eight stones."},
 	"torch": {"name": "Pine torch", "cost": {"stick": 2, "wood": 1}, "output": "torch", "amount": 1, "description": "A resinous pine torch. Hold it to light the ground ahead; no fuel upkeep yet."},
 	"split_wood": {"name": "Split wood into sticks", "cost": {"wood": 1}, "output": "stick", "amount": 4, "description": "Turn one piece of timber into four crafting sticks."},
-	"furnace": {"name": "Stone furnace", "cost": {"stone": 10, "wood": 2}, "output": "furnace", "amount": 1, "description": "A placeable furnace that turns two iron ore and one wood into an iron ingot every six seconds. Mine ore from the rusty veins at the clearing's edge."}
+	"furnace": {"name": "Stone furnace", "cost": {"stone": 10, "wood": 2}, "output": "furnace", "amount": 1, "description": "A placeable furnace that turns two iron ore and one wood into an iron ingot every twelve seconds. Mine ore from the rusty veins at the clearing's edge."}
 }
 const BENCH_COST := {"stick": 6, "stone": 4}
 const AXE_COST := {"stick": 3, "stone": 2}

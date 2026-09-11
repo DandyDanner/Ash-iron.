@@ -202,7 +202,10 @@ func _apply(data: Dictionary) -> void:
 		furnace.restore(_dict(entry))
 	var saved := _dict(data.get("player"))
 	boar.restore(_dict(data.get("boar")))
-	bellmaw.restore(_dict(data.get("bellmaw")))
+	var bell_data := _dict(data.get("bellmaw")).duplicate()
+	if int(_num(data.get("version"), GameSave.VERSION)) <= 8 and bell_data.has("health"):
+		bell_data.health = clampf(_num(bell_data.health, 80), 0, 80) * 2
+	bellmaw.restore(bell_data)
 	if player:
 		player.health = clampi(int(_num(saved.get("health"), 100)), 1, 100)
 		# Only an explicit saved upgrade unlocks the extra slots; versions 1–7 stay at eight.

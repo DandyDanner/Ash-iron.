@@ -51,6 +51,7 @@ func run() -> void:
 		enemy.position = Vector3(12, 0.2, 12)
 		for third in [false, true]:
 			enemy.health = enemy.MAX_HEALTH
+			enemy.state = "recover"
 			player.equip_item("stone_axe")
 			await aim(player, enemy, 2.2, third)
 			check(player._melee_target(player.REACH).get("collider") == enemy, "Axe fixture did not aim at enemy")

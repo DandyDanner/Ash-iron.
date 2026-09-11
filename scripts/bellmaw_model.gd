@@ -8,20 +8,23 @@ var throat: Node3D
 var limbs: Array[Node3D] = []
 var pulse: MeshInstance3D
 var elapsed := 0.0
+var upper_lip: Node3D
 
 func _ready() -> void:
 	body = M.joint(self, "Body", Vector3.ZERO)
-	D.oval(body, Vector3(0, 0.82, -0.15), Vector3(1.72, 1.12, 1.9), SKIN)
+	var torso := D.loft(body, [Vector4(-1.08,0.10,0.10,-0.62),Vector4(-0.85,0.57,0.43,-0.76),Vector4(-0.35,0.85,0.57,-0.82),Vector4(0.25,0.76,0.49,-0.85),Vector4(0.60,0.54,0.36,-0.88),Vector4(0.81,0.15,0.12,-0.90)], SKIN, 40, 0.022)
+	torso.rotation.x = PI / 2
 	D.oval(body, Vector3(0, 0.66, 0.5), Vector3(1.35, 0.93, 1.02), SKIN.darkened(0.12))
 	D.oval(body, Vector3(0, 1.12, 0.58), Vector3(1.35, 0.53, 0.98), SKIN)
 	# Strong upper lip and a recessed, wide dark mouth.
 	D.oval(body, Vector3(0, 0.97, 0.99), Vector3(1.08, 0.13, 0.19), Color("302b20"))
-	D.oval(body, Vector3(0, 1.05, 1.0), Vector3(1.15, 0.13, 0.25), SKIN.lightened(0.1))
+	upper_lip = D.oval(body, Vector3(0, 1.05, 1.0), Vector3(1.15, 0.13, 0.25), SKIN.lightened(0.1))
 	throat = M.joint(body, "ResonantThroat", Vector3(0, 0.68, 0.84))
 	D.loft(throat, [Vector4(-0.375,0.015,0.015,0), Vector4(-0.30,0.28,0.20,0), Vector4(-0.15,0.46,0.31,0), Vector4(0,0.51,0.34,0), Vector4(0.15,0.47,0.30,0), Vector4(0.30,0.32,0.19,0), Vector4(0.375,0.08,0.04,0)], Color("bb8a40"), 48, 0.045)
 	for side in [-1, 1]:
-		D.oval(body, Vector3(side * 0.43, 1.28, 0.7), Vector3(0.38, 0.23, 0.39), SKIN.darkened(0.2))
-		D.oval(body, Vector3(side * 0.46, 1.28, 0.84), Vector3(0.14, 0.145, 0.12), Color("161a13"))
+		D.oval(body, Vector3(side * 0.43, 1.28, 0.7), Vector3(0.32, 0.17, 0.34), SKIN.darkened(0.2))
+		D.oval(body, Vector3(side * 0.46, 1.28, 0.84), Vector3(0.115, 0.105, 0.10), Color("161a13"))
+		D.strand(body, [Vector3(side*0.31,1.29,0.81),Vector3(side*0.44,1.35,0.84),Vector3(side*0.57,1.29,0.78)], [0.01,0.035,0.008], SKIN.darkened(0.10), 0.65)
 		D.oval(body, Vector3(side * 0.44, 1.315, 0.89), Vector3(0.025, 0.025, 0.014), Color("ead9ae"))
 		D.oval(body, Vector3(side * 0.19, 1.16, 1.05), Vector3(0.07, 0.045, 0.018), Color("373c2c"))
 		for front in [true, false]:
@@ -70,7 +73,8 @@ func _ready() -> void:
 
 func pose(delta: float, speed: float, state: String, state_time: float, hit_flash: float) -> void:
 	elapsed += delta
-	var inflation := clampf(state_time / 1.45, 0, 1) if state == "warn" else 0.0
+	var inflation := clampf(state_time / 1.2, 0, 1) if state == "warn" else 0.0
+	upper_lip.position.y = 1.05 + inflation * 0.035
 	throat.scale = Vector3(1 + inflation * 0.30, 1 + inflation * 0.43, 1 + inflation * 0.38)
 	body.position.y = sin(elapsed * 1.8) * 0.014 - (0.04 if state == "recover" else 0.0)
 	body.rotation.x = -0.05 * inflation + (hit_flash * 0.2)
