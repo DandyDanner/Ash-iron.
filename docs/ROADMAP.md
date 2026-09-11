@@ -30,7 +30,8 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot
 - [x] Twenty-six Blender modeling/render/review cycles: reconstructed traveler faces/ears/hair/garments and wildlife anatomy, fitted eyes, coats and hooves (offline art only)
-- [ ] Current art priority: close the illustration-fidelity gap in faces/hair/garments and animal anatomy, then retopology, textures, and rig/animation integration
+- [x] Four selectable Blender traveler exports with a first skinning pass, existing movement/tool animation, persisted choice, and original customization retained
+- [ ] Current art priority: close the illustration-fidelity gap in faces/hair/garments and animal anatomy; optimize topology/materials and improve joint deformation. Wildlife integration remains later.
 - [ ] Later: foliage refinement from play feedback; leave the world unchanged during the character/boar work
 - [x] Add terrain variation
 - [ ] Add basic footsteps/ambient audio

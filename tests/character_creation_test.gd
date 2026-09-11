@@ -40,6 +40,7 @@ func run() -> void:
 	var creator := current_scene
 	check(creator.profile.background == 2, "Wrong default background")
 	await capture("character-creator.png")
+	creator._choose("traveler", 4)
 	creator.name_input.text = "Rowan"
 	creator.name_input.text_changed.emit("Rowan")
 	creator._choose("skin", 4)

@@ -7,6 +7,8 @@ const MUTED := Color("a6b4a6")
 const GOLD := Color("d4b372")
 var profile: Dictionary
 var traveler: Node3D
+var appearance_controls: VBoxContainer
+var traveler_note: Label
 var camera: Camera3D
 var name_input: LineEdit
 var story: Label
@@ -46,7 +48,7 @@ func _ready() -> void:
 	header.add_child(title)
 	label(title, "ASH & IRON   /   A NEW BEGINNING", 13, GOLD)
 	label(title, "Your story starts in the wild.", 30)
-	var subtitle := label(header, "Willow Scout • Make this traveler yours.", 16, MUTED)
+	var subtitle := label(header, "Choose your traveler. Make a life here.", 16, MUTED)
 	subtitle.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	var columns := HBoxContainer.new()
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -70,7 +72,7 @@ func _ready() -> void:
 	story = label(left, "", 16, INK)
 	story.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	story.custom_minimum_size.y = 80
-	var note := label(left, "A starting look and a little history.\nEvery background plays the same.", 13, MUTED)
+	var note := label(left, "A little history to carry with you.\nEvery background plays the same.", 13, MUTED)
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var center := VBoxContainer.new()
 	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -109,12 +111,18 @@ func _ready() -> void:
 	name_input.custom_minimum_size.y = 39
 	name_input.text_changed.connect(func(value: String): profile.name = value)
 	right.add_child(name_input)
-	_option(right, "Build", "build", Profile.BUILDS)
-	_option(right, "Face", "face", Profile.FACES)
-	_option(right, "Hair", "hair", Profile.HAIR_STYLES)
-	_palette(right, "Skin tone", "skin", Profile.SKINS)
-	_palette(right, "Hair color", "hair_color", Profile.HAIR_COLORS)
-	_palette(right, "Clothing color", "clothes", Profile.CLOTHES)
+	_option(right, "Traveler", "traveler", Profile.TRAVELERS)
+	traveler_note = label(right, "", 15, MUTED)
+	traveler_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	appearance_controls = VBoxContainer.new()
+	appearance_controls.add_theme_constant_override("separation", 7)
+	right.add_child(appearance_controls)
+	_option(appearance_controls, "Build", "build", Profile.BUILDS)
+	_option(appearance_controls, "Face", "face", Profile.FACES)
+	_option(appearance_controls, "Hair", "hair", Profile.HAIR_STYLES)
+	_palette(appearance_controls, "Skin tone", "skin", Profile.SKINS)
+	_palette(appearance_controls, "Hair color", "hair_color", Profile.HAIR_COLORS)
+	_palette(appearance_controls, "Clothing color", "clothes", Profile.CLOTHES)
 	label(layout, "03  /  SOMETHING FROM HOME", 13, GOLD)
 	var keepsakes := HBoxContainer.new()
 	keepsakes.add_theme_constant_override("separation", 10)
@@ -236,6 +244,8 @@ func _refresh() -> void:
 	for i in range(4):
 		background_buttons[i].set_pressed_no_signal(i == profile.background)
 		keepsake_buttons[i].set_pressed_no_signal(i == profile.keepsake)
+	appearance_controls.visible = profile.traveler == 4
+	traveler_note.text = Profile.TRAVELER_NOTES[profile.traveler]
 	story.text = Profile.STORIES[profile.background]
 	memory.text = Profile.MEMORIES[profile.keepsake]
 	for key in choices:

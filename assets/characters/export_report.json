@@ -1,0 +1,49 @@
+{
+  "source": "art/blender/cycles/cycle_26/characters.blend",
+  "models": [
+    {
+      "design": "willow_scout",
+      "triangles": 245864,
+      "bytes": 10072356,
+      "bones": 14,
+      "scale": [
+        1.1399999856948853,
+        1.1399999856948853,
+        1.1399999856948853
+      ]
+    },
+    {
+      "design": "hearthland_ranger",
+      "triangles": 212694,
+      "bytes": 9519532,
+      "bones": 14,
+      "scale": [
+        1.2540000677108765,
+        1.2197999954223633,
+        1.1912999153137207
+      ]
+    },
+    {
+      "design": "ridge_wayfarer",
+      "triangles": 354184,
+      "bytes": 16672388,
+      "bones": 14,
+      "scale": [
+        1.2882000207901,
+        1.2083998918533325,
+        1.202699899673462
+      ]
+    },
+    {
+      "design": "ember_forager",
+      "triangles": 217108,
+      "bytes": 8967068,
+      "bones": 14,
+      "scale": [
+        1.1058000326156616,
+        1.128600001335144,
+        1.128600001335144
+      ]
+    }
+  ]
+}

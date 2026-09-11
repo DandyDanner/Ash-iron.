@@ -1,9 +1,13 @@
 extends Node3D
-## Willow Scout: original shaped meshes and an articulated procedural animation rig.
+## Shared movement/tool rig with authored travelers and the original customizable scout.
 const Detail = preload("res://scripts/character_mesh.gd")
 const Profile = preload("res://scripts/character_profile.gd")
 var body: Node3D
 var elapsed := 0.0
+var authored: RefCounted
+var skin_color := Color.WHITE
+var arm_rest: Array[Quaternion] = []
+var forearm_rest: Array[Quaternion] = []
 
 static func part(parent: Node3D, mesh: Mesh, pos: Vector3, color: Color, dimensions: Vector3 = Vector3.ONE) -> MeshInstance3D:
 	var node := MeshInstance3D.new()
@@ -94,10 +98,18 @@ func rebuild(profile: Dictionary) -> void:
 	if is_instance_valid(body):
 		remove_child(body)
 		body.queue_free()
+	authored = null
+	arm_rest.clear()
+	forearm_rest.clear()
+	skin_color = Profile.skin_color(profile)
 	arms.clear()
 	forearms.clear()
 	legs.clear()
 	knees.clear()
+	if profile.get("traveler", 0) < 4:
+		authored = preload("res://scripts/authored_traveler.gd").new()
+		authored.build(self, int(profile.get("traveler", 0)))
+		return
 	body = joint(self, "WillowScout", Vector3.ZERO)
 	body.scale.x = [0.91, 1.0, 1.13][profile.build]
 	var skin: Color = Profile.SKINS[profile.skin]
@@ -299,8 +311,8 @@ func reach_hand(index: int, target: Vector3, bend_hint: Vector3) -> void:
 	# Two rigid arm segments reach the bow grip/string without stretching the model.
 	var shoulder: Vector3 = arms[index].global_position
 	var scale_factor := global_basis.get_scale().x
-	var upper_length := 0.28 * scale_factor
-	var lower_length := 0.26 * scale_factor
+	var upper_length: float = forearms[index].position.length() * scale_factor
+	var lower_length: float = (left_hand if index == 0 else right_hand).position.length() * scale_factor
 	var offset := target - shoulder
 	var distance := clampf(offset.length(), 0.03, upper_length + lower_length - 0.001)
 	var direction := offset.normalized()
@@ -324,6 +336,9 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		knees[i].rotation.x = maxf(0, -stride * side) * 0.85 if grounded else 0.48
 		arms[i].rotation = Vector3(-stride * side * 0.65, 0, side * 0.10)
 		forearms[i].rotation = Vector3(-0.10, 0, 0)
+		if authored != null:
+			arms[i].quaternion = arm_rest[i] * Quaternion.from_euler(Vector3(-stride * side * .65, 0, side * .04))
+			forearms[i].quaternion = forearm_rest[i] * Quaternion(Vector3.RIGHT, -.10)
 	if item in ["stone_axe", "stone_pickaxe", "torch"]:
 		arms[1].rotation.x = -0.40
 		forearms[1].rotation.x = -0.45
@@ -345,12 +360,20 @@ func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed
 		forearms[1].rotation.x = -1.3 * draw
 	else:
 		arms[1].rotation.z = 0.0 if item in ["stone_axe", "stone_pickaxe"] else (0.20 if item == "torch" else 0.10)
+	if item in ["stone_axe", "stone_pickaxe"]:
+		arms[1].rotation.y = 0.0
+		forearms[1].rotation.y = 0.0
+		forearms[1].rotation.z = 0.0
 	body.position.y = absf(sin(gait)) * 0.025 * motion if grounded else 0.02
 	torso.rotation.x = motion * 0.035
 	cape.rotation.x = sin(elapsed * 2.1) * 0.025 + motion * 0.08 + clampf(-vertical_speed * 0.025, -0.12, 0.16)
+
+func sync_authored_pose() -> void:
+	if authored != null: authored.sync()
 
 func _process(delta: float) -> void:
 	if gameplay or not is_instance_valid(body): return
 	elapsed += delta
 	body.position.y = sin(elapsed * 1.8) * 0.005
 	cape.rotation.x = sin(elapsed * 1.5) * 0.018
+	sync_authored_pose()

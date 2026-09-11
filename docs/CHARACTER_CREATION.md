@@ -27,3 +27,9 @@ The existing design brief and wilderness test scene remain the foundation for su
 Run `Godot --headless --path . --script res://tests/character_creation_test.gd` with your Godot executable. This uses an isolated temporary profile, checks malformed data recovery, cycles every appearance option, verifies backgrounds preserve personalization, activates the Begin button, checks world identity and hands, and reopens the creator with the saved profile. It does not replace the player's saved character.
 
 The same test can run with graphics enabled and `-- --screenshots=/absolute/output/folder` to save visual checks. Godot 4.7.2 on Apple M2 was used for the first verification.
+
+## Four Blender travelers
+
+The Traveler dropdown now offers Willow Scout, Hearthland Ranger, Ridge Wayfarer, and Ember Forager. Each is a fixed modeled appearance with its own hair, clothing, and proportions. Name, background and keepsake remain independent cosmetic choices. Custom Scout (original) restores the original editable build, face, hair and palettes.
+
+Press C in the clearing, choose a traveler, then Continue your journey to change appearance while retaining world progress and inventory. Existing profiles migrate to the original custom look; new profiles default to Willow Scout. Appearance format 2 records this selection separately from the world save. The source illustration is still the art target; these first skinned exports need further refinement.

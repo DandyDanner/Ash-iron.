@@ -79,12 +79,12 @@ func _ready() -> void:
 	prompt_label.offset_bottom = -110
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt_label.add_theme_color_override("font_color", Color("fff1cb"))
-	Traveler.oval(camera, Vector3(-0.28, -0.35, -0.43), Vector3(0.14, 0.16, 0.38), Profile.CLOTHES[profile.clothes])
-	var left_hand := Traveler.oval(camera, Vector3(-0.27, -0.32, -0.62), Vector3(0.105, 0.115, 0.15), Profile.SKINS[profile.skin])
+	Traveler.oval(camera, Vector3(-0.28, -0.35, -0.43), Vector3(0.14, 0.16, 0.38), Profile.clothing_color(profile))
+	var left_hand := Traveler.oval(camera, Vector3(-0.27, -0.32, -0.62), Vector3(0.105, 0.115, 0.15), Profile.skin_color(profile))
 	left_hand.name = "LeftHand"
 	axe = Axe.new()
 	camera.add_child(axe)
-	axe.setup(Profile.CLOTHES[profile.clothes], Profile.SKINS[profile.skin])
+	axe.setup(Profile.clothing_color(profile), Profile.skin_color(profile))
 	axe.set_equipped(false)
 	bow = Bow.new()
 	camera.add_child(bow)

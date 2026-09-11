@@ -1,6 +1,8 @@
 extends RefCounted
 ## Cosmetic choices only. Backgrounds never change movement, combat, or resources.
 
+const TRAVELERS := ["Willow Scout", "Hearthland Ranger", "Ridge Wayfarer", "Ember Forager", "Custom Scout (original)"]
+const TRAVELER_NOTES := ["Sage cape, cream linen and a teal sash.", "A field jacket, red scarf and a traveling pack.", "A woven blue poncho and swept-back braids.", "Copper hair, warm ochre and a gathering basket.", "Choose your own build, face, hairstyle and colors."]
 const SAVE_PATH := "user://character.json"
 static var storage_path: String = SAVE_PATH
 const BACKGROUNDS := ["Trapper", "Apprentice", "Wanderer", "Prospector"]
@@ -25,11 +27,12 @@ const BUILDS := ["Lean", "Balanced", "Broad"]
 const FACES := ["Soft", "Angular", "Round"]
 
 static func defaults() -> Dictionary:
-	return {"version": 1, "name": "", "background": 2, "keepsake": 0, "skin": 1, "hair_color": 0, "hair": 0, "build": 1, "face": 0, "clothes": 0}
+	return {"version": 2, "traveler": 0, "name": "", "background": 2, "keepsake": 0, "skin": 1, "hair_color": 0, "hair": 0, "build": 1, "face": 0, "clothes": 0}
 
 static func clean(raw: Dictionary) -> Dictionary:
 	var result := defaults()
-	var limits := {"background": 4, "keepsake": 4, "skin": 6, "hair_color": 6, "hair": 6, "build": 3, "face": 3, "clothes": 6}
+	if not raw.has("traveler") and not raw.is_empty(): result.traveler = 4
+	var limits := {"traveler": 5,"background": 4, "keepsake": 4, "skin": 6, "hair_color": 6, "hair": 6, "build": 3, "face": 3, "clothes": 6}
 	for key in limits:
 		var value: Variant = raw.get(key, result[key])
 		if value is int or value is float:
@@ -63,3 +66,15 @@ static func save_profile(profile: Dictionary, path: String = "") -> Error:
 	if write_error != OK:
 		return write_error
 	return DirAccess.rename_absolute(path + ".tmp", path)
+
+static func skin_color(profile: Dictionary) -> Color:
+	var design: int = profile.get("traveler", 0)
+	if design < 4:
+		return [Color(.48, .285, .16), Color(.45, .24, .12), Color(.19, .088, .040), Color(.62, .37, .21)][design].linear_to_srgb()
+	return SKINS[profile.skin]
+
+static func clothing_color(profile: Dictionary) -> Color:
+	var design: int = profile.get("traveler", 0)
+	if design < 4:
+		return [Color("70865c"), Color("71814e"), Color("5c8196"), Color("c39952")][design]
+	return CLOTHES[profile.clothes]

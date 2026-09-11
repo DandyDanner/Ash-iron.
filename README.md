@@ -26,7 +26,9 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 ## Starter controls
 
 - The project opens with character creation. Choose a background, customize your traveler, pick a keepsake, then select **Begin your journey**.
-- Backgrounds and keepsakes are cosmetic. Classes and abilities are deferred.
+- Use the **Traveler** dropdown to choose **Willow Scout**, **Hearthland Ranger**, **Ridge Wayfarer**, or **Ember Forager**. These use the Blender models with fixed outfits/hair. **Custom Scout (original)** restores the original build, face, hair, and color controls.
+- Press **C** in the clearing to change travelers, then **Continue your journey**. Your inventory, placed furniture, and world progress are kept. Existing profiles retain their original look until you choose a new traveler.
+- Travelers, backgrounds and keepsakes are cosmetic. Classes and abilities are deferred.
 - `W A S D` — move
 - `Shift` — sprint
 - `Space` — jump
@@ -51,15 +53,15 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 3. Press **F5** or the **Run Project** button in the top-right. On some Mac keyboards use **Fn + F5**.
 4. Create your traveler, or choose **Continue your journey**, then enter the stylized forest clearing. On Mac, **Command + B** also runs the project.
 
-Your name and appearance are saved locally between launches. They are separate from the clearing save. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
+Your name and appearance are saved locally between launches. They are separate from the clearing save. The four Blender travelers now have playable skinned exports; the original procedural customization remains available. These are still prototype models with further art and animation work ahead. See `docs/CHARACTER_CREATION.md` for the current feature set.
 
 ## Character modeling in Blender
 
-Blender 5.2.1 LTS is installed. Open `art/blender/cycles/cycle_26/characters.blend` for all four traveler and all four wildlife studies. Twenty-six saved modeling/render/review cycles and their actual images are documented in [the art review](art/blender/cycles/REVIEW.md). These are unrigged studies with further fidelity work remaining; the playable characters and world are unchanged. The original prototype baseline remains in `art/blender/ash_iron_character_studio.blend`. See [the morning review](docs/art/OVERNIGHT_REVIEW.md) for actual model images and `art/blender/README.md` for reproduction and integration limits.
+Blender 5.2.1 LTS is installed. Open `art/blender/cycles/cycle_26/characters.blend` for all four traveler and all four wildlife studies. Twenty-six saved modeling/render/review cycles and their actual images are documented in [the art review](art/blender/cycles/REVIEW.md). The native studies remain preserved and unrigged. The four travelers now have separate skinned game exports in `assets/characters/`, driven by the existing walking, jumping and equipment poses. Wildlife studies remain offline; the clearing is unchanged by this integration. The original prototype baseline remains in `art/blender/ash_iron_character_studio.blend`. See [the morning review](docs/art/OVERNIGHT_REVIEW.md) for actual model images and `art/blender/README.md` for reproduction and integration limits.
 
 ## Coordinated visual pass
 
-The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. Saved skin, hair, build, clothing color, and keepsake choices still apply. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler. The stone pickaxe has a faceted hooked point, a shorter rear chisel, a lashed socket, and a wrapped wooden handle; held tools, dropped pickups, and inventory icons share that design. The axe and pickaxe lift back and strike forward/down in a vertical plane in both camera views, with a windup and follow-through. The woodland bow has curved, tapered limbs, a wrapped palm grip, an upright hold, and a drawing hand that follows the string; the arrow rests above the grip.
+The approved **Willow Scout** guides the shared character model: a short sage cape, cream sleeves, teal sash, leather pouches, and folded boots. The four authored presets retain their modeled appearance; saved skin, hair, build and clothing choices remain available under Custom Scout. Keepsakes and backgrounds apply to every traveler. Walking, sprinting, jumping, chopping, and drawing the bow move the articulated body. A spring-arm camera retracts near solid obstacles and moves closer during a bow draw; V keeps first person available. Pickup and tool reach remain measured from the traveler. The stone pickaxe has a faceted hooked point, a shorter rear chisel, a lashed socket, and a wrapped wooden handle; held tools, dropped pickups, and inventory icons share that design. The axe and pickaxe lift back and strike forward/down in a vertical plane in both camera views, with a windup and follow-through. The woodland bow has curved, tapered limbs, a wrapped palm grip, an upright hold, and a drawing hand that follows the string; the arrow rests above the grip.
 
 The scout and boar now have a focused model refinement pass: smoother shaped surfaces, swept hair and defined eyelids/lips, cape embroidery and a folded hood, and curved tusks with layered boar fur. These are still simplified procedural assets; the concept illustrations remain the target for future sculpted/textured models. This pass does not change the world.
 
@@ -125,7 +127,9 @@ For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (C
 
 For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
-Use your Godot executable in these commands:
+Use your Godot executable in these commands (fifteen suites):
+
+- `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four previews and skins, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
 
 - `Godot --headless --path . --script res://tests/boar_test.gd` — warning, sidestep, charge/recovery, pause, walls, territory, actual spear/bow hits, one hide reward, player defeat/healing, persistence, and format 5 migration.
 - `Godot --headless --path . --script res://tests/spear_test.gd` — spear recipe and connected storage, full-pack failure, both camera views, single contact, reach/obstruction, cancellation, non-harvesting, hand/body clearance, hotbar, storage, save/load, and dropped recovery.

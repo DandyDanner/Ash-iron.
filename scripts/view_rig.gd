@@ -63,14 +63,14 @@ func _ready() -> void:
 		held[pair[0]] = tool
 	held_spear = Traveler.joint(avatar.body, "HeldSpear", Vector3.ZERO)
 	preload("res://scripts/spear_art.gd").build(held_spear)
-	var spear_fingers := Traveler.gripping_fingers(held_spear, avatar.right_hand.get_child(0).material_override.albedo_color)
+	var spear_fingers := Traveler.gripping_fingers(held_spear, avatar.skin_color)
 	spear_fingers.rotation.x = PI / 2
 	first_torch_light = player.axe.get_node("Torch/WarmLight")
 	third_torch_light = held.torch.get_node("WarmLight")
 	held_bow = Traveler.joint(avatar.left_hand, "HeldBow", Vector3.ZERO)
 	held_bow.scale = Vector3.ONE * 0.82
 	bow_strings = Archery.bow(held_bow)
-	var bow_fingers := Traveler.gripping_fingers(held_bow, avatar.left_hand.get_child(0).material_override.albedo_color)
+	var bow_fingers := Traveler.gripping_fingers(held_bow, avatar.skin_color)
 	bow_fingers.scale = Vector3.ONE * 1.12
 	drawn_arrow = Archery.arrow(held_bow)
 	back_bow = Traveler.joint(avatar.body, "StowedBow", Vector3(-0.12, 1.30, -0.24))
@@ -126,6 +126,7 @@ func _sync_equipment() -> void:
 			avatar.reach_hand(1, held_bow.to_global(center), Vector3(1, 0.1, -0.3))
 	drawn_arrow.visible = player.bow.drawing
 	drawn_arrow.position = center + Vector3(0, 0, -0.39)
+	avatar.sync_authored_pose()
 
 func _physics_process(delta: float) -> void:
 	arm.rotation.x = player.camera.rotation.x
