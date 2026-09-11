@@ -32,6 +32,16 @@ Remaining visual limitations are visible and should drive the next art review: f
 
 The final lineup is open in Blender. Native-file verification reopened all four versions: each contains all eight non-hidden model collections, all three packed references, and the expected render files. All fourteen gameplay suites passed with no runtime changes (the sandbox prevented default log-file writes; PASS output and test save paths were unaffected).
 
+## Cycles 5–6 — overnight facial reconstruction
+
+Loaded `cycle_04/characters.blend` and rebuilt only the four travelers' facial geometry. The saved source is preserved; no regeneration of outfits, hair, body, or animals. New surfaces give the ranger/wayfarer broader jaws, the scout/forager shorter lower faces, continuous nasal/cheek planes, fitted almond-shaped visible eyes, larger irises, shaped lip surfaces, folded ears, and surface-following beard/freckles. Rendered the full traveler lineup, individual closeups of all four faces, and the scout's profile.
+
+Cycle 5 review found a black-ear/eyelid material error (the cheek-tint vertex attribute was missing on those objects), a visible chin crease from uneven interpolation of profile rings, and overly narrow eyes. Cycle 6 corrects the shared material, uses slopes measured along the profile for smoother curvature, broadens the lower jaw, and increases iris/eye height. Reviewed all four corrected portraits and the scout profile: the ear color and jaw crease are corrected; profiles still show a simplified ear and ocular region. Native-file verification confirmed all eight models and packed references, with 892 unrelated objects retaining identical geometry, transforms, and material assignments in both facial passes.
+
+Still unresolved: the eyes remain stylized fitted patches with limited depth rather than a complete ocular socket, lips are simple, faces need more individual personality and asymmetry, and the illustrated expression is not yet matched. Existing shell-like hair and rigid garments are now especially visible beside the revised face. No illustration-fidelity or game-readiness claim. Cycle 5 is retained as a review record of faults, not the preferred model.
+
+**Continue from `cycle_06/characters.blend`.** Next priority: authored hair coverage and flowing clumps, then tailored/draped outfits and distinct silhouettes; subsequent animal refinement must retain these faces. Do not run the old full-set generator and accidentally discard the facial work.
+
 ## Reproduce
 
 Use Blender 5.2.1 LTS from the repository root:
@@ -40,9 +50,11 @@ Use Blender 5.2.1 LTS from the repository root:
 /Applications/Blender.app/Contents/MacOS/Blender --background --factory-startup --python tools/blender/model_characters.py -- --art-pass=5
 ```
 
-A new pass number preserves existing `.blend` files; the generator refuses to overwrite a saved pass. Passes 4 and above use the latest geometry. A future iteration should change the source based on an actual render review before claiming another improvement. Cycle 1/2 snapshots preserve their exact meshes; later source maintenance is not a byte-identical reproduction guarantee.
+A new pass number preserves existing `.blend` files; the generator refuses to overwrite a saved pass. The old full-set generator reproduces the cycle 4 design; it does not include later facial work. A future iteration should change the source based on an actual render review before claiming another improvement. Cycle 1/2 snapshots preserve their exact meshes; later source maintenance is not a byte-identical reproduction guarantee.
 
 Each design is in its own named collection. `APPROVED REFERENCES` holds packed images. `STUDIO — never export` is only a presentation setup. `REVIEW STATUS` inside the file states the modeling stage. This whole directory is excluded from Godot by its parent's `.gdignore`.
+
+To reproduce the face milestone in a new output directory, run `Blender --background --factory-startup --python tools/blender/refine_traveler_faces.py -- --art-pass=7 --refinement=2`. This intentionally reads cycle 4 and applies the face reconstruction, so do not use it to overwrite later hair/clothing changes.
 
 ## Remaining work before game integration
 

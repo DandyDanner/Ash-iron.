@@ -29,7 +29,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Third-person camera with wall collision, first-person toggle, walking/jumping/tool/bow poses
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot
-- [x] Four Blender modeling/render/review cycles for all four approved travelers and all four wildlife studies (offline art only)
+- [x] Six Blender modeling/render/review cycles: full eight-model studies plus facial reconstruction on all four travelers (offline art only)
 - [ ] Current art priority: close the illustration-fidelity gap in faces/hair/garments and animal anatomy, then retopology, textures, and rig/animation integration
 - [ ] Later: foliage refinement from play feedback; leave the world unchanged during the character/boar work
 - [x] Add terrain variation
