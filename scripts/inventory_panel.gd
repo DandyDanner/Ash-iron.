@@ -19,6 +19,9 @@ var axe_status: Label
 var chest_status: Label
 var message_label: Label
 var storage_note: Label
+var shortcut_buttons: Array[Button] = []
+var recipe_rows := {}
+var quit_button: Button
 
 func setup(owner_player: Node3D) -> void:
 	player = owner_player
@@ -31,9 +34,11 @@ func setup(owner_player: Node3D) -> void:
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(heading)
 	_label(heading, "ASH & IRON  /  FIRST DAYS", 13, GOLD)
-	_label(heading, "A little room. A place to begin.", 27)
+	_label(heading, "Backpack & workbench", 27)
 	save_button = _button(header, "Save game")
 	save_button.pressed.connect(func(): message_label.text = player.save_game_now())
+	quit_button = _button(header, "Save & Quit")
+	quit_button.pressed.connect(player.save_and_quit)
 	var close_button := _button(header, "Close  [I / Esc]")
 	close_button.pressed.connect(player.close_inventory)
 	var columns := HBoxContainer.new()
@@ -47,14 +52,17 @@ func setup(owner_player: Node3D) -> void:
 	columns.add_child(left)
 	capacity_label = _label(left, "", 16, GOLD)
 	_label(left, "Resources stack to 10. Each tool takes one slot.", 14, MUTED)
-	pack = _slot_grid(left, Inventory.CAPACITY, 4, func(i: int): selected = i; refresh())
+	pack = _slot_grid(left, Inventory.CAPACITY, 4, func(i: int): selected = i; refresh(), Vector2(138, 96))
 	detail = _label(left, "", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	detail.custom_minimum_size.y = 80
+	detail.custom_minimum_size.y = 54
 	var actions := HBoxContainer.new()
 	left.add_child(actions)
 	equip_button = _button(actions, "Equip axe")
-	equip_button.pressed.connect(func(): player.toggle_axe(); refresh())
+	equip_button.pressed.connect(func():
+		var item: String = player.inventory.slots[selected].get("item", "") if selected >= 0 else ""
+		player.equip_item("" if player.equipped_item == item else item)
+		refresh())
 	place_button = _button(actions, "Place chest here")
 	place_button.pressed.connect(func():
 		message_label.text = player.place_chest(selected)
@@ -64,13 +72,30 @@ func setup(owner_player: Node3D) -> void:
 		var result: String = player.drop_slot(selected)
 		message_label.text = result
 		refresh())
+	_label(left, "HOTBAR  •  Select a tool, then click a number or press its key.", 13, GOLD)
+	var shortcuts := HBoxContainer.new()
+	shortcuts.add_theme_constant_override("separation", 5)
+	left.add_child(shortcuts)
+	for i in range(10):
+		var button := _button(shortcuts, str((i + 1) % 10))
+		button.custom_minimum_size = Vector2(48, 34)
+		button.pressed.connect(_assign_shortcut.bind(i))
+		shortcut_buttons.append(button)
+	_label(left, "Select an empty backpack slot to clear a shortcut. Tools still use pack space.", 13, MUTED)
 	storage_note = _label(left, "", 14, MUTED)
 	storage_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var scroll := ScrollContainer.new()
+	scroll.name = "Recipes"
+	scroll.custom_minimum_size.x = 390
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	columns.add_child(scroll)
 	var right := VBoxContainer.new()
-	right.custom_minimum_size.x = 380
+	right.custom_minimum_size.x = 370
+	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 6)
-	columns.add_child(right)
-	_label(right, "MAKE YOUR FIRST TOOLS", 14, GOLD)
+	scroll.add_child(right)
+	_label(right, "RECIPES  •  SCROLL FOR MORE", 14, GOLD)
 	_label(right, "01  Simple workbench", 20)
 	var bench_note := _label(right, "Gather supplies by hand, then build at the marked camp worksite.", 14, MUTED)
 	bench_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -103,15 +128,47 @@ func setup(owner_player: Node3D) -> void:
 		message_label.text = player.craft_chest()
 		selected = _find("chest", selected)
 		refresh())
+	for id in Inventory.RECIPES:
+		var recipe: Dictionary = Inventory.RECIPES[id]
+		right.add_child(HSeparator.new())
+		_label(right, recipe.name, 20)
+		var note := _label(right, recipe.description, 14, MUTED)
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var cost := _label(right, "", 15)
+		cost.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var status := _label(right, "", 13, MUTED)
+		status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var button := _button(right, "Craft " + recipe.name.to_lower())
+		button.pressed.connect(_craft_recipe.bind(id))
+		recipe_rows[id] = {"cost": cost, "status": status, "button": button}
 	message_label = _label(layout, "", 15, GOLD)
 	message_label.custom_minimum_size.y = 22
 	_label(layout, "E  Gather / bench / chest     •     I  Backpack     •     Your progress in the clearing is saved as you play.", 13, MUTED)
 	visible = false
 
 func _input(event: InputEvent) -> void:
-	if visible and event is InputEventKey and event.pressed and not event.echo and (event.physical_keycode == KEY_I or event.keycode == KEY_ESCAPE):
+	if not visible or not event is InputEventKey or not event.pressed or event.echo:
+		return
+	if event.physical_keycode == KEY_I or event.keycode == KEY_ESCAPE:
 		player.close_inventory()
 		get_viewport().set_input_as_handled()
+	else:
+		var index: int = player.hotbar_key(event)
+		if index >= 0:
+			_assign_shortcut(index)
+			get_viewport().set_input_as_handled()
+
+func _assign_shortcut(index: int) -> void:
+	if selected < 0:
+		message_label.text = "Select a tool first, or an empty backpack slot to clear a shortcut."
+		return
+	message_label.text = player.assign_hotbar(index, player.inventory.slots[selected].get("item", ""))
+	refresh()
+
+func _craft_recipe(id: String) -> void:
+	message_label.text = player.craft_recipe(id)
+	selected = _find(Inventory.RECIPES[id].output, selected)
+	refresh()
 
 func show_pack() -> void:
 	visible = true
@@ -128,11 +185,11 @@ func _find(item: String, fallback: int) -> int:
 func refresh() -> void:
 	var inventory: RefCounted = player.inventory
 	capacity_label.text = "YOUR BACKPACK    %d / %d slots" % [inventory.used_slots(), Inventory.CAPACITY]
-	_refresh_grid(pack, inventory, selected, "stone_axe" if player.axe_equipped else "")
+	_refresh_grid(pack, inventory, selected, player.equipped_item)
 	var chosen: Dictionary = inventory.slots[selected] if selected >= 0 else {}
 	drop_button.disabled = chosen.is_empty()
-	equip_button.disabled = chosen.get("item", "") != "stone_axe"
-	equip_button.text = "Put axe away" if player.axe_equipped else "Equip axe"
+	equip_button.disabled = not chosen.get("item", "") in Inventory.EQUIPPABLE
+	equip_button.text = "Put away" if not chosen.is_empty() and player.equipped_item == chosen.item else "Equip tool"
 	place_button.disabled = chosen.get("item", "") != "chest"
 	detail.text = Inventory.ITEMS[chosen.item].description if not chosen.is_empty() else "Choose a slot to inspect an item. If your pack fills up, drop a stack on the ground to make room."
 	var connected: int = player.workbench.linked_chests().size()
@@ -156,3 +213,17 @@ func refresh() -> void:
 		axe_status.text = "Ready to craft. Takes one slot."
 	if chest_status.text.is_empty():
 		chest_status.text = "Ready to craft. Carry it, then place it where you like."
+
+	for i in range(shortcut_buttons.size()):
+		var item: String = player.hotbar[i]
+		shortcut_buttons[i].text = str((i + 1) % 10) + (" •" if not item.is_empty() else "")
+		shortcut_buttons[i].tooltip_text = Inventory.ITEMS[item].name if not item.is_empty() else "Empty shortcut"
+	for id in recipe_rows:
+		var recipe: Dictionary = Inventory.RECIPES[id]
+		var amounts := PackedStringArray()
+		for item in recipe.cost:
+			amounts.append("%s  %d / %d" % [Inventory.ITEMS[item].name, player.stock(item), recipe.cost[item]])
+		recipe_rows[id].cost.text = "    ".join(amounts)
+		var reason: String = player.recipe_requirement(id)
+		recipe_rows[id].status.text = reason if not reason.is_empty() else "Ready to craft here."
+		recipe_rows[id].button.disabled = not reason.is_empty()

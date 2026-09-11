@@ -26,3 +26,11 @@ func _draw() -> void:
 			for x in [-14.0, 14.0]:
 				draw_rect(Rect2(center + Vector2(x - 3, -17), Vector2(6, 37)), Color("4a4640"))
 			draw_rect(Rect2(center + Vector2(-4, -8), Vector2(8, 9)), Color("c9b47a"))
+
+		"stone_pickaxe":
+			draw_line(center + Vector2(-10, 23), center + Vector2(6, -17), Color("b8915d"), 6, true)
+			draw_polyline(PackedVector2Array([center + Vector2(-25, -8), center + Vector2(-10, -21), center + Vector2(10, -19), center + Vector2(25, -7)]), Color("a0b4b1"), 7, true)
+		"torch":
+			draw_line(center + Vector2(-6, 23), center + Vector2(1, -5), Color("b8915d"), 7, true)
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-12, -5), center + Vector2(-5, -20), center + Vector2(1, -29), center + Vector2(7, -15), center + Vector2(13, -5), center + Vector2(1, 4)]), Color("efa34c"))
+			draw_circle(center + Vector2(0, -4), 5, Color("ffe7a8"))

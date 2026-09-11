@@ -42,6 +42,8 @@ Goal: walk out, collect one thing, bring it home.
 - [x] Gather loose sticks and stones without tools
 - [x] Build a simple bench at the camp worksite
 - [x] Craft the first stone axe from gathered materials
+- [x] Ten saved hotbar shortcuts with equip / put-away toggles
+- [x] Stone pickaxe, mineable boulders, pine torch, and wood-to-sticks recipes
 - [x] Placeable storage chest at camp (twelve slots; store, take, pick up and move)
 - [x] Crafting pulls from connected home storage (chests near the bench, backpack first)
 
@@ -54,7 +56,7 @@ Goal: walk out, collect one thing, bring it home.
 - [ ] Furnace
 - [ ] Ore smelting into ingots
 - [ ] Craft one meaningful upgrade
-- [x] Save/load (automatic snapshot of the clearing; Continue / Start over on the opening screen)
+- [x] Save/load (automatic snapshots, Continue / Start over, explicit Save & Quit with failure handling, migration of older saves)
 
 ## Phase 4 — Danger
 

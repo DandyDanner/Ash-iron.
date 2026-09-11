@@ -9,9 +9,17 @@ const CHEST_CAPACITY := 12
 const ITEMS := {
 	"stick": {"name": "Sticks", "stack": 10, "description": "Fallen branches. Gather by hand to make a bench and simple tools."},
 	"stone": {"name": "Stones", "stack": 10, "description": "Loose stones from the clearing. No tool needed to pick them up."},
-	"wood": {"name": "Wood", "stack": 10, "description": "Timber from felled trees. Keep it for later building recipes."},
+	"wood": {"name": "Wood", "stack": 10, "description": "Timber for chests, pine torches, or splitting into sticks at the bench."},
 	"stone_axe": {"name": "Stone axe", "stack": 1, "description": "A shaped stone head on a wooden handle. Equip it to chop trees."},
+	"stone_pickaxe": {"name": "Stone pickaxe", "stack": 1, "description": "A pointed stone tool. Equip it and strike boulders to gather more stones."},
+	"torch": {"name": "Pine torch", "stack": 1, "description": "A warm pool of light for exploring. Equip from your hotbar; put away with the same key."},
 	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips. Chests near the bench feed its recipes."}
+}
+const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch"]
+const RECIPES := {
+	"stone_pickaxe": {"name": "Stone pickaxe", "cost": {"stick": 3, "stone": 4}, "output": "stone_pickaxe", "amount": 1, "description": "Break boulders into loose stones. Four swings yield eight stones."},
+	"torch": {"name": "Pine torch", "cost": {"stick": 2, "wood": 1}, "output": "torch", "amount": 1, "description": "A resinous pine torch. Hold it to light the ground ahead; no fuel upkeep yet."},
+	"split_wood": {"name": "Split wood into sticks", "cost": {"wood": 1}, "output": "stick", "amount": 4, "description": "Turn one piece of timber into four crafting sticks."}
 }
 const BENCH_COST := {"stick": 6, "stone": 4}
 const AXE_COST := {"stick": 3, "stone": 2}

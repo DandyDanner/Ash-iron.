@@ -5,6 +5,7 @@ const CONTACT_TIME := 0.22
 const SWING_DURATION := 0.6
 var elapsed := -1.0
 var contact_sent := false
+var selected_item := ""
 var rest_position := Vector3(0.36, -0.34, -0.7)
 var whoosh: AudioStreamPlayer
 var impact: AudioStreamPlayer
@@ -35,6 +36,34 @@ func setup(cloth: Color, skin: Color) -> void:
 	Model.box(tool, Vector3(-0.218, 0.46, 0), Vector3(0.012, 0.235, 0.033), Color("98a38f"))
 	for i in range(3):
 		Model.box(tool, Vector3(0, 0.415 + i * 0.035, 0.06), Vector3(0.135, 0.021, 0.035), Color("c2ac7c"))
+	var pick := Node3D.new()
+	pick.name = "Pickaxe"
+	add_child(pick)
+	Model.cylinder(pick, Vector3(0, 0.18, 0), 0.025, 0.65, Color("916b44"), 0.02)
+	var head := Model.oval(pick, Vector3(0, 0.42, 0), Vector3(0.48, 0.10, 0.10), Color("8a9c99"))
+	head.rotation.z = -0.18
+	for i in range(3):
+		Model.cylinder(pick, Vector3(0, 0.39 + i * 0.026, 0), 0.055, 0.016, Color("d3bf8c"))
+	var torch := Node3D.new()
+	torch.name = "Torch"
+	add_child(torch)
+	Model.cylinder(torch, Vector3(0, 0.17, 0), 0.033, 0.6, Color("926744"), 0.026)
+	Model.cylinder(torch, Vector3(0, 0.42, 0), 0.075, 0.16, Color("674a31"), 0.045)
+	var flame := Model.oval(torch, Vector3(0, 0.55, 0), Vector3(0.13, 0.25, 0.13), Color("ff9a36"))
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color("ffb04c")
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	flame.material_override = material
+	Model.oval(torch, Vector3(0, 0.50, -0.06), Vector3(0.07, 0.13, 0.07), Color("ffe6a3"))
+	var light := OmniLight3D.new()
+	light.name = "WarmLight"
+	light.position = Vector3(0, 0.55, -0.1)
+	light.light_color = Color("ffb76a")
+	light.light_energy = 2.4
+	light.omni_range = 8.0
+	torch.add_child(light)
+	pick.hide()
+	torch.hide()
 	for mesh in find_children("*", "MeshInstance3D", true, false):
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	rotation_degrees = Vector3(0, -12, -12)
@@ -64,12 +93,18 @@ func _sound(wood: bool) -> AudioStreamPlayer:
 	return player
 
 func set_equipped(equipped: bool) -> void:
-	$Tool.visible = equipped
-	if not equipped:
+	set_item("stone_axe" if equipped else "")
+
+func set_item(item: String) -> void:
+	selected_item = item
+	$Tool.visible = item == "stone_axe"
+	$Pickaxe.visible = item == "stone_pickaxe"
+	$Torch.visible = item == "torch"
+	if not item in ["stone_axe", "stone_pickaxe"]:
 		cancel_swing()
 
 func start_swing() -> bool:
-	if not $Tool.visible or elapsed >= 0.0:
+	if not selected_item in ["stone_axe", "stone_pickaxe"] or elapsed >= 0.0:
 		return false
 	elapsed = 0.0
 	contact_sent = false

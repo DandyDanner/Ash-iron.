@@ -5,9 +5,9 @@ const GameSave = preload("res://scripts/game_save.gd")
 var failures := 0
 
 func _initialize() -> void:
-	Profile.storage_path = "user://unused_pickup_test.json"
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("unused_pickup_test.json")
 	# World progress is isolated too: entering the clearing must never read or write the player's real save.
-	GameSave.storage_path = "user://unused_pickup_assist_test_save.json"
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("unused_pickup_assist_test_save.json")
 	GameSave.clear()
 	call_deferred("run")
 

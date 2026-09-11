@@ -4,11 +4,22 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 
 ## Now
 
-- Build: Godot 4.7.2 on Apple Silicon. Seven headless tests, all passing (see `README.md`, Verification).
-- Playable loop: create a traveler, gather sticks and stones, build the bench, craft a stone axe, chop pines, craft and place storage chests, store and take items, craft from chests near the bench. Progress saves automatically; the opening screen offers Continue and Start over.
+- Build: Godot 4.7.2 on Apple Silicon. Eight headless tests, all passing (see `README.md`, Verification).
+- Playable loop: create a traveler, gather sticks and stones, build the bench, craft a stone axe, chop pines, craft and place storage chests, store and take items, craft from chests near the bench. Three extra bench recipes: stone pickaxe (mines boulders), pine torch (held light), and wood into sticks. Ten saved hotbar shortcuts toggle held tools. Progress saves automatically; the opening screen offers Continue and Start over; the backpack has Save & Quit.
 - Suggested next for the visuals lane (Phase 1 in `docs/ROADMAP.md`): replace placeholder cylinders and boxes with stylized assets, add terrain variation, establish forest lighting, fog, and sky, add footsteps and ambient audio.
 - Suggested next for the systems lane (Phase 3): iron ore, weight and encumbrance stages, furnace and smelting, one meaningful upgrade.
-- Known gaps: chests can be placed on top of the bench or a boulder if the surface is flat; the HUD text block is getting long; no confirmation before dropping a stack.
+- Known gaps: chests can be placed on top of the bench or a boulder if the surface is flat; the HUD text block is getting long; no confirmation before dropping a stack. New UI passed a viewport-bounds check, but an on-screen visual playtest is still needed (graphical Godot launch failed in the restricted execution environment). Torch fuel, ore, and resource regrowth remain deferred.
+
+## 2026-09-10 — ChatGPT / Codex
+
+- Dallon authorized this gameplay pass after Claude's completed handoff. Started from `4528414`, clean and even with GitHub; checked origin again before publishing. Preserved Claude's chest, connected-storage, and save architecture.
+- Added 1–9/0 hotbar shortcuts. Assign by selecting a backpack tool and pressing/clicking a number; select an empty slot to clear. Press the assigned key to equip or holster. Shortcuts reference item types, add no inventory capacity, and stay dimmed if the item is stored or dropped. First equip assigns a free shortcut automatically.
+- Added bench recipes: pickaxe (3 sticks + 4 stones), pine torch (2 sticks + 1 wood), split timber (1 wood → 4 sticks). New recipes share atomic connected-storage planning. Pickaxes take four hits to deplete a boulder and drop two stones per hit. Axes cannot mine, and pickaxes cannot chop. Torches provide held light with no fuel upkeep yet.
+- Backpack now has a scrollable recipe column and Save & Quit; Esc opens the backpack. Window close and C are guarded by successful saving. Save errors leave the world open and show an explanation. Focus-loss resume still does not attack.
+- Save format is now 2: adds hotbar, held item, and boulder damage. Format 1 saves load without resetting progress; old axes gain shortcut 1. Future changes should retain this migration.
+- Final tree hits now create the wood bundle immediately, so saving/quitting during the visual fall cannot lose the reward. Loading never duplicates it.
+- Tests: all eight headless suites pass, including new hotbar/recipe/mining/migration/Save & Quit coverage and panel bounds. All test saves now live in the OS temporary folder via `tests/test_paths.gd`; the real traveler and clearing are untouched.
+- Next handoff: playtest visual size/readability of the hotbar and recipe scroll, then choose either forest art/lighting or the first ore-processing loop. No half-written gameplay work remains.
 
 ## 2026-09-10 — Claude Code
 

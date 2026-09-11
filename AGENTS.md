@@ -37,6 +37,6 @@ Two assistants work on this repository, one at a time: **Claude Code** (systems,
 
 - Godot 4.7, GDScript with tabs and typed variables. Placeholder art is built procedurally with the static helpers in `traveler_model.gd` so it can be replaced by real assets later without changing gameplay code.
 - Original content only: no paid or licensed assets in the repository, no copied text.
-- Tests are headless `SceneTree` scripts in `tests/`. Each one sets its own `Profile.storage_path` and `GameSave.storage_path`, so a test never reads or writes the player's real traveler or clearing. Do the same in any new test.
+- Tests are headless `SceneTree` scripts in `tests/`. Each one sets its own `Profile.storage_path` and `GameSave.storage_path` using `tests/test_paths.gd` in the OS temporary folder, so a test never reads or writes the player's real traveler or clearing. Do the same in any new test.
 - Save files live in Godot's user folder as `user://character.json` (appearance) and `user://save.json` (world progress). They stay separate.
 - New features should pass the three questions in `docs/ROADMAP.md`, and the design pillars in `docs/DESIGN_BRIEF.md` decide ties.

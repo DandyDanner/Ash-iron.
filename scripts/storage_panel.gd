@@ -96,7 +96,7 @@ func refresh() -> void:
 		return
 	pack_label.text = "YOUR BACKPACK    %d / %d slots" % [player.inventory.used_slots(), Inventory.CAPACITY]
 	chest_label.text = "STORAGE CHEST    %d / %d slots" % [chest.storage.used_slots(), Inventory.CHEST_CAPACITY]
-	_refresh_grid(pack, player.inventory, selected_pack, "stone_axe" if player.axe_equipped else "")
+	_refresh_grid(pack, player.inventory, selected_pack, player.equipped_item)
 	_refresh_grid(store, chest.storage, selected_chest)
 	var chosen: Dictionary = {}
 	if selected_pack >= 0:

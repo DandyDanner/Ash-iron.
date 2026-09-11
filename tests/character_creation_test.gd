@@ -10,9 +10,9 @@ func check(condition: bool, message: String) -> void:
 		push_error(message)
 
 func _initialize() -> void:
-	Profile.storage_path = "user://character_test_%s.json" % Time.get_ticks_usec()
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("character_test_%s.json" % Time.get_ticks_usec())
 	# World progress is isolated too: entering the clearing must never read or write the player's real save.
-	GameSave.storage_path = "user://unused_character_creation_test_save.json"
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("unused_character_creation_test_save.json")
 	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):

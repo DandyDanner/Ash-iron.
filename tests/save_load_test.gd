@@ -6,8 +6,8 @@ var failures := 0
 
 func _initialize() -> void:
 	# Both files are isolated: the player's real traveler and real clearing are never touched.
-	Profile.storage_path = "user://save_load_test_profile_%d.json" % Time.get_ticks_usec()
-	GameSave.storage_path = "user://save_load_test_%d.json" % Time.get_ticks_usec()
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("save_load_test_profile_%d.json" % Time.get_ticks_usec())
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("save_load_test_%d.json" % Time.get_ticks_usec())
 	GameSave.clear()
 	call_deferred("run")
 

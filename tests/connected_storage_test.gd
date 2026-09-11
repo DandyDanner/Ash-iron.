@@ -6,8 +6,8 @@ const Chest = preload("res://scripts/storage_chest.gd")
 var failures := 0
 
 func _initialize() -> void:
-	Profile.storage_path = "user://unused_connected_storage_test.json"
-	GameSave.storage_path = "user://connected_storage_test_%d.json" % Time.get_ticks_usec()
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("unused_connected_storage_test.json")
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("connected_storage_test_%d.json" % Time.get_ticks_usec())
 	GameSave.clear()
 	call_deferred("run")
 

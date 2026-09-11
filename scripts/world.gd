@@ -12,13 +12,19 @@ var dirty := false
 var since_save := 0.0
 var loaded_from_save := false
 var last_save_error: Error = OK
+signal quit_requested
+
 
 func _ready() -> void:
+	get_tree().auto_accept_quit = false
 	player = get_node_or_null("Player")
 	var data := GameSave.load_state()
 	if not data.is_empty():
 		_apply(data)
 		loaded_from_save = true
+
+func _exit_tree() -> void:
+	get_tree().auto_accept_quit = true
 
 func _process(delta: float) -> void:
 	since_save += delta
@@ -27,7 +33,16 @@ func _process(delta: float) -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST and is_inside_tree():
-		save_game()
+		request_quit()
+
+func request_quit() -> Error:
+	var result := save_game()
+	if result == OK:
+		quit_requested.emit()
+		get_tree().quit()
+	elif is_instance_valid(player):
+		player.show_quit_error()
+	return result
 
 func mark_dirty() -> void:
 	dirty = true
@@ -36,7 +51,7 @@ func save_game() -> Error:
 	if not is_instance_valid(player):
 		return ERR_UNAVAILABLE
 	last_save_error = GameSave.save_state(to_data())
-	dirty = false
+	dirty = last_save_error != OK
 	since_save = 0.0
 	if player.has_method("note_saved"):
 		player.note_saved(last_save_error)
@@ -61,11 +76,16 @@ func to_data() -> Dictionary:
 	for chest in get_tree().get_nodes_in_group("chests"):
 		if not chest.is_queued_for_deletion():
 			chests.append(chest.to_data())
+	var boulders := []
+	for rock in get_tree().get_nodes_in_group("mineable_rocks"):
+		boulders.append({"name": rock.name, "hits_left": rock.hits_left})
 	return {
+		"boulders": boulders,
 		"player": {
 			"x": player.global_position.x, "y": player.global_position.y, "z": player.global_position.z,
 			"yaw": player.rotation.y, "pitch": player.camera.rotation.x,
-			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped
+			"slots": player.inventory.to_data(), "axe_equipped": player.axe_equipped,
+			"equipped_item": player.equipped_item, "hotbar": player.hotbar.duplicate()
 		},
 		"workbench": {"built": workbench.built if workbench else false},
 		"trees": trees, "pickups": pickups, "bundles": bundles, "chests": chests
@@ -118,10 +138,14 @@ func _apply(data: Dictionary) -> void:
 		chest.global_position = _vec(_dict(entry), Vector3.ZERO)
 		chest.rotation.y = _num(_dict(entry).get("yaw"), 0.0)
 		chest.restore(_dict(entry))
+	for rock in get_tree().get_nodes_in_group("mineable_rocks"):
+		for entry in _list(data.get("boulders")):
+			if str(_dict(entry).get("name", "")) == str(rock.name):
+				rock.restore(int(_num(_dict(entry).get("hits_left"), 4.0)))
 	var saved := _dict(data.get("player"))
 	if player:
 		player.inventory.restore(saved.get("slots", []))
-		player.equip_axe(saved.get("axe_equipped", false) == true)
+		player.restore_equipment(saved)
 		var spot := _vec(saved, player.global_position)
 		if spot.y > -10.0:
 			player.global_position = spot

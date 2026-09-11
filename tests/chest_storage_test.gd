@@ -6,8 +6,8 @@ var failures := 0
 var screenshot_dir := ""
 
 func _initialize() -> void:
-	Profile.storage_path = "user://unused_chest_test.json"
-	GameSave.storage_path = "user://chest_test_%d.json" % Time.get_ticks_usec()
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("unused_chest_test.json")
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("chest_test_%d.json" % Time.get_ticks_usec())
 	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):

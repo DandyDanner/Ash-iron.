@@ -31,13 +31,15 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - `Shift` — sprint
 - `Space` — jump
 - Mouse — look
-- Left click — swing your crafted and equipped axe (while the mouse is captured)
+- Left click — swing your equipped axe or pickaxe (while the mouse is captured)
 - `E` — gather sticks, loose stones, or wood; use the camp worksite or bench; open a storage chest
 - `I` — open or close your backpack and crafting panel
-- `Esc` — release mouse
+- `Esc` — open the backpack and save controls; close an open panel
 - Click game window — capture mouse again
 - `C` — return to character creation (your progress is saved first)
-- Progress in the clearing saves itself; **Save game** in the backpack saves on demand
+- `1`–`9`, `0` — equip a hotbar tool; press its key again to put it away
+- In the backpack, select a tool and press a number or click a shortcut button to assign it. Select an empty backpack slot to clear that shortcut.
+- Progress saves automatically. **Save game** saves on demand; **Save & Quit** saves successfully before closing the game. A failed save keeps the game open.
 
 ## Run it
 
@@ -46,7 +48,7 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 3. Press **F5** or the **Run Project** button in the top-right. On some Mac keyboards use **Fn + F5**.
 4. Create your traveler, then enter the tiny placeholder 3D test area.
 
-Your name and appearance are saved locally between launches. They are separate from future gameplay save data. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
+Your name and appearance are saved locally between launches. They are separate from the clearing save. The character is an original procedural art blockout, ready for feedback before investing in a finished model. See `docs/CHARACTER_CREATION.md` for the current feature set.
 
 ## Start with empty hands
 
@@ -61,18 +63,32 @@ Every background now starts with **eight empty inventory slots and no tools**. Y
 5. Close the backpack, walk up to a pine, and click four times to chop it down. Aim at the fallen logs and press **E** to collect five wood into your backpack.
 6. Back at the bench, spend **5 wood + 2 sticks** on **Craft storage chest**. Select the chest in your backpack and choose **Place chest here**; it lands on the ground in front of you. Walk up to it and press **E** to move stacks between your pack and its twelve slots. An empty chest can be picked up and moved. A chest within about eight meters of the bench is **connected**: the bench's recipes draw from it after your backpack, and the workbench prompt shows how many chests are connected.
 
+Scroll the recipe column for three additional bench recipes. They use nearby connected chests too:
+
+| Recipe | Materials | Use |
+| --- | --- | --- |
+| Stone pickaxe | 3 sticks + 4 stones | Four swings break a boulder; each hit drops two loose stones to gather with E. |
+| Pine torch | 2 sticks + 1 wood | Hold for warm light. No fuel upkeep or fire damage in this prototype. |
+| Split wood into sticks | 1 wood | Produces 4 sticks for tools and camp supplies. |
+
+Tools automatically take the first unused hotbar shortcut when equipped. Shortcuts point to items in your eight-slot backpack; they add no storage. A stored or dropped tool is shown dimmed until recovered. Assignments survive quitting and loading.
+
 The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
-Select a backpack slot to inspect an item, equip or put away the axe, or **Drop selected stack**. Dropped items can be recovered. The equipped axe still occupies its backpack slot. Large boulders are solid scenery for now; gather the loose stones around them by hand.
+Select a backpack slot to inspect an item, equip or put away a tool, or **Drop selected stack**. Dropped items can be recovered. Equipped tools still occupy their backpack slots. Axes chop pines; pickaxes mine boulders. Depleted boulders stay depleted after loading.
 
 Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby trees. Falling off the test clearing returns you to the starting point with your current inventory.
 
-**Your progress is kept.** Your position and view, backpack, equipped axe, the workbench, tree damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
+**Your progress is kept.** Your position and view, backpack, hotbar shortcuts, held tool, the workbench, tree and boulder damage, loose and dropped resources, and every placed chest with its contents are written to `user://save.json`: a moment after anything changes, whenever you close a panel, every 15 seconds while you play, when you press **C**, and when the window closes. The opening screen then offers **Continue your journey**; **Start over** (it asks twice) erases the clearing but keeps your traveler, whose appearance lives in its own file. Recipes never spend anything unless the whole recipe, including its result, fits.
+
+Save format 2 accepts existing format 1 saves without resetting the clearing. Old saves gain an axe shortcut when an axe is in the backpack. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
 ## Verification
 
 Use your Godot executable in these commands:
 
+- `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
+- `Godot --headless --path . --script res://tests/pickup_assist_test.gd` — generous pickup targeting, reach limits, priority, and blocked sight lines.
 - `Godot --headless --path . --script res://tests/inventory_crafting_test.gd` — slot limits, stacking, partial pickups, atomic crafting, empty-handed start, gathering, workbench, axe, equip/drop/recover.
 - `Godot --headless --path . --script res://tests/jump_axe_test.gd` — jumping, landing, axe reach and obstruction, cooldown, felling, wood pickup, mouse resume, and fall recovery after obtaining an axe.
 - `Godot --headless --path . --script res://tests/character_creation_test.gd` — character customization, isolated save round trip, world entry, and reopening.
@@ -80,7 +96,7 @@ Use your Godot executable in these commands:
 - `Godot --headless --path . --script res://tests/connected_storage_test.gd` — crafting across the backpack and chests near the bench: backpack first, distance limit, atomic failure, output in the backpack, the workbench prompt, panel totals, and persistence of chest stock.
 - `Godot --headless --path . --script res://tests/save_load_test.gd` — malformed saves, a full snapshot round trip (pose, backpack, axe, bench, trees, pickups, dropped stacks, chests), no duplicated wood, checkpoints on closing panels, C keeping progress, Continue, and Start over.
 
-The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. Every test uses its own profile and save paths, so none of them touch your character or your clearing.
+The inventory test can also run with graphics enabled and `-- --screenshots=/absolute/output/folder` to capture the starting clearing, backpack, and bench. The hotbar test accepts the same screenshot option. Every test uses isolated profile and save paths in the OS temporary folder through `tests/test_paths.gd`, so none touch your character or clearing. On restricted hosts, add `--log-file /absolute/writable/path.log`.
 
 ## First milestone
 

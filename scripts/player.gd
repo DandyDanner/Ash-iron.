@@ -8,6 +8,7 @@ const InventoryPanel = preload("res://scripts/inventory_panel.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const StoragePanel = preload("res://scripts/storage_panel.gd")
 const Chest = preload("res://scripts/storage_chest.gd")
+const Hotbar = preload("res://scripts/hotbar.gd")
 const REACH := 2.6
 @export var pickup_radius: float = 3.0
 @export_range(10.0, 90.0) var pickup_half_angle: float = 70.0
@@ -29,7 +30,11 @@ var controls_active := true
 var inventory := Inventory.new()
 var inventory_panel: Control
 var workbench: Node3D
-var axe_equipped := false
+var equipped_item := ""
+var axe_equipped: bool:
+	get: return equipped_item == "stone_axe"
+var hotbar: Array[String] = ["", "", "", "", "", "", "", "", "", ""]
+var hotbar_view: Control
 var wood: int:
 	get: return inventory.count("wood")
 var jump_buffer := 0.0
@@ -51,15 +56,15 @@ func _ready() -> void:
 	var hud := CanvasLayer.new()
 	add_child(hud)
 	identity_label = _label(hud, Vector2(24, 20), 17)
-	identity_label.text = "%s · %s\nKeepsake: %s\n\nWASD Move · Shift Sprint · Space Jump\nE Gather / bench / chest · I Backpack / craft\nLeft click Use axe · C Character · Esc Release mouse" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
+	identity_label.text = "%s · %s\nKeepsake: %s\n\nWASD Move · Shift Sprint · Space Jump\nE Gather / bench / chest · I Backpack / craft\n1–9, 0 Equip · Left click Use · Esc Backpack / save" % [display_name, Profile.BACKGROUNDS[profile.background], Profile.KEEPSAKES[profile.keepsake]]
 	resource_label = _label(hud, Vector2(24, 175), 22)
 	resource_label.add_theme_color_override("font_color", Color("f4d79a"))
 	prompt_label = _label(hud, Vector2.ZERO, 21)
 	prompt_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	prompt_label.offset_left = -450
 	prompt_label.offset_right = 450
-	prompt_label.offset_top = -85
-	prompt_label.offset_bottom = -35
+	prompt_label.offset_top = -151
+	prompt_label.offset_bottom = -110
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt_label.add_theme_color_override("font_color", Color("fff1cb"))
 	Traveler.oval(camera, Vector3(-0.28, -0.35, -0.43), Vector3(0.14, 0.16, 0.38), Profile.CLOTHES[profile.clothes])
@@ -70,6 +75,9 @@ func _ready() -> void:
 	axe.setup(Profile.CLOTHES[profile.clothes], Profile.SKINS[profile.skin])
 	axe.set_equipped(false)
 	workbench = get_tree().get_first_node_in_group("workbenches")
+	hotbar_view = Hotbar.new()
+	hud.add_child(hotbar_view)
+	hotbar_view.setup(self)
 	inventory_panel = InventoryPanel.new()
 	hud.add_child(inventory_panel)
 	inventory_panel.setup(self)
@@ -108,15 +116,19 @@ func _unhandled_input(event: InputEvent) -> void:
 			open_inventory()
 			return
 		if event.physical_keycode == KEY_C:
-			if world:
-				world.save_game()
+			if world and world.save_game() != OK:
+				show_quit_error()
+				return
 			get_tree().change_scene_to_file("res://scenes/character_creator.tscn")
 			return
 		if event.keycode == KEY_ESCAPE:
-			_capture_controls(false)
-			_cancel_actions()
+			open_inventory()
 			return
 		if controls_active:
+			var shortcut := hotbar_key(event)
+			if shortcut >= 0:
+				use_hotbar(shortcut)
+				return
 			if event.physical_keycode == KEY_SPACE:
 				jump_buffer = JUMP_BUFFER
 			if event.physical_keycode == KEY_E:
@@ -125,8 +137,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not controls_active:
 			_capture_controls(true)
 			return # The click that resumes play must not also swing the axe.
-		if axe_equipped and inventory.count("stone_axe") > 0:
+		if equipped_item in ["stone_axe", "stone_pickaxe"] and inventory.count(equipped_item) > 0:
 			axe.start_swing()
+		elif equipped_item == "torch":
+			_show_feedback("Pine torch • Press its hotbar key again to put it away.")
 		else:
 			_show_feedback("Empty hands • Gather sticks and stones, then build at camp.")
 	if event is InputEventMouseMotion and controls_active:
@@ -183,11 +197,16 @@ func _physics_process(delta: float) -> void:
 		_show_feedback("Back in the clearing")
 	if axe.advance(delta):
 		var hit := _aim_target()
-		if not hit.is_empty() and hit.collider.has_method("chop"):
+		if axe_equipped and not hit.is_empty() and hit.collider.has_method("chop"):
 			if hit.collider.chop(hit.position):
 				axe.impact.play()
 				_progress_changed()
 				_show_feedback("Timber! Collect the fallen wood with E." if hit.collider.hits_left == 0 else "Good hit")
+		elif equipped_item == "stone_pickaxe" and not hit.is_empty() and hit.collider.has_method("mine"):
+			if hit.collider.mine(hit.position):
+				axe.impact.play()
+				_progress_changed()
+				_show_feedback("Boulder broken! E to gather stones." if hit.collider.hits_left == 0 else "Stone chipped")
 	if collect_requested:
 		collect_requested = false
 		var target := _interaction_target()
@@ -256,7 +275,9 @@ func _interaction_target() -> Node3D:
 	return best
 
 func _update_hud() -> void:
-	resource_label.text = "%s   /   PACK %d / 8" % ["STONE AXE" if axe_equipped else "EMPTY HANDS", inventory.used_slots()]
+	resource_label.text = "%s   /   PACK %d / 8" % [Inventory.ITEMS[equipped_item].name.to_upper() if not equipped_item.is_empty() else "EMPTY HANDS", inventory.used_slots()]
+	if is_instance_valid(hotbar_view):
+		hotbar_view.refresh()
 	if feedback_time > 0.0:
 		prompt_label.text = feedback
 		return
@@ -309,6 +330,7 @@ func _enter_menu() -> void:
 	resource_label.hide()
 	prompt_label.hide()
 	save_label.hide()
+	hotbar_view.hide()
 	get_parent().get_node("HUD/Crosshair").hide()
 
 func _leave_menu() -> void:
@@ -316,6 +338,7 @@ func _leave_menu() -> void:
 	resource_label.show()
 	prompt_label.show()
 	save_label.show()
+	hotbar_view.show()
 	get_parent().get_node("HUD/Crosshair").show()
 	_capture_controls(true)
 	_update_hud()
@@ -324,9 +347,9 @@ func _leave_menu() -> void:
 		world.save_game()
 
 func _inventory_changed() -> void:
-	if inventory.count("stone_axe") == 0:
-		axe_equipped = false
-	axe.set_equipped(axe_equipped)
+	if not equipped_item.is_empty() and inventory.count(equipped_item) == 0:
+		equipped_item = ""
+	axe.set_item(equipped_item)
 	_update_hud()
 	if inventory_panel.visible:
 		inventory_panel.refresh()
@@ -335,12 +358,105 @@ func _inventory_changed() -> void:
 	_progress_changed()
 
 func equip_axe(equipped: bool) -> void:
-	axe_equipped = equipped and inventory.count("stone_axe") > 0
-	axe.set_equipped(axe_equipped)
+	equip_item("stone_axe" if equipped else "")
+
+func equip_item(item: String) -> void:
+	if not item.is_empty() and (not item in Inventory.EQUIPPABLE or inventory.count(item) == 0):
+		return
+	equipped_item = item
+	axe.cancel_swing()
+	axe.set_item(item)
+	if not item.is_empty() and not item in hotbar:
+		var free := hotbar.find("")
+		if free >= 0:
+			hotbar[free] = item
 	_update_hud()
+	_progress_changed()
 
 func toggle_axe() -> void:
 	equip_axe(not axe_equipped)
+
+static func hotbar_key(event: InputEventKey) -> int:
+	var code := event.physical_keycode if event.physical_keycode != 0 else event.keycode
+	if code >= KEY_1 and code <= KEY_9:
+		return code - KEY_1
+	return 9 if code == KEY_0 else -1
+
+func assign_hotbar(index: int, item: String) -> String:
+	if index < 0 or index >= hotbar.size():
+		return "Unknown shortcut."
+	if not item.is_empty() and (not item in Inventory.EQUIPPABLE or inventory.count(item) == 0):
+		return "Choose an axe, pickaxe, or torch from your backpack."
+	# Moving a shortcut keeps a single, predictable key for each tool.
+	for i in range(hotbar.size()):
+		if not item.is_empty() and hotbar[i] == item:
+			hotbar[i] = ""
+	hotbar[index] = item
+	_update_hud()
+	_progress_changed()
+	return "Shortcut %d cleared." % ((index + 1) % 10) if item.is_empty() else "%s assigned to %d." % [Inventory.ITEMS[item].name, (index + 1) % 10]
+
+func use_hotbar(index: int) -> void:
+	if index < 0 or index >= hotbar.size():
+		return
+	var item := hotbar[index]
+	if not item.is_empty() and inventory.count(item) == 0:
+		equip_item("")
+		_show_feedback("%s is not in your backpack. Take it from storage first." % Inventory.ITEMS[item].name)
+		return
+	equip_item("" if equipped_item == item else item)
+
+func restore_equipment(saved: Dictionary) -> void:
+	hotbar.fill("")
+	var raw: Variant = saved.get("hotbar", [])
+	if raw is Array:
+		for i in range(mini(10, raw.size())):
+			if raw[i] is String and raw[i] in Inventory.EQUIPPABLE and not raw[i] in hotbar:
+				hotbar[i] = raw[i]
+	var item: Variant = saved.get("equipped_item", "stone_axe" if saved.get("axe_equipped", false) == true else "")
+	equip_item(item if item is String and item in Inventory.EQUIPPABLE and inventory.count(item) > 0 else "")
+	# Old saves gain a useful first shortcut even when the axe was put away.
+	if not saved.has("hotbar") and inventory.count("stone_axe") > 0:
+		hotbar[0] = "stone_axe"
+	_update_hud()
+
+func recipe_requirement(id: String) -> String:
+	if not Inventory.RECIPES.has(id):
+		return "Unknown recipe."
+	if not workbench.built:
+		return "Build the simple bench first."
+	if not workbench.within_reach(self):
+		return "Stand close to your workbench."
+	var recipe: Dictionary = Inventory.RECIPES[id]
+	if recipe.output in Inventory.EQUIPPABLE and inventory.count(recipe.output) > 0:
+		return "You already carry this tool."
+	if not Inventory.can_afford_across(containers(), recipe.cost):
+		return "Gather the missing materials."
+	if not Inventory.can_craft_across(containers(), recipe.cost, recipe.output, recipe.amount):
+		return "Make room in your backpack first."
+	return ""
+
+func craft_recipe(id: String) -> String:
+	var reason := recipe_requirement(id)
+	if not reason.is_empty():
+		return reason
+	var recipe: Dictionary = Inventory.RECIPES[id]
+	var before := _pack_counts(recipe.cost)
+	if not Inventory.craft_across(containers(), recipe.cost, recipe.output, recipe.amount):
+		return "Couldn't craft: check materials and backpack space."
+	if recipe.output in Inventory.EQUIPPABLE:
+		equip_item(recipe.output)
+	return "Crafted %d %s." % [recipe.amount, Inventory.ITEMS[recipe.output].name.to_lower()] + _storage_note(before, recipe.cost)
+
+func save_and_quit() -> void:
+	if world:
+		world.request_quit()
+
+func show_quit_error() -> void:
+	if storage_panel.visible:
+		close_storage()
+	open_inventory()
+	inventory_panel.message_label.text = "Couldn't save. Your game is still open. Free disk space or check folder access, then retry."
 
 func bench_requirement() -> String:
 	if workbench.built:

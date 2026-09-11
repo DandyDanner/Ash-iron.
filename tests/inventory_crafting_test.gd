@@ -7,9 +7,9 @@ var failures := 0
 var screenshot_dir := ""
 
 func _initialize() -> void:
-	Profile.storage_path = "user://unused_inventory_test.json"
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("unused_inventory_test.json")
 	# World progress is isolated too: entering the clearing must never read or write the player's real save.
-	GameSave.storage_path = "user://unused_inventory_crafting_test_save.json"
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("unused_inventory_crafting_test_save.json")
 	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):

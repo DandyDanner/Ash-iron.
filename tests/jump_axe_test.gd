@@ -6,9 +6,9 @@ var screenshot_dir := ""
 
 func _initialize() -> void:
 	# Never load or change the player's actual saved character during verification.
-	Profile.storage_path = "user://unused_jump_axe_test.json"
+	Profile.storage_path = preload("res://tests/test_paths.gd").path("unused_jump_axe_test.json")
 	# World progress is isolated too: entering the clearing must never read or write the player's real save.
-	GameSave.storage_path = "user://unused_jump_axe_test_save.json"
+	GameSave.storage_path = preload("res://tests/test_paths.gd").path("unused_jump_axe_test_save.json")
 	GameSave.clear()
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--screenshots="):
@@ -69,7 +69,7 @@ func run() -> void:
 	click(player)
 	await ticks(45)
 	check(tree.hits_left == 4, "Axe hit a tree beyond its reach")
-	key(player, KEY_ESCAPE)
+	player._notification(MainLoop.NOTIFICATION_APPLICATION_FOCUS_OUT)
 	click(player)
 	check(player.axe.elapsed < 0, "Resume click also swung the axe")
 	player.position = Vector3(0, 1.1, 2)

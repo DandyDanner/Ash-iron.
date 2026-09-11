@@ -33,6 +33,10 @@ func _ready() -> void:
 			var handle := Model.cylinder(self, Vector3(0, 0.08, 0), 0.026, 0.6, Color("86603c"))
 			handle.rotation.x = PI / 2
 			Model.oval(self, Vector3(0, 0.1, -0.22), Vector3(0.34, 0.16, 0.2), Color("89948c"))
+		"stone_pickaxe", "torch":
+			var handle := Model.cylinder(self, Vector3(0, 0.08, 0), 0.026, 0.6, Color("86603c"))
+			handle.rotation.x = PI / 2
+			Model.oval(self, Vector3(0, 0.1, -0.22), Vector3(0.40, 0.12, 0.12) if item_id == "stone_pickaxe" else Vector3(0.13, 0.12, 0.20), Color("8a9c99") if item_id == "stone_pickaxe" else Color("b88248"))
 		"chest":
 			Model.box(self, Vector3(0, 0.14, 0), Vector3(0.42, 0.24, 0.26), Color("8b6a44"))
 			Model.box(self, Vector3(0, 0.27, 0), Vector3(0.44, 0.05, 0.28), Color("9a7750"))

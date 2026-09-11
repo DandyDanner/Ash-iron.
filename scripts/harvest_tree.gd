@@ -36,7 +36,7 @@ func chop(hit_position: Vector3) -> bool:
 	if hits_left == 0:
 		_leave_stump()
 		response.tween_property(crown, "rotation:x", -PI / 2, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-		response.tween_callback(_drop_wood)
+		_drop_wood()
 		response.tween_interval(1.0)
 		response.tween_property(crown, "scale", Vector3.ZERO, 0.45)
 		response.tween_callback(crown.queue_free)
