@@ -1,6 +1,6 @@
 # Character and wildlife modeling studio
 
-Open `cycles/cycle_15/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
+Open `cycles/cycle_20/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. These models are not rigged or integrated into the game.
 
 `ash_iron_character_studio.blend` remains the original baseline.
 
@@ -27,3 +27,11 @@ Use the installed executable paths on the Mac: `/Users/dallonanderson/Downloads/
 The exporter removes hidden prototype nodes from the comparison copy: Blender 5.2.1 does not accept Godot’s required `KHR_node_visibility` extension. This does not alter gameplay source or the live character. The round-trip check validates the exported mesh presence and dimensions in Godot; it is not a fidelity, skinning, or animation approval.
 
 The setup script refuses to overwrite an existing studio by default. Rebuilding the generated comparison file requires `-- --replace-baseline`. Preserve any manual art edits in a separate authored `.blend` file first.
+
+## Latest wildlife study
+
+`tools/blender/refine_wildlife.py` loads cycle 15 and preserves its travelers while rebuilding animals. To reproduce the cycle 19 checkpoint in a fresh folder, use `Blender --background --factory-startup --python tools/blender/refine_wildlife.py -- --art-pass=99 --refinement=4`. It refuses to overwrite a saved source. Do not use this baseline-based reconstruction to overwrite later traveler or animal edits.
+
+`Blender --background --factory-startup --python tools/blender/render_wildlife_details.py -- --art-pass=19` renders rear and face inspection views from that saved source without modifying the `.blend` file. The ordinary wildlife generator also renders full silhouettes and portrait/side pairs. All images are actual Cycles renders.
+
+For the cycle 20 attachment cleanup, `Blender --background --factory-startup --python tools/blender/polish_wildlife_attachments.py -- --art-pass=99` loads the saved cycle 19 animals and corrects antler/ear seating, eye/fur clearance and hoof finish. It preserves the saved traveler models and refuses to overwrite an existing source. Use `render_wildlife_details.py -- --art-pass=20` for the latest close views.
