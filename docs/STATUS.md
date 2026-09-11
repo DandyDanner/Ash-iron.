@@ -8,11 +8,18 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Playable loop: create a traveler, gather sticks/stones, hand-craft and place a portable bench, craft tools, chop pines and mine boulders, store in chests, craft using linked chest materials, and practice with a craftable bow and recoverable arrows. Eight backpack slots and ten saved hotbar shortcuts. Automatic progress saves, Continue / Start over, and Save & Quit.
 - Workbenches: craft anywhere for six sticks/four stones, carry in one slot, place on clear level ground, then use E nearby. Pick up this workbench packs it for relocation. Multiple benches persist; E selects the viewed bench, I uses the nearest reachable one. Recipes use that bench’s nearby chests; remote stock is unavailable.
 - Crafting UI: eight recipe icons with hover cards for use, have/need totals, missing ingredients, and availability. Click or keyboard-focus to inspect; use the separate craft button. Disabled recipes remain browsable. Arrow/stick icons show output amounts.
+- Pickaxe art: faceted stone head with a long hooked point, short rear chisel, thick lashed socket, and wrapped hardwood handle. Shared held/dropped model and matching icon.
 - Tool grip: axe/pickaxe edges face forward through a back-to-forward vertical chop in both camera views, with windup/contact/follow-through and no lateral sweep. Palm grips retain forearm clearance. The redesigned bow has tapered recurve limbs, an upright palm grip, string-following draw hand, and an arrow rest above the grip.
 - Presentation: approved Willow Scout implemented as an articulated procedural model shared by the creator and world. Third person starts by default; V switches views and saves the preference. Walking, jumping, tool gestures, bow drawing, and cape movement. Forest paths, grass, flowers, hills, fuller pines, lichen boulders, planked bench/chest, warm sky/light, and shorter HUD. F11 toggles standalone full screen.
 - Suggested next for visuals: refine the face/hair/cape and animation hand contact against `docs/art/willow-scout-turnaround.png`, replace simple distant silhouettes, vary foliage density, then add footsteps/ambient audio. This is a coordinated first procedural pass, not the finished concept-art model.
 - Suggested next for systems (Phase 3): choose one meaningful expedition upgrade (ore → furnace → improved tool) or one animal for the existing bow, before expanding the map.
 - Known gaps: no placement ghost or manual rotation tool yet (furniture follows the player’s horizontal facing); no confirmation before dropping a stack. Torch fuel, ore, resource regrowth, enemy damage, and background abilities remain deferred. Animation is a node rig without foot IK, skeletal skinning, or cloth simulation. The editor's embedded game controls its own window size; F11 is primarily for standalone play.
+
+## 2026-09-10 — ChatGPT / Codex: shaped stone pickaxe
+
+- Dallon liked the corrected swing but found the pickaxe head too oval. Started clean at `80acd06`, verified origin and identity.
+- Replaced the oval with an original faceted stone head: a long downward-curved point, shorter rear chisel, and thick center socket secured with rawhide bands. Added a tapered hardwood haft and wrapped grip. Shared `pickaxe_art.gd` serves held and dropped tools; inventory/crafting/hotbar icons match the new silhouette.
+- Native Godot reviewed the side silhouette in third person and the details in first person. All twelve suites pass, including mining, both swing paths, and forearm clearance through the swing. Animation, recipes, damage, reach, and saves are unchanged.
 
 ## 2026-09-10 — ChatGPT / Codex: forward swings in both camera views
 

@@ -37,7 +37,9 @@ func _draw() -> void:
 
 		"stone_pickaxe":
 			draw_line(center + Vector2(-10, 23), center + Vector2(6, -17), Color("b8915d"), 6, true)
-			draw_polyline(PackedVector2Array([center + Vector2(-25, -8), center + Vector2(-10, -21), center + Vector2(10, -19), center + Vector2(25, -7)]), Color("a0b4b1"), 7, true)
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-27, -3), center + Vector2(-17, -20), center + Vector2(-4, -26), center + Vector2(11, -25), center + Vector2(25, -10), center + Vector2(20, -6), center + Vector2(6, -16), center + Vector2(-8, -17)]), Color("8c9c90"))
+			draw_line(center + Vector2(0, -24), center + Vector2(2, -14), Color("c4ac7b"), 3, true)
+			draw_line(center + Vector2(6, -24), center + Vector2(8, -14), Color("c4ac7b"), 3, true)
 		"torch":
 			draw_line(center + Vector2(-6, 23), center + Vector2(1, -5), Color("b8915d"), 7, true)
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-12, -5), center + Vector2(-5, -20), center + Vector2(1, -29), center + Vector2(7, -15), center + Vector2(13, -5), center + Vector2(1, 4)]), Color("efa34c"))

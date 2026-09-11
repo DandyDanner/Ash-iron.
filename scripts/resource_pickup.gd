@@ -33,10 +33,17 @@ func _ready() -> void:
 			var handle := Model.cylinder(self, Vector3(0, 0.08, 0), 0.026, 0.6, Color("86603c"))
 			handle.rotation.x = PI / 2
 			Model.oval(self, Vector3(0, 0.1, -0.22), Vector3(0.34, 0.16, 0.2), Color("89948c"))
-		"stone_pickaxe", "torch":
+		"stone_pickaxe":
+			var art := Node3D.new()
+			add_child(art)
+			preload("res://scripts/pickaxe_art.gd").build(art)
+			art.rotation.x = -PI / 2
+			art.position = Vector3(0, 0.065, 0.13)
+			art.scale = Vector3.ONE * 0.75
+		"torch":
 			var handle := Model.cylinder(self, Vector3(0, 0.08, 0), 0.026, 0.6, Color("86603c"))
 			handle.rotation.x = PI / 2
-			Model.oval(self, Vector3(0, 0.1, -0.22), Vector3(0.40, 0.12, 0.12) if item_id == "stone_pickaxe" else Vector3(0.13, 0.12, 0.20), Color("8a9c99") if item_id == "stone_pickaxe" else Color("b88248"))
+			Model.oval(self, Vector3(0, 0.1, -0.22), Vector3(0.13, 0.12, 0.20), Color("b88248"))
 		"bow":
 			var art := Node3D.new()
 			add_child(art)

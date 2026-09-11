@@ -41,11 +41,7 @@ func setup(cloth: Color, skin: Color) -> void:
 	pick.name = "Pickaxe"
 	pick.rotation.y = -PI / 2
 	add_child(pick)
-	Model.cylinder(pick, Vector3(0, 0.18, 0), 0.025, 0.65, Color("916b44"), 0.02)
-	var head := Model.oval(pick, Vector3(0, 0.42, 0), Vector3(0.48, 0.10, 0.10), Color("8a9c99"))
-	head.rotation.z = -0.18
-	for i in range(3):
-		Model.cylinder(pick, Vector3(0, 0.39 + i * 0.026, 0), 0.055, 0.016, Color("d3bf8c"))
+	preload("res://scripts/pickaxe_art.gd").build(pick)
 	var torch := Node3D.new()
 	torch.name = "Torch"
 	add_child(torch)
