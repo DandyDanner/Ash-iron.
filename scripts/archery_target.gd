@@ -23,7 +23,7 @@ func _ready() -> void:
 	add_child(collider)
 	sign = Label3D.new()
 	sign.position = Vector3(0, 2.6, 0)
-	sign.text = "ARCHERY PRACTICE\nHold left click • Release to fire"
+	sign.text = "WEAPON PRACTICE\nBow: hold / release • Spear: click"
 	sign.font_size = 38
 	sign.pixel_size = 0.009
 	sign.outline_size = 8
@@ -38,4 +38,11 @@ func hit_by_arrow(point: Vector3) -> String:
 	return last_result + " • Recover your arrow with E."
 
 func prompt() -> String:
-	return "Archery target • Hold left click with your bow, then release"
+	return "Practice target • Bow: hold / release • Spear: click to thrust"
+
+func receive_melee_hit(_damage: int, point: Vector3) -> String:
+	hits += 1
+	var local := to_local(point) - Vector3(0, 1.4, 0)
+	last_result = "Spear bullseye!" if Vector2(local.x, local.y).length() <= 0.18 else "Spear hit!"
+	sign.text = "%s\n%d practice hit%s" % [last_result, hits, "" if hits == 1 else "s"]
+	return last_result

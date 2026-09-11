@@ -280,6 +280,7 @@ func reach_hand(index: int, target: Vector3, bend_hint: Vector3) -> void:
 
 func animate_movement(delta: float, speed: float, grounded: bool, vertical_speed: float, item: String, swing: float, draw: float) -> void:
 	gameplay = true
+	right_hand.rotation = Vector3.ZERO
 	elapsed += delta
 	motion = lerpf(motion, minf(speed / 5.0, 1.35), minf(1, delta * 12))
 	gait += delta * (8.0 + speed * 0.55) if speed > 0.1 and grounded else delta * 2

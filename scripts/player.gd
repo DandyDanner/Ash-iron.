@@ -162,7 +162,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		if not controls_active:
 			_capture_controls(true)
 			return # The click that resumes play must not also swing the axe.
-		if equipped_item in ["stone_axe", "stone_pickaxe"] and inventory.count(equipped_item) > 0:
+		if equipped_item in ["stone_axe", "stone_pickaxe", "stone_spear"] and inventory.count(equipped_item) > 0:
 			axe.start_swing()
 		elif equipped_item == "bow":
 			if inventory.count("arrow") > 0:
@@ -229,8 +229,15 @@ func _physics_process(delta: float) -> void:
 		_cancel_actions()
 		_show_feedback("Back in the clearing")
 	if axe.advance(delta):
-		var hit := _aim_target()
-		if axe_equipped and not hit.is_empty() and hit.collider.has_method("chop"):
+		var hit := _spear_target() if equipped_item == "stone_spear" else _aim_target()
+		if equipped_item == "stone_spear":
+			if not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
+				var message: String = hit.collider.receive_melee_hit(Axe.SPEAR_DAMAGE, hit.position)
+				axe.impact.play()
+				_show_feedback(message)
+			elif not hit.is_empty():
+				_show_feedback("Spear blocked • Practice on the target at the far right of camp.")
+		elif axe_equipped and not hit.is_empty() and hit.collider.has_method("chop"):
 			if hit.collider.chop(hit.position):
 				axe.impact.play()
 				_progress_changed()
@@ -264,6 +271,12 @@ func _aim_target() -> Dictionary:
 	var origin := camera.global_position
 	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(3) * REACH, 3, [get_rid()])
 	query.collide_with_areas = true
+	return get_world_3d().direct_space_state.intersect_ray(query)
+
+func _spear_target() -> Dictionary:
+	# Resolve the first solid contact from the traveler, never from the chase camera.
+	var origin := camera.global_position
+	var query := PhysicsRayQueryParameters3D.create(origin, origin + view_rig.shot_direction(1) * Axe.SPEAR_REACH, 1, [get_rid()])
 	return get_world_3d().direct_space_state.intersect_ray(query)
 
 func _show_feedback(text: String) -> void:
@@ -343,6 +356,8 @@ func _update_hud() -> void:
 			prompt_label.text = "Equip your axe in the backpack [I]." if inventory.count("stone_axe") > 0 else "A pine needs an axe • Gather loose sticks and stones first."
 		else:
 			prompt_label.text = hit.collider.prompt()
+	elif equipped_item == "stone_spear":
+		prompt_label.text = "Left click to thrust • Practice target at the far right of camp"
 	elif equipped_item == "bow":
 		prompt_label.text = "Hold left click to draw • Release to fire • Target at the far right of camp"
 	elif inventory.count("bench") > 0:
@@ -449,7 +464,7 @@ func assign_hotbar(index: int, item: String) -> String:
 	if index < 0 or index >= hotbar.size():
 		return "Unknown shortcut."
 	if not item.is_empty() and (not item in Inventory.EQUIPPABLE or inventory.count(item) == 0):
-		return "Choose a tool or bow from your backpack."
+		return "Choose equipment from your backpack."
 	# Moving a shortcut keeps a single, predictable key for each tool.
 	for i in range(hotbar.size()):
 		if not item.is_empty() and hotbar[i] == item:

@@ -13,13 +13,15 @@ const ITEMS := {
 	"wood": {"name": "Wood", "stack": 10, "description": "Timber for chests, pine torches, or splitting into sticks at the bench."},
 	"stone_axe": {"name": "Stone axe", "stack": 1, "description": "A shaped stone head on a wooden handle. Equip it to chop trees."},
 	"stone_pickaxe": {"name": "Stone pickaxe", "stack": 1, "description": "A pointed stone tool. Equip it and strike boulders to gather more stones."},
+	"stone_spear": {"name": "Stone spear", "stack": 1, "description": "A stone-tipped hunting spear. Left click to thrust forward. Practice on the target at the far right of camp; does not chop or mine."},
 	"torch": {"name": "Pine torch", "stack": 1, "description": "A warm pool of light for exploring. Equip from your hotbar; put away with the same key."},
 	"bow": {"name": "Woodland bow", "stack": 1, "description": "A bent-wood bow. Hold left click to draw, release to shoot. Right click cancels the draw."},
 	"arrow": {"name": "Arrows", "stack": 10, "description": "Stone-tipped ammunition. Each shot uses one arrow; recover landed arrows with E."},
 	"chest": {"name": "Storage chest", "stack": 1, "description": "A banded wooden chest with twelve slots. Place it on solid ground near camp, then use it to keep supplies safe between trips. Chests near the bench feed its recipes."}
 }
-const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch", "bow"]
+const EQUIPPABLE := ["stone_axe", "stone_pickaxe", "torch", "bow", "stone_spear"]
 const RECIPES := {
+	"stone_spear": {"name": "Stone spear", "cost": {"wood": 2, "stone": 2}, "output": "stone_spear", "amount": 1, "description": "A melee weapon for short forward thrusts. Left click to strike the practice target within 2.8 meters. Does not harvest trees or rocks."},
 	"bow": {"name": "Woodland bow", "cost": {"wood": 3, "stick": 2}, "output": "bow", "amount": 1, "description": "Hold left click to draw, release to fire. A longer draw shoots farther. Uses arrows from your backpack."},
 	"arrows": {"name": "5 stone-tipped arrows", "cost": {"stick": 2, "stone": 1}, "output": "arrow", "amount": 5, "description": "Ammunition for your bow. Recover landed arrows with E. Arrows stack to ten."},
 	"stone_pickaxe": {"name": "Stone pickaxe", "cost": {"stick": 3, "stone": 4}, "output": "stone_pickaxe", "amount": 1, "description": "Break boulders into loose stones. Four swings yield eight stones."},

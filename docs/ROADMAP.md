@@ -64,6 +64,10 @@ Goal: walk out, collect one thing, bring it home.
 
 ## Phase 4 — Danger
 
+Current agreed order: finish the stone spear, add one enemy with readable attacks and spear/bow hit responses, then return to ore → smelter → ingots → an iron weapon upgrade. Keep the same clearing while proving this loop.
+
+- [x] Craftable stone spear, forward thrust, hotbar/save support, and practice-target melee hits
+
 - [ ] One animal/enemy archetype
 - [ ] Health/stamina
 - [x] Craftable bow and arrows, draw/release, ballistics, recovery, practice target, and saved flight state

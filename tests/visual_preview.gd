@@ -27,7 +27,7 @@ func _ready() -> void:
 	var chest := preload("res://scripts/storage_chest.gd").new()
 	world.add_child(chest)
 	chest.position = player.workbench.position + Vector3(1.6, 0, 0.8)
-	for item in ["stone_axe", "bow", "stone_pickaxe", "torch"]:
+	for item in ["stone_axe", "bow", "stone_pickaxe", "torch", "stone_spear"]:
 		player.inventory.add(item, 1)
 		player.equip_item(item)
 	player.inventory.add("arrow", 10)
@@ -38,7 +38,7 @@ func _ready() -> void:
 	player.camera.rotation.x = -0.12
 	player._capture_controls(true)
 	var label := Label.new()
-	label.text = "VISUAL PREVIEW • Temporary inventory / save • O: portrait • J/U: axe/pick poses • K: drawn bow • L: orbit • P: capture"
+	label.text = "VISUAL PREVIEW • Temporary inventory / save • O: portrait • J/U/T: axe/pick/spear poses • K: drawn bow • L: orbit • P: capture"
 	label.position = Vector2(24, 120)
 	label.add_theme_font_size_override("font_size", 13)
 	var hud := CanvasLayer.new()
@@ -66,12 +66,12 @@ func _unhandled_input(event: InputEvent) -> void:
 				portrait.global_position = avatar.global_position + avatar.global_basis.z.normalized() * 3.1 + Vector3.UP * 1.25
 				portrait.look_at(avatar.global_position + Vector3.UP * 0.95)
 				portrait.make_current()
-		if event.physical_keycode in [KEY_J, KEY_U, KEY_K] and (is_instance_valid(portrait) or not preview_player.view_rig.third_person):
+		if event.physical_keycode in [KEY_J, KEY_U, KEY_T, KEY_K] and (is_instance_valid(portrait) or not preview_player.view_rig.third_person):
 			preview_player._capture_controls(false)
 			preview_player.view_rig.set_physics_process(false)
-			if event.physical_keycode in [KEY_J, KEY_U]:
+			if event.physical_keycode in [KEY_J, KEY_U, KEY_T]:
 				gear_pose = (gear_pose + 1) % 4
-				preview_player.equip_item("stone_axe" if event.physical_keycode == KEY_J else "stone_pickaxe")
+				preview_player.equip_item("stone_axe" if event.physical_keycode == KEY_J else ("stone_pickaxe" if event.physical_keycode == KEY_U else "stone_spear"))
 				preview_player.axe.elapsed = [-1.0, 0.08, 0.22, 0.32][gear_pose]
 				preview_player.axe.pose_swing(preview_player.axe.elapsed)
 			else:

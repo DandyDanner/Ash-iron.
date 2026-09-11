@@ -115,7 +115,7 @@ func setup(owner_player: Node3D) -> void:
 		"stone_axe": {"name": "Stone axe", "short": "Stone axe", "output": "stone_axe", "amount": 1, "cost": Inventory.AXE_COST, "description": Inventory.ITEMS.stone_axe.description},
 		"chest": {"name": "Storage chest", "short": "Chest", "output": "chest", "amount": 1, "cost": Inventory.CHEST_COST, "description": "Place a chest to store supplies in twelve slots. Chests near the bench supply crafting materials."}
 	}
-	var short_names := {"bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks"}
+	var short_names := {"stone_spear": "Spear","bow": "Bow", "arrows": "Arrows", "stone_pickaxe": "Pickaxe", "torch": "Torch", "split_wood": "Sticks"}
 	for id in Inventory.RECIPES:
 		catalog[id] = Inventory.RECIPES[id].duplicate(true)
 		catalog[id].short = short_names.get(id, catalog[id].name)

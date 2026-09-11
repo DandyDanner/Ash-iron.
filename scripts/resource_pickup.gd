@@ -51,6 +51,12 @@ func _ready() -> void:
 			art.rotation.x = PI / 2
 			art.position.y = 0.11
 			art.scale = Vector3.ONE * 0.6
+		"stone_spear":
+			var art := Node3D.new()
+			add_child(art)
+			preload("res://scripts/spear_art.gd").build(art)
+			art.position = Vector3(0, 0.06, 0.26)
+			art.scale = Vector3.ONE * 0.70
 		"arrow":
 			var art := preload("res://scripts/archery_art.gd").arrow(self)
 			art.position.y = 0.08

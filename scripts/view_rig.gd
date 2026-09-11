@@ -10,6 +10,7 @@ var third_camera: Camera3D
 var third_person := true
 var facing := PI
 var held := {}
+var held_spear: Node3D
 var held_bow: Node3D
 var bow_strings: Dictionary
 var drawn_arrow: Node3D
@@ -60,6 +61,10 @@ func _ready() -> void:
 		tool.rotation = Vector3(0, PI / 2, 0) # The cutting edge leads forward in the vertical chopping plane.
 		tool.hide()
 		held[pair[0]] = tool
+	held_spear = Traveler.joint(avatar.body, "HeldSpear", Vector3.ZERO)
+	preload("res://scripts/spear_art.gd").build(held_spear)
+	var spear_fingers := Traveler.gripping_fingers(held_spear, avatar.right_hand.get_child(0).material_override.albedo_color)
+	spear_fingers.rotation.x = PI / 2
 	first_torch_light = player.axe.get_node("Torch/WarmLight")
 	third_torch_light = held.torch.get_node("WarmLight")
 	held_bow = Traveler.joint(avatar.left_hand, "HeldBow", Vector3.ZERO)
@@ -98,6 +103,13 @@ func _sync_equipment() -> void:
 	for item in held:
 		held[item].visible = player.equipped_item == item
 	held_bow.visible = player.equipped_item == "bow"
+	held_spear.visible = player.equipped_item == "stone_spear"
+	if held_spear.visible:
+		held_spear.position = Vector3(0.38, 1.27, 0.16 + player.axe.thrust_distance(player.axe.elapsed) * 0.5)
+		held_spear.global_basis = avatar.global_basis.orthonormalized() * Basis(Vector3.UP, PI) * Basis.from_scale(Vector3.ONE * avatar.scale.x)
+		avatar.reach_hand(1, held_spear.to_global(Vector3(-0.075, 0, 0)), Vector3(1, -0.4, 0))
+		avatar.right_hand.global_basis = held_spear.global_basis * Basis(Vector3.RIGHT, PI / 2)
+		avatar.open_right_fingers.hide()
 	avatar.left_hand.get_node("OpenFingers").visible = not held_bow.visible
 	back_bow.visible = player.inventory.count("bow") > 0 and not held_bow.visible
 	quiver.visible = player.inventory.count("bow") > 0 or player.inventory.count("arrow") > 0

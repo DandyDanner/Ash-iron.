@@ -27,7 +27,7 @@ func run() -> void:
 	player.open_inventory()
 	var panel: Control = player.inventory_panel
 	await ticks()
-	check(panel.craftables.size() == 8, "Not all eight craftables appear in the icon grid")
+	check(panel.craftables.size() == 9, "Not all nine craftables appear in the icon grid")
 	var before: Array = player.inventory.to_data()
 	for id in panel.craftables:
 		var row: Dictionary = panel.craftables[id]

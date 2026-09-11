@@ -3,6 +3,8 @@ extends Node3D
 const Model = preload("res://scripts/traveler_model.gd")
 const CONTACT_TIME := 0.22
 const SWING_DURATION := 0.6
+const SPEAR_REACH := 2.8
+const SPEAR_DAMAGE := 20
 var elapsed := -1.0
 var contact_sent := false
 var selected_item := ""
@@ -42,6 +44,11 @@ func setup(cloth: Color, skin: Color) -> void:
 	pick.rotation.y = -PI / 2
 	add_child(pick)
 	preload("res://scripts/pickaxe_art.gd").build(pick)
+	var spear := Node3D.new()
+	spear.name = "Spear"
+	add_child(spear)
+	preload("res://scripts/spear_art.gd").build(spear)
+	spear.hide()
 	var torch := Node3D.new()
 	torch.name = "Torch"
 	add_child(torch)
@@ -98,11 +105,12 @@ func set_item(item: String) -> void:
 	$Tool.visible = item == "stone_axe"
 	$Pickaxe.visible = item == "stone_pickaxe"
 	$Torch.visible = item == "torch"
-	if not item in ["stone_axe", "stone_pickaxe"]:
+	$Spear.visible = item == "stone_spear"
+	if not item in ["stone_axe", "stone_pickaxe", "stone_spear"]:
 		cancel_swing()
 
 func start_swing() -> bool:
-	if not selected_item in ["stone_axe", "stone_pickaxe"] or elapsed >= 0.0:
+	if not selected_item in ["stone_axe", "stone_pickaxe", "stone_spear"] or elapsed >= 0.0:
 		return false
 	elapsed = 0.0
 	contact_sent = false
@@ -127,6 +135,10 @@ func advance(delta: float) -> bool:
 	return contact
 
 func pose_swing(time: float) -> void:
+	if selected_item == "stone_spear":
+		rotation = Vector3.ZERO
+		position = rest_position + Vector3(0, 0, -thrust_distance(time))
+		return
 	# Pitch only: keep the head in a vertical plane beside the crosshair.
 	var pitch: float
 	var hand_offset: Vector3
@@ -154,3 +166,9 @@ func pose_swing(time: float) -> void:
 		hand_offset = follow_through.lerp(Vector3.ZERO, t)
 	rotation = Vector3(pitch, 0, 0)
 	position = rest_position + hand_offset
+
+static func thrust_distance(time: float) -> float:
+	if time < 0: return 0.0
+	if time < 0.08: return lerpf(0.0, -0.12, smoothstep(0, 0.08, time))
+	if time < CONTACT_TIME: return lerpf(-0.12, 0.38, smoothstep(0.08, CONTACT_TIME, time))
+	return lerpf(0.38, 0.0, smoothstep(CONTACT_TIME, SWING_DURATION, time))

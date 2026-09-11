@@ -35,6 +35,11 @@ func _draw() -> void:
 				draw_rect(Rect2(center + Vector2(x - 3, -17), Vector2(6, 37)), Color("4a4640"))
 			draw_rect(Rect2(center + Vector2(-4, -8), Vector2(8, 9)), Color("c9b47a"))
 
+		"stone_spear":
+			draw_line(center + Vector2(-16, 25), center + Vector2(10, -17), Color("b8915d"), 4, true)
+			draw_colored_polygon(PackedVector2Array([center + Vector2(19, -28), center + Vector2(2, -19), center + Vector2(7, -10), center + Vector2(16, -14)]), Color("a9b6a0"))
+			draw_line(center + Vector2(3, -10), center + Vector2(9, -6), Color("ccb689"), 4, true)
+			draw_line(center + Vector2(-9, 10), center + Vector2(-3, 0), Color("465b4b"), 6, true)
 		"stone_pickaxe":
 			draw_line(center + Vector2(-10, 23), center + Vector2(6, -17), Color("b8915d"), 6, true)
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-27, -3), center + Vector2(-17, -20), center + Vector2(-4, -26), center + Vector2(11, -25), center + Vector2(25, -10), center + Vector2(20, -6), center + Vector2(6, -16), center + Vector2(-8, -17)]), Color("8c9c90"))

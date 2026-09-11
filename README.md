@@ -33,7 +33,7 @@ Build a small, playable Godot prototype before expanding the design. Prototype 0
 - Mouse — look / orbit the traveler while standing still
 - `V` — switch third person / first person; the choice is saved
 - `F11` — toggle full screen in a standalone game window (some Mac keyboards need Fn)
-- Left click — swing your equipped axe or pickaxe; with a bow, hold to draw and release to fire (while the mouse is captured)
+- Left click — swing your equipped axe or pickaxe; thrust with a spear; with a bow, hold to draw and release to fire (while the mouse is captured)
 - Right click — cancel a bow draw without spending an arrow
 - `E` — gather sticks, loose stones, or wood; use a placed workbench; open a storage chest
 - `I` — open or close your backpack and crafting panel
@@ -76,17 +76,18 @@ You can have multiple workbenches. Stand close and press **E** to use a particul
 
 Both benches and chests require clear, level ground beneath their whole footprint. Placement rejects obstacles, overlapping furniture, ledges, steep/uneven ground, and placing through walls. Failed crafting, placement, or packing never consumes the item or ingredients.
 
-The **Craftables** icon grid shows all eight recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, and OWNED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
+The **Craftables** icon grid shows all nine recipes. Hover an icon to see what it does, materials you have versus need, missing amounts, and any bench or backpack requirement. Click an icon (or focus it with Tab) to keep its details open, then use the separate **Craft** button below. Browsing never spends materials. Dimmed icons remain browsable; READY, UNAVAILABLE, and OWNED labels show their state. Arrow and stick icons show their batch output counts. Recipes use nearby connected chests too:
 
 | Recipe | Materials | Use |
 | --- | --- | --- |
+| Stone spear | 2 wood + 2 stones | Left click for a forward thrust. Practice within 2.8 meters of the target. |
 | Woodland bow | 3 wood + 2 sticks | Hold left click to draw, release to fire. Longer draws shoot farther. |
 | 5 stone-tipped arrows | 2 sticks + 1 stone | Bow ammunition; landed arrows can be recovered with E. |
 | Stone pickaxe | 3 sticks + 4 stones | Four swings break a boulder; each hit drops two loose stones to gather with E. |
 | Pine torch | 2 sticks + 1 wood | Hold for warm light. No fuel upkeep or fire damage in this prototype. |
 | Split wood into sticks | 1 wood | Produces 4 sticks for tools and camp supplies. |
 
-The bow and tools automatically take the first unused hotbar shortcut when equipped. Shortcuts point to items in your eight-slot backpack; they add no storage. A stored or dropped tool is shown dimmed until recovered. Assignments survive quitting and loading.
+The spear, bow, and tools automatically take the first unused hotbar shortcut when equipped. Shortcuts point to items in your eight-slot backpack; they add no storage. A stored or dropped tool is shown dimmed until recovered. Assignments survive quitting and loading.
 
 The recipe panel shows your current materials, requirements, and whether a craft is available. Crafting spends ingredients only if the complete result fits. When a pickup would exceed capacity, only the amount that fits is collected; the rest stays on the ground.
 
@@ -102,14 +103,21 @@ Jump with **Space**. Obstacles block axe hits, and chopping only reaches nearby 
 
 Save format 5 accepts existing format 1, 2, 3, and 4 saves without resetting the clearing. Format 1 saves gain an axe shortcut when an axe is in the backpack; format 2 shortcuts stay intact. Format 3 adds in-flight arrow position, velocity, and age. Format 4 also stores camera mode; older saves start in third person. Format 5 stores every placed workbench with its position and rotation. An older built camp bench becomes a movable bench at its original location; an unbuilt worksite disappears without granting a free bench. The added grove pines begin uncut and subsequently save like the original trees. Closing the native game window also saves before quitting; stopping a process from the editor can interrupt it, so use **Save & Quit** to finish a session.
 
+## Stone spear and the next step
+
+Craft a **stone spear** at a nearby workbench using **2 wood + 2 stones**. Connected chests can supply the materials. It takes one backpack slot, equips after crafting, and uses the first available hotbar shortcut. Left click to thrust; each attack can land one hit within 2.8 meters. Solid obstacles block the strike. Test it on the practice target at the far right of the clearing. The spear does not chop trees or mine rocks.
+
+The next milestone is **one enemy with readable attacks and spear/bow damage**, followed by **ore, a smelter, and an iron weapon upgrade**. The current spear has practice-target hit feedback; enemies and player health are not implemented yet.
+
 ## Verification
 
-For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (Command + R on Mac). Press O for portrait mode; J cycles axe carry/windup/contact/follow-through (U does the same for the pickaxe), K shows a drawn bow, and L orbits the camera. The J/U pose controls also work in first person. O enters/exits portrait mode and returns to play. This scene uses temporary inventory and saves. Run Project returns to the regular game.
+For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (Command + R on Mac). Press O for portrait mode; J cycles axe carry/windup/contact/follow-through (U does the same for the pickaxe; T for the spear), K shows a drawn bow, and L orbits the camera. The J/U/T pose controls also work in first person. O enters/exits portrait mode and returns to play. This scene uses temporary inventory and saves. Run Project returns to the regular game.
 
 Use your Godot executable in these commands:
 
+- `Godot --headless --path . --script res://tests/spear_test.gd` — spear recipe and connected storage, full-pack failure, both camera views, single contact, reach/obstruction, cancellation, non-harvesting, hand/body clearance, hotbar, storage, save/load, and dropped recovery.
 - `Godot --headless --path . --script res://tests/placeable_workbench_test.gd` — hand crafting, placement/obstruction/overlap/slope checks, selected bench and linked storage, packing and relocation, multiple-bench snapshots, older saves, and dropped bench recovery.
-- `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — eight craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
+- `Godot --headless --path . --script res://tests/crafting_icons_test.gd` — nine craftables, hover recipe/use/missing amounts, safe browsing, keyboard focus, explicit build/craft, linked-storage totals, output counts, and grid/detail/tooltip bounds.
 - `Godot --headless --path . --script res://tests/third_person_test.gd` — camera switching and wall collision, empty starting gear, third-person gathering/chopping/bow obstruction, animation, tool/forearm clearance, axe cutting direction, upright bow and hand/string/arrow alignment, terrain collision, saved camera choice, and format 3 migration.
 - `Godot --headless --path . --script res://tests/bow_test.gd` — bow/arrow recipes, connected materials, draw strength, cancellation, one-arrow cost, hotbar, gravity, target scoring, close obstruction, E recovery, airborne/landed persistence, and old-save migration.
 - `Godot --headless --path . --script res://tests/hotbar_recipes_test.gd` — shortcuts, equip/holster, stored tools, new recipes, mining, torch light, old-save migration, immediate wood rewards, panel bounds, save failures, and the actual Save & Quit button.
