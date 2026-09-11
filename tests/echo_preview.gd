@@ -1,5 +1,5 @@
 extends SceneTree
-## Native renderer review: isolated profile/world, three captures, then closes its own window.
+## Native renderer review: isolated profile/world, size comparison and encounter captures, then closes its own window.
 const Paths = preload("res://tests/test_paths.gd")
 const Profile = preload("res://scripts/character_profile.gd")
 const Save = preload("res://scripts/game_save.gd")
@@ -31,13 +31,24 @@ func run() -> void:
 	current_scene.set_process(false)
 	var camera := Camera3D.new()
 	camera.fov = 43
+	camera.cull_mask = 1 | 4
 	current_scene.add_child(camera)
-	camera.position = bell.position + Vector3(3.1, 2.0, 4.6)
-	camera.look_at(bell.position + Vector3.UP * 0.8)
+	camera.position = bell.position + Vector3(6.5, 5.5, 8.5)
+	camera.look_at(bell.position + Vector3.UP * 1.6)
 	camera.make_current()
 	for child in player.get_children():
 		if child is CanvasLayer: child.hide()
 	current_scene.get_node("HUD").hide()
+	# Matched native views with the actual player for an honest size comparison.
+	player.set_physics_process(false)
+	player.global_position = bell.global_position + Vector3(-3.3, 0.9, 0.8)
+	player.view_rig.facing = 0.45
+	camera.position = bell.position + Vector3(6.5, 5.5, 8.5)
+	camera.look_at(bell.position + Vector3(-0.8, 0.9, 0))
+	bell.art.body.scale = Vector3.ONE
+	await capture("bellmaw-size-before.png")
+	bell.art.body.scale = Vector3.ONE * bell.BODY_SCALE
+	await capture("bellmaw-size-after.png")
 	await capture("bellmaw-engine-idle.png")
 	bell._set_state("warn")
 	bell.state_time = 1.2

@@ -3,6 +3,7 @@ extends CharacterBody3D
 const Art = preload("res://scripts/bellmaw_model.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const HOME := Vector3(42, 1.03, -20)
+const BODY_SCALE := 2.0
 const MAX_HEALTH := 160
 const BOOM_DAMAGE := 34
 const BOOM_RADIUS := 4.5
@@ -29,16 +30,18 @@ func _ready() -> void:
 	floor_snap_length = 0.5
 	art = Art.new()
 	add_child(art)
+	# Enlarge the creature only; the sibling warning ring stays at BOOM_RADIUS.
+	art.body.scale = Vector3.ONE * BODY_SCALE
 	collider = CollisionShape3D.new()
 	var shape := CapsuleShape3D.new()
-	shape.radius = 0.66
-	shape.height = 1.6
+	shape.radius = 0.66 * BODY_SCALE
+	shape.height = 1.6 * BODY_SCALE
 	collider.shape = shape
-	collider.position = Vector3(0, 0.67, 0)
+	collider.position = Vector3(0, 0.67 * BODY_SCALE, 0)
 	collider.rotation.x = PI / 2
 	add_child(collider)
 	label = Label3D.new()
-	label.position.y = 2.1
+	label.position.y = 2.1 * BODY_SCALE
 	label.font_size = 30
 	label.pixel_size = 0.007
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -103,16 +106,17 @@ func _physics_process(delta: float) -> void:
 func _clear_direction(desired: Vector3) -> Vector3:
 	for angle in [0.0, 0.8, -0.8, 1.4, -1.4]:
 		var candidate := desired.rotated(Vector3.UP, angle)
-		var side := candidate.cross(Vector3.UP).normalized() * 0.6
+		var side := candidate.cross(Vector3.UP).normalized() * 0.6 * BODY_SCALE
 		var clear := true
 		for lateral in [-side, Vector3.ZERO, side]:
-			var origin: Vector3 = global_position + Vector3.UP * 0.7 + lateral
-			var query := PhysicsRayQueryParameters3D.create(origin, origin + candidate * 1.8, 1, [get_rid(), player.get_rid()])
+			var origin: Vector3 = global_position + Vector3.UP * 0.7 * BODY_SCALE + lateral
+			var query := PhysicsRayQueryParameters3D.create(origin, origin + candidate * 1.8 * BODY_SCALE, 1, [get_rid(), player.get_rid()])
 			if not get_world_3d().direct_space_state.intersect_ray(query).is_empty(): clear = false
 		if clear: return candidate
 	return Vector3.ZERO
 
 func _sees_player() -> bool:
+	# Keep the low cover-check origin: the larger silhouette must not invalidate rock cover.
 	var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.85, player.global_position, 1, [get_rid()])
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	return not hit.is_empty() and hit.collider == player

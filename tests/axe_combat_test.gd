@@ -71,8 +71,9 @@ func run() -> void:
 			click(player)
 			await ticks(45)
 			check(enemy.health == before - 30, "Axe hit outside its reach")
-		# A wall must remain the first solid contact.
-		await aim(player, enemy, 2.2, true)
+		# A wall must remain outside the body and be the first solid contact.
+		var wall_offset := 1.0 if enemy == current_scene.bellmaw else 0.0
+		await aim(player, enemy, 2.2 + wall_offset, true)
 		var wall := StaticBody3D.new()
 		var collider := CollisionShape3D.new()
 		var shape := BoxShape3D.new()
@@ -80,7 +81,7 @@ func run() -> void:
 		collider.shape = shape
 		wall.add_child(collider)
 		current_scene.add_child(wall)
-		wall.position = enemy.position + Vector3(0, 1.4, 1)
+		wall.position = enemy.position + Vector3(0, 1.4, 1 + wall_offset)
 		await ticks()
 		var health: int = enemy.health
 		click(player)

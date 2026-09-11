@@ -81,6 +81,7 @@ Current order: spear and Bristleback Boar → ore/furnace → one strange creatu
 - [x] First animal/enemy: territorial Bristleback Boar, warning, straight charge, recovery, and one hide reward
 - [x] Player/enemy health, safe camp recovery, and defeat returning the player with inventory intact
 - [x] Bellmaw: warned radial boom, distance/cover counterplay, recovery, one saved hide reward per defeat
+- [x] Double Bellmaw body dimensions, matching collision/obstacle clearance and raised cues; keep the warning ring at the actual 4.5 m radius
 - [x] More dangerous Bellmaw: 160 health, guarded hide, 34-damage boom, faster pursuit and shorter recovery
 - [x] Both enemies respawn after 120 active seconds, away from the player and only into clear space; timer persists
 - [x] Echo Hollow trail, marked warning, cover rocks, harvestable pines and Old Lookout iron vein

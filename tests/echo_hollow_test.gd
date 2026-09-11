@@ -57,6 +57,7 @@ func run() -> void:
 	reset(player, bell)
 	await ticks(15)
 	check(bell.state == "warn" and player.health == 100 and bell.art.throat.scale.y > 1, "Throat warning missing or caused early damage")
+	check(is_equal_approx(bell.art.pulse.global_basis.x.length(), Bell.BOOM_RADIUS), "Larger body changed the warned boom radius")
 	player.global_position.z += 3
 	await ticks(65)
 	check(player.health == 100 and bell.state == "recover", "Backing beyond the boom radius did not avoid it")

@@ -49,8 +49,8 @@ func run() -> void:
 	var camera := Camera3D.new()
 	current_scene.add_child(camera)
 	camera.fov = 43
-	camera.position = bell.position + Vector3(3.1,2,4.6)
-	camera.look_at(bell.position + Vector3.UP * 0.8)
+	camera.position = bell.position + Vector3(6.5,5.5,8.5)
+	camera.look_at(bell.position + Vector3.UP * 1.6)
 	camera.make_current()
 	await capture("bellmaw-idle")
 	bell._set_state("warn")
