@@ -57,7 +57,7 @@ func run() -> void:
 				check(material.vertex_color_use_as_albedo, "Imported colors are disabled")
 				check(material.albedo_texture != null, "Rodin surface lost its painted texture")
 				if material.albedo_texture != null:
-					check(material.albedo_texture.get_width() == 2048, "Rodin atlas detail was lost during import")
+					check(material.albedo_texture.get_width() == (1024 if material.resource_name.begins_with("Rodin Face") else 2048), "Rodin atlas detail was lost during import")
 		var hand_sides := {"Left": false, "Right": false}
 		for mesh in avatar.authored.finger_meshes:
 			for side in hand_sides:

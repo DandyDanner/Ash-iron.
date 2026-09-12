@@ -5,6 +5,10 @@
   "removed_archery_vertices": 2698,
   "removed_archery_fragment_vertices": 64,
   "archery_attachment_caps": 9,
+  "face_polygons": 4875,
+  "face_islands": 35,
+  "face_texels": 354964,
+  "face_map": 1024,
   "discarded_miniatures": 4,
   "removed_hand_hip_web_faces": 759,
   "source_triangles": 90064,
@@ -119,5 +123,5 @@
   ],
   "cape_vertices": 5248,
   "max_weights": 4,
-  "bytes": 4168984
+  "bytes": 4611200
 }

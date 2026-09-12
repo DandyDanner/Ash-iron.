@@ -12,6 +12,7 @@ from rodin_party_regions import PALETTES,FRONT,BACK,JOINTS,ARM_REGIONS
 from rodin_party_texture import texture
 from rodin_party_weights import bind
 from willow_equipment_cleanup import remove_archery
+from rodin_party_face import face_material
 ARGS=sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else []
 SOURCE=Path(next((a for a in ARGS if not a.startswith('--')),'/Users/dallonanderson/Downloads/Travelers.glb'))
 ONLY=int(next((a.split('=')[1] for a in ARGS if a.startswith('--only=')),-1))
@@ -20,6 +21,9 @@ OUT=R/'art/blender/rodin_party';OUT.mkdir(parents=True,exist_ok=True);(OUT/'.gdi
 REVIEW=R/'docs/art/rodin-party';REVIEW.mkdir(parents=True,exist_ok=True);(REVIEW/'.gdignore').touch()
 BONES=['Body','Torso','Head','Cape','LeftLeg','LeftKnee','LeftArm','LeftElbow','LeftHand','RightLeg','RightKnee','RightArm','RightElbow','RightHand']
 S=900/2.3
+# Front-view eye centres/radii and mouth centres/half-widths, measured on the sculpt.
+EYES=[[(332,123,10,4),(364,124,6,3.5)],[(306,105,9,4),(342,106,6,4)],[(308,96,9,4),(343,97,6,4)],[(283,119,10,4.5),(323,123,8,4)]]
+MOUTHS=[(350,155,10),(325,142,10),(325,133,10),(302,156,10)]
 
 def smooth(t):
  t=np.clip(t,0,1);return t*t*(3-2*t)
@@ -68,12 +72,16 @@ def paint(P,k,N=None):
  color=np.array([lin(PALETTES[k][n]) for n in names])[labels]
  grain=np.sin(X*125+np.sin(Z*81))*np.sin(Y*119-Z*93)
  color*=1+grain[:,None]*.012
+ # Fine streaks along the hair clumps read as strands instead of a solid cap.
+ hair=labels==names.index('hair')
+ streak=np.sin((X*.55+Y*.83)*1500+np.sin(Z*45)*2.2)*np.sin(Z*160+X*90)
+ color[hair]*=1+.09*streak[hair,None]
  if k==1:
   beard=(labels==names.index('hair'))&(y>136)&(y<172)
   color[beard]=color[beard]*.35+lin(PALETTES[k]['skin'])*.65
  # Face accents are painted on the sculpt, below the hair and on front-facing skin.
  face=(labels==names.index('skin'))&(Y<.10)&(Z>1.7)
- eyes=[[(332,123,10,4),(364,124,6,3.5)],[(306,105,9,4),(342,106,6,4)],[(308,96,9,4),(343,97,6,4)],[(283,119,10,4.5),(323,123,8,4)]][k]
+ eyes=EYES[k]
  for ex,ey,rx,ry in eyes:
   u=(x-ex)/rx;v=(y-ey)/ry;shape=(abs(u)<1)&(abs(v)<(1-u*u)*.85)
   m=face&shape;color[m]=lin(PALETTES[k]['eyes'])*(0.80+0.20*np.clip(v[m]+.4,0,1))[:,None]
@@ -83,7 +91,7 @@ def paint(P,k,N=None):
   m=face&shape&(((x-ex)/.65)**2+((y-ey+1.1)/.65)**2<1);color[m]=lin('ded6c4')
   lid=face&shape&(v<-.48);color[lid]=color[lid]*.35+lin(PALETTES[k]['hair'])*.65
   brow=face&(abs(u)<1.1)&(abs(y-(ey-6+.8*u))<.7);color[brow]=lin(PALETTES[k]['hair'])*.9
- mouth=[(350,155,10),(325,142,10),(325,133,10),(302,156,10)][k]
+ mouth=MOUTHS[k]
  mx,my,rx=mouth;lip=face&(abs(x-mx)<rx)&(abs(y-(my+.018*(x-mx)**2))<1.0)
  color[lip]=color[lip]*.58+lin(['9a6451','81503a','563527','a56c59'][k])*.42
  if k==3:
@@ -214,6 +222,7 @@ for k,o in enumerate(figs):
  cat={n:0 for n in names};cat.update(skin=1,hair=2,leather=3,sole=3,wood=3,metal=4,eyes=5,iris=5,pupil=5)
  for p in me.polygons:p.material_index=cat[names[int(np.bincount(labels[list(p.vertices)],minlength=len(names)).argmax())]];p.use_smooth=True
  texture(o,paint,k,OUT/(SLUGS[k]+'_albedo.png'))
+ face_report=face_material(o,k,paint,PALETTES[k],EYES[k],MOUTHS[k],points['Head'][0],OUT,SLUGS[k])
  # Rodin sometimes joins a hanging hand to the hip/apron with a thin skin web.
  # Those are not anatomical joints: cut only cross-influence faces at hip height.
  bm=bmesh.new();bm.from_mesh(o.data);deform=bm.verts.layers.deform.active
@@ -253,7 +262,7 @@ for k,o in enumerate(figs):
  path=R/'assets/characters'/(SLUGS[k]+'.glb')
  bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_animations=False,export_skins=True,export_all_influences=False,export_def_bones=True,export_materials='EXPORT',export_attributes=False,export_yup=True,export_extras=True)
  # Save an editable character-only scene; other figures are excluded from the file.
- report=dict(source=SOURCE.name,sha256=source_hash,source_figure=k,**equipment_cleanup,discarded_miniatures=4,removed_hand_hip_web_faces=len(cuts),source_triangles=original,triangles=sum(len(p.vertices)-2 for q in objects for p in q.data.polygons),bones=BONES,points={n:points[n].tolist() for n in BONES},palette=PALETTES[k],open_finger_meshes=[q.name for q in finger_sets],cape_vertices=int(cape.sum()),max_weights=int((weights>1e-5).sum(1).max()),bytes=path.stat().st_size)
+ report=dict(source=SOURCE.name,sha256=source_hash,source_figure=k,**equipment_cleanup,**face_report,discarded_miniatures=4,removed_hand_hip_web_faces=len(cuts),source_triangles=original,triangles=sum(len(p.vertices)-2 for q in objects for p in q.data.polygons),bones=BONES,points={n:points[n].tolist() for n in BONES},palette=PALETTES[k],open_finger_meshes=[q.name for q in finger_sets],cape_vertices=int(cape.sum()),max_weights=int((weights>1e-5).sum(1).max()),bytes=path.stat().st_size)
  (OUT/(SLUGS[k]+'.json')).write_text(json.dumps(report,indent=2)+'\n');print('PREPARED',SLUGS[k],json.dumps(report),flush=True)
  if '--no-render' not in ARGS:
   scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=20;scene.cycles.use_denoising=True;scene.world.color=(.08,.08,.08);scene.view_settings.view_transform='AgX';scene.render.resolution_x=600;scene.render.resolution_y=900;scene.render.resolution_percentage=100

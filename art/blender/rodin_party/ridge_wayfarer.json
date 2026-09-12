@@ -2,6 +2,10 @@
   "source": "Travelers.glb",
   "sha256": "4ef4cfaf1554696bbede3617f438fa8ac4cf10f9c9b948dd130d8b88f3a887f6",
   "source_figure": 2,
+  "face_polygons": 5033,
+  "face_islands": 54,
+  "face_texels": 349134,
+  "face_map": 1024,
   "discarded_miniatures": 4,
   "removed_hand_hip_web_faces": 909,
   "source_triangles": 118078,
@@ -116,5 +120,5 @@
   ],
   "cape_vertices": 6909,
   "max_weights": 4,
-  "bytes": 4635392
+  "bytes": 5135000
 }
