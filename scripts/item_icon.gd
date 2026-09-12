@@ -19,8 +19,8 @@ func _draw() -> void:
 			draw_line(center + Vector2(-9, 18), center + Vector2(24, -7), Color("8e7148"), 5, true)
 			draw_line(center + Vector2(2, -2), center + Vector2(0, -17), Color("bd965e"), 4, true)
 		"stone":
-			draw_colored_polygon(PackedVector2Array([center + Vector2(-25, 9), center + Vector2(-18, -12), center + Vector2(1, -20), center + Vector2(19, -6), center + Vector2(24, 14), center + Vector2(-4, 20)]), Color("9ba89d"))
-			draw_colored_polygon(PackedVector2Array([center + Vector2(-18, -12), center + Vector2(1, -20), center + Vector2(19, -6), center + Vector2(-1, 0)]), Color("bcc6b6"))
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-25, 9), center + Vector2(-18, -12), center + Vector2(1, -20), center + Vector2(19, -6), center + Vector2(24, 14), center + Vector2(-4, 20)]), Color("858990"))
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-18, -12), center + Vector2(1, -20), center + Vector2(19, -6), center + Vector2(-1, 0)]), Color("a6afb8"))
 		"wood":
 			for i in range(3):
 				draw_line(center + Vector2(-21, -12 + i * 12), center + Vector2(17, -12 + i * 12), Color("a57849"), 10, true)
@@ -38,11 +38,11 @@ func _draw() -> void:
 			draw_rect(Rect2(center + Vector2(-4, -8), Vector2(8, 9)), Color("c9b47a"))
 
 		"iron_ore", "copper_ore":
-			draw_colored_polygon(PackedVector2Array([center + Vector2(-24, 8), center + Vector2(-16, -12), center + Vector2(2, -20), center + Vector2(20, -8), center + Vector2(23, 12), center + Vector2(-2, 20)]), Color("5b524c"))
-			draw_colored_polygon(PackedVector2Array([center + Vector2(-16, -12), center + Vector2(2, -20), center + Vector2(20, -8), center + Vector2(0, -1)]), Color("6e645c"))
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-24, 8), center + Vector2(-16, -12), center + Vector2(2, -20), center + Vector2(20, -8), center + Vector2(23, 12), center + Vector2(-2, 20)]), Color("555b61"))
+			draw_colored_polygon(PackedVector2Array([center + Vector2(-16, -12), center + Vector2(2, -20), center + Vector2(20, -8), center + Vector2(0, -1)]), Color("6d777f"))
 			for spot in [Vector2(-10, 4), Vector2(6, 8), Vector2(11, -6), Vector2(-3, -9)]:
-				draw_circle(center + spot, 4, Color("b8652d"))
-				draw_circle(center + spot + Vector2(-1, -1), 1.6, Color("70c0a3") if item_id == "copper_ore" else Color("e08a4a"))
+				draw_circle(center + spot, 4, Color("ca844b") if item_id == "copper_ore" else Color("b3bdc6"))
+				draw_circle(center + spot + Vector2(-1, -1), 1.6, Color("70c0a3") if item_id == "copper_ore" else Color("d4dbe1"))
 		"iron_ingot", "copper_ingot":
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-26, 4), center + Vector2(-18, -10), center + Vector2(22, -10), center + Vector2(26, 4)]), Color("d8935d") if item_id == "copper_ingot" else Color("8f9aa3"))
 			draw_colored_polygon(PackedVector2Array([center + Vector2(-26, 4), center + Vector2(26, 4), center + Vector2(26, 14), center + Vector2(-26, 14)]), Color("a4643f") if item_id == "copper_ingot" else Color("5f6b75"))

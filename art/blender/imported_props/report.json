@@ -1,0 +1,32 @@
+{
+  "pine": {
+    "source": "/Users/dallonanderson/Downloads/Tree.zip",
+    "sha256": "1480ec55ad83999f6fcc0a8351714967e87c0e310aecc8b48e7170983c884fd4",
+    "source_triangles": 40000,
+    "meshes": {
+      "PineNear": 8000,
+      "PineFar": 1400
+    },
+    "glb_bytes": 2038332
+  },
+  "rock_cluster": {
+    "source": "/Users/dallonanderson/Downloads/ore/base_basic_pbr.glb",
+    "sha256": "6b6e2b8d07f98c096c678795bbb0c779ce87fe0ea7ef90a347d6d1e15e30a301",
+    "source_triangles": 20568,
+    "meshes": {
+      "RockNear": 5999,
+      "RockFar": 900
+    },
+    "glb_bytes": 1436764
+  },
+  "storage_chest": {
+    "source": "/Users/dallonanderson/Downloads/Chest/base_basic_pbr.glb",
+    "sha256": "df931dacad36d8b94414ef2202a04cf51c09b2a0c77976ae07062076b52cd8cc",
+    "source_triangles": 22360,
+    "meshes": {
+      "ChestBody": 5479,
+      "ChestLid": 4049
+    },
+    "glb_bytes": 1817212
+  }
+}

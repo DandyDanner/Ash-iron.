@@ -127,7 +127,8 @@ func _forest() -> void:
 		var a := i * TAU / 18
 		var x := sin(a) * rng.randf_range(18, 32)
 		var z := cos(a) * rng.randf_range(18, 32)
-		var rock := Model.oval(self, Vector3(x, terrain_height(x,z) + 0.18, z), Vector3(1.1, 0.55, 0.9), Color("89927b"))
+		var rock := preload("res://scripts/imported_props.gd").rock(self, Vector3(1.1, 0.55, 0.9))
+		rock.position = Vector3(x, terrain_height(x,z), z)
 		rock.rotation.y = a
 
 func _flowers() -> void:

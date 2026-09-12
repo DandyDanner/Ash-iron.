@@ -1,6 +1,5 @@
 extends StaticBody3D
 ## A surface outcrop of iron ore. Strike it with a stone pickaxe; each hit frees one chunk of ore.
-const Model = preload("res://scripts/traveler_model.gd")
 const MAX_HITS := 4
 var ore_id := "iron_ore"
 var hits_left := MAX_HITS
@@ -11,21 +10,7 @@ func _ready() -> void:
 	add_to_group("iron_veins" if ore_id == "iron_ore" else "copper_veins")
 	art = Node3D.new()
 	add_child(art)
-	var rock := Color("6a4f42")
-	var rust := Color("c8602a") if ore_id == "iron_ore" else Color("5da895")
-	Model.oval(art, Vector3(0, 0.45, 0), Vector3(1.7, 1.0, 1.4), rock)
-	Model.oval(art, Vector3(0.5, 0.35, 0.3), Vector3(1.0, 0.7, 0.9), rock.lightened(0.06))
-	Model.oval(art, Vector3(-0.45, 0.3, -0.35), Vector3(0.9, 0.65, 0.8), rock.darkened(0.08))
-	# Ore shows as bright rusty nodules and streaks breaking through the surface all around the outcrop.
-	for i in range(10):
-		var a := i * 0.63
-		var reach := Vector3(0.80, 0.0, 0.66)
-		var spot := Vector3(sin(a) * reach.x, 0.30 + (i % 3) * 0.15, cos(a) * reach.z)
-		var nodule := Model.box(art, spot, Vector3(0.24, 0.16, 0.20), rust.lightened((i % 3) * 0.08))
-		nodule.rotation = Vector3(sin(a) * 0.6, a * 0.7, cos(a) * 0.5)
-	for i in range(3):
-		var streak := Model.box(art, Vector3(-0.3 + i * 0.3, 0.86 - i * 0.05, -0.2 + i * 0.25), Vector3(0.7, 0.05, 0.10), rust)
-		streak.rotation = Vector3(0, 0.5 + i * 0.7, -0.15)
+	preload("res://scripts/imported_props.gd").rock(art, Vector3(1.7, 1.0, 1.4), ore_id)
 	collision = CollisionShape3D.new()
 	var shape := BoxShape3D.new()
 	shape.size = Vector3(1.7, 1.0, 1.4)

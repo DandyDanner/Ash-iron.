@@ -1,6 +1,5 @@
 extends StaticBody3D
 ## A placeable banded chest. Its contents are an Inventory, exactly like the backpack.
-const Model = preload("res://scripts/traveler_model.gd")
 const Inventory = preload("res://scripts/inventory.gd")
 var storage := Inventory.new(Inventory.CHEST_CAPACITY)
 var lid: Node3D
@@ -15,31 +14,7 @@ func _ready() -> void:
 	collision.shape = shape
 	collision.position.y = 0.31
 	add_child(collision)
-	var wood := Color("a17b4e")
-	var iron := Color("51564b")
-	# An open inner cavity remains visible when the planked lid lifts.
-	Model.box(self, Vector3(0, 0.06, 0), Vector3(0.9, 0.10, 0.55), wood.darkened(0.3))
-	for row in range(3):
-		var tone := wood.lightened(row * 0.035)
-		for side in [-1.0, 1.0]:
-			Model.box(self, Vector3(0, 0.17 + row * 0.13, side * 0.25), Vector3(0.90, 0.122, 0.05), tone)
-			Model.box(self, Vector3(side * 0.425, 0.17 + row * 0.13, 0), Vector3(0.05, 0.122, 0.50), tone.darkened(0.06))
-	for x in [-0.3, 0.3]:
-		Model.box(self, Vector3(x, 0.25, 0), Vector3(0.07, 0.52, 0.575), iron)
-		for z in [-0.292, 0.292]:
-			for y in [0.15, 0.40]:
-				Model.oval(self, Vector3(x, y, z), Vector3(0.026, 0.026, 0.016), Color("c2ad79"))
-	Model.box(self, Vector3(0, 0.03, 0), Vector3(0.94, 0.06, 0.59), iron.darkened(0.2))
-	# The lid pivots on its back edge so it can swing open while the chest is in use.
-	lid = Node3D.new()
-	lid.position = Vector3(0, 0.5, -0.275)
-	add_child(lid)
-	for i in range(4):
-		Model.box(lid, Vector3(0, 0.06, 0.058 + i * 0.145), Vector3(0.92, 0.12, 0.138), wood.lightened(0.05 + i * 0.018))
-	for x in [-0.3, 0.3]:
-		Model.box(lid, Vector3(x, 0.065, 0.275), Vector3(0.07, 0.13, 0.59), iron)
-	Model.box(lid, Vector3(0, 0.02, 0.565), Vector3(0.1, 0.1, 0.04), Color("c9b47a"))
-	Model.box(lid, Vector3(0, 0.015, 0.587), Vector3(0.026, 0.038, 0.006), iron)
+	lid = preload("res://scripts/imported_props.gd").chest(self)
 	storage.changed.connect(_contents_changed)
 
 func prompt() -> String:

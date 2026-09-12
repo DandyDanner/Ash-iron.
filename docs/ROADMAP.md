@@ -26,6 +26,7 @@ Goal: make simply moving through the prototype world feel competent.
 
 - [ ] Tune player speed and camera feel
 - [x] First coordinated stylized asset pass: Willow Scout, trees, rocks, bench, chest, and shared materials
+- [x] Supplied textured pines with distance meshes, hollow hinged chest, and shared stone/copper/iron cluster art with matching icon colors; existing interactions and saves preserved
 - [x] Third-person camera with wall collision, first-person toggle, walking/jumping/tool/bow poses
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot

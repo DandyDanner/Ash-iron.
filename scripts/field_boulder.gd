@@ -1,5 +1,4 @@
 extends StaticBody3D
-const Model = preload("res://scripts/traveler_model.gd")
 @export var dimensions := Vector3(3, 2, 3)
 ## Ordinary boulders hide a little iron: each strike may also shed one chunk of ore.
 @export var ore_chance := 0.35
@@ -20,12 +19,7 @@ func _ready() -> void:
 	mesh.height = 1.0
 	mesh.radial_segments = 7
 	mesh.rings = 3
-	Model.part(art, mesh, Vector3.ZERO, Color("929b89"), dimensions)
-	# Lichen patches sit on the upper facets; all decoration follows depletion.
-	for i in range(5):
-		var angle := i * 2.4
-		var patch := Model.oval(art, Vector3(sin(angle) * dimensions.x * 0.16, dimensions.y * (0.41 - (i % 2) * 0.035), cos(angle) * dimensions.z * 0.13), Vector3(dimensions.x * 0.22, dimensions.y * 0.065, dimensions.z * 0.19), Color("788b50").lightened((i % 3) * 0.04))
-		patch.rotation.z = -sin(angle) * 0.30
+	preload("res://scripts/imported_props.gd").rock(art, dimensions, "stone", true)
 	var vertices: PackedVector3Array = mesh.get_mesh_arrays()[Mesh.ARRAY_VERTEX]
 	for i in range(vertices.size()):
 		vertices[i] *= dimensions

@@ -24,6 +24,9 @@ func _ready() -> void:
 	for p in [Vector2(38,-23), Vector2(46,-17)]:
 		var rock := M.oval(self, Vector3(p.x, 1.85, p.y), Vector3(2.5, 1.8, 2.2), Color("737e68"))
 		rock.create_convex_collision()
+		rock.hide() # Keep the established permanent cover collider.
+		var surface := preload("res://scripts/imported_props.gd").rock(self, Vector3(2.5, 1.8, 2.2), "stone", true)
+		surface.position += rock.position
 	for i in range(12):
 		var angle := i * TAU / 12
 		var p := Vector2(42 + sin(angle) * 11, -20 + cos(angle) * 11)

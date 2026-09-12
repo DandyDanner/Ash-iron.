@@ -76,7 +76,7 @@ The approved **Willow Scout** guides the shared character model: a short sage ca
 
 The scout and boar now have a focused model refinement pass: smoother shaped surfaces, swept hair and defined eyelids/lips, cape embroidery and a folded hood, and curved tusks with layered boar fur. These are still simplified procedural assets; the concept illustrations remain the target for future sculpted/textured models. This pass does not change the world.
 
-The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The bench has a planked top and braces; chests have planks, rivets, and an opening lid; boulders have lichen. The HUD is shorter, with camera and full-screen hints beside the hotbar. These are original procedural prototype assets, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
+The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The bench has a planked top and braces. Supplied PBR models now provide layered pines, a plank chest with a hinged lid/interior, and jagged gray stone, copper and iron clusters. Tree and rock meshes switch to lighter versions at distance; ore icon colors match their deposits. [Actual prop captures and limits](docs/art/IMPORTED_PROPS_REVIEW.md). The HUD is shorter, with camera and full-screen hints beside the hotbar. The clearing combines procedural scenery and supplied models, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
 
 ## Start with empty hands
 
@@ -161,7 +161,7 @@ For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (C
 
 For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
-Use your Godot executable in these commands (twenty-six suites):
+Use your Godot executable in these commands (twenty-seven suites):
 
 - `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four previews and skins, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
 
@@ -198,6 +198,10 @@ Use your Godot executable in these commands (twenty-six suites):
 - `Godot --headless --path . --script res://tests/bellmaw_attacks_test.gd` — paw support/impact timing, slam-first sequencing, selected/mirrored swipes, one-hit contact, dodge/cover/pause, cooldown and resets.
 
 - `Godot --headless --path . --script res://tests/bellmaw_balance_test.gd` — 300 health, doubled collision, 15/30-hit defeats and percentage-preserving save migration/reload.
+
+- `Godot --headless --path . --script res://tests/imported_props_test.gd` — supplied mesh budgets/LOD, textures/palettes, hollow chest and hinge, contents and depleted-prop persistence.
+
+For current tree/chest/ore captures, run `Godot --path . --script res://tests/imported_props_preview.gd` with isolated test saves.
 
 For current sculpt/size/slam/swipe captures, run `Godot --path . --script res://tests/sculpted_bellmaw_preview.gd`. It uses temporary saves and records actual runtime poses and motion.
 
