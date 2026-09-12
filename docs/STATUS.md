@@ -4,6 +4,8 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 
 ## Now
 
+- Equipment asset: supplied leather backpack prepared at `assets/equipment/leather_backpack.glb`, approximately 20k triangles, 2K embedded textures and 0.6 m normalized height. Not attached to player yet; fit straps/cape and resolve existing pack/quiver overlap first. See `docs/art/LEATHER_BACKPACK_REVIEW.md`.
+
 - Build: Godot 4.7.2 on Apple Silicon. Twenty-four headless suites pass. Native Godot review covers the latest first-person hand/weapon poses, furnace UI, player, boar and Bellmaw; see `docs/art/SURVIVAL_REFINEMENT_REVIEW.md`.
 - Approved crafting direction: **Stone → Copper → Bronze → Iron → Steel**; recorded in `docs/CRAFTSMAN_PROGRESSION.md`. Stone/copper is now playable: stone tools by hand, earned bench/furnace unlocks, copper fittings, a permanent Copperworking kit and copper axe. Next: playtest this sequence before tin/bronze. Old iron processing remains compatible.
 - Playable loop: create a traveler, gather sticks/stones, hand-craft stone tools, unlock/place a bench and furnace, smelt copper and improve the bench, chop pines, mine boulders/iron veins, smelt ingots, store and craft through linked chests, fight Bristleback and explore Echo Hollow to defeat Bellmaw for an Explorer Pack. Eight starting slots, twelve after the pack upgrade, ten saved hotbar shortcuts. Continue / Start over and Save & Quit preserve progress.
@@ -21,6 +23,12 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Player vitals: upper-left red health and green stamina bars with values, low-health cue (≤25) and exhaustion cue. Sprinting spends 16/s from 100; walking/rest recovers 22/s after 0.9 s. Exhaustion clears at 20; idle Shift costs nothing. Menus/focus pause, defeat resets, and both views share the HUD.
 - Saves: format 11 adds permanent crafting milestones and furnace metal selection; versions 1–10 keep previous recipe access and old furnaces retain Iron/contents/progress. Copper outcrop depletion saves through the existing vein data. Format 10 adds saved stamina/recovery/exhaustion; format 9 includes enemy respawn timers and furnace auto-feed. Formats 1–9 migrate without clearing progress; old Bellmaw health scales from 80 to 160 at the same percentage, old defeated enemies get a fresh respawn delay. No real player save/profile was read or edited during tests.
 - Later: iron equipment, armor with optional ore/metal/mineral decorative trim and inlays (see `docs/CRAFTSMAN_PROGRESSION.md`), combat/jump stamina costs, resource regrowth, day/night pressure and the Wayfarer's Lantern; preserve discovery/villager direction and Threadwing concept in `docs/CREATURE_DIRECTION.md`. Furniture placement ghost/manual rotation, foot IK, cloth simulation and further deformation polish remain gaps.
+
+## 2026-09-11 — Codex: prepare supplied leather backpack
+
+- Inspected Dallon’s free backpack upload: one unrigged mesh, 3,134,796 triangles, 160 MiB, with an 8K color map and 4K material/normal maps. Created a separate optimized GLB at 0.6 m height with approximately 20k triangles and embedded 2K textures. Original download unchanged. Rebuild script and source/optimized front/back comparisons preserved.
+- Asset is available in the Godot project but is not yet attached to the player. Intended visual direction is the earned Explorer Pack; fitting shoulder straps, cape and existing backpack/quiver overlap remains future work. Inventory capacity, recipes, player appearance, saves and world are unchanged.
+- Validation: all 24 gameplay suites plus direct GLB mesh/texture inspection; native Godot preview and Blender comparison. The known headless certificate warning remains. No player save/profile is used by the asset preview. Exact geometry/file statistics and images are in `docs/art/LEATHER_BACKPACK_REVIEW.md`.
 
 ## 2026-09-11 — Codex: supplied Bellmaw rig and Willow repair candidate
 

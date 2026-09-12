@@ -36,6 +36,8 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Isolate the largest supplied Bellmaw, build weighted skeleton/movement, integrate and verify actual Godot combat/rendering
 - [x] Offline repair candidate for the uploaded Willow sheet: isolate front figure, replace corrupt head and fit neck/collar; preserve current playable traveler
 - [ ] Retopologize/texture the imported Willow body, separate hands/equipment and rig before playable replacement; refine Bellmaw foot contact and facial detail
+- [x] Prepare supplied leather backpack as an optimized reusable Godot asset; review textures and silhouette
+- [ ] Fit backpack straps/cape attachment and resolve existing equipment overlap before displaying the Explorer Pack upgrade
 - [ ] Current art priority: focus on Willow Scout first; close the illustration-fidelity gap in faces/hair/garments and animal anatomy; optimize topology/materials and improve joint deformation. Wildlife integration remains later.
 - [ ] Later: broader foliage refinement from play feedback; the September 11 Echo Hollow excursion is the only new world slice in this pass
 - [x] Add terrain variation

@@ -1,0 +1,16 @@
+{
+  "source_filename": "Meshy_AI_Vintage_Leather_Backp_0911235900_texture.glb",
+  "source_sha256": "92397374ff06a9085110ba8f71a4e99472b6685e0d5f327cccc176bd1efa51d2",
+  "source_bytes": 167973804,
+  "source_triangles": 3134796,
+  "game_triangles": 19959,
+  "game_bytes": 1977080,
+  "game_height_m": 0.6,
+  "textures_px": 2048,
+  "status": "Reusable project asset; not yet worn by the player",
+  "source_note": "Supplied by Dallon as a free backpack model; no author or license metadata was embedded in the GLB",
+  "remaining": [
+    "Fit shoulder straps to traveler torso/cape",
+    "Resolve existing backpack/quiver overlap before wearable integration"
+  ]
+}

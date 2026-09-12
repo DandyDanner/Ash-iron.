@@ -205,6 +205,10 @@ The inventory test can also run with graphics enabled and `-- --screenshots=/abs
 
 For an isolated visual playground, open `scenes/visual_preview.tscn` and **Run Current Scene** (Command + R on Mac). It supplies temporary tools, six sticks, four stones, and a bench/chest fixture, uses temporary saves, and never edits your real traveler or clearing. O toggles a front portrait; P captures the viewport into the temporary test folder and prints the path and current frame rate. Use **Run Project** afterward to return to the real game.
 
+## Prepared equipment assets
+
+The supplied vintage leather backpack has an optimized, textured Godot copy at `assets/equipment/leather_backpack.glb`. It is a reusable asset for the Explorer Pack direction, **not yet worn by the player**. Strap fitting and existing pack/quiver overlap must be resolved first. See [actual renders and preparation notes](docs/art/LEATHER_BACKPACK_REVIEW.md). Run `Godot --path . --script res://tests/backpack_asset_preview.gd` for an isolated native preview; headless mode verifies the GLB geometry/textures without opening a window.
+
 ## First milestone
 
 Keep the backpack and crafting loop small. Skills, NPCs, weather, and procedural generation remain deferred.
