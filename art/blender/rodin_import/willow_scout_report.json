@@ -173,6 +173,56 @@
     "knees": 9,
     "thighs": 7
   },
+  "sheet": {
+    "sheet": "Willow Scout.png",
+    "boxes_front_side_back": [
+      [
+        126,
+        467,
+        81,
+        926
+      ],
+      [
+        657,
+        860,
+        84,
+        926
+      ],
+      [
+        1043,
+        1388,
+        85,
+        920
+      ]
+    ],
+    "fits": {
+      "front": {
+        "iou": 0.785,
+        "cx": 285.0,
+        "base_y": 916.0,
+        "ppm_x": 393.7864077669903,
+        "ppm_y": 401.99029126213594,
+        "sash_row": 387.5
+      },
+      "back": {
+        "iou": 0.805,
+        "cx": 1247.5,
+        "base_y": 912.0,
+        "ppm_x": 393.1796116504854,
+        "ppm_y": 401.2864077669903,
+        "sash_row": 384.4254015215554
+      },
+      "side": {
+        "iou": 0.813,
+        "cx": 756.0,
+        "base_y": 922.0,
+        "ppm_x": 412.8252427184466,
+        "ppm_y": 408.7378640776699,
+        "sash_row": 384.62890955198657
+      }
+    },
+    "covered": 0.9780693950177936
+  },
   "max_influences": 2,
   "regions": {
     "arm": 5222,
@@ -181,7 +231,7 @@
   },
   "limitations": [
     "Generated topology, no manual retopology",
-    "Flat Willow palette by region; Rodin texture export not yet applied",
+    "Colours projected from the 2D turnaround sheet (baked illustration shading, projection smear where surfaces are hidden in all three views)",
     "Single mesh: gripped-tool poses show the game's procedural closed fingers over the open hand",
     "Cape bone carries no vertices"
   ]
