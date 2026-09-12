@@ -53,7 +53,16 @@ func run() -> void:
 			if mesh.skin == null: continue
 			check(mesh.skin.get_bind_count() == 14, "Mesh is not bound to the rig")
 			for surface in range(mesh.mesh.get_surface_count()):
-				check(mesh.get_active_material(surface).vertex_color_use_as_albedo, "Imported colors are disabled")
+				var material: StandardMaterial3D = mesh.get_active_material(surface)
+				check(material.vertex_color_use_as_albedo, "Imported colors are disabled")
+				check(material.albedo_texture != null, "Rodin surface lost its painted texture")
+				if material.albedo_texture != null:
+					check(material.albedo_texture.get_width() == 2048, "Rodin atlas detail was lost during import")
+		var hand_sides := {"Left": false, "Right": false}
+		for mesh in avatar.authored.finger_meshes:
+			for side in hand_sides:
+				if side in mesh.name: hand_sides[side] = true
+		check(hand_sides.Left and hand_sides.Right, "Rodin open fingers were not separated for both weapon grips")
 		await capture("creator-%d" % design)
 		creator.begin_button.pressed.emit()
 		await scene_changed

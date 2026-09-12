@@ -1,5 +1,7 @@
 # Rodin traveler review — September 11
 
+Historical Willow-only pass. The current four-model integration is documented in [the Rodin party review](RODIN_PARTY_REVIEW.md).
+
 Dallon generated the Willow Scout with Rodin (Hyper3D) from her turnaround sheet. The download (`base.glb`: 500,000 triangles, no textures, no rig) holds three fused figures, the front, side and back views reconstructed as separate bodies. The front figure has the cleanest face and hands and a complete back, so it becomes the playable Willow. The download itself is not in the repository and stays unchanged.
 
 ## What the pipeline does

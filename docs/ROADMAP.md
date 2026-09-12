@@ -31,6 +31,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot
 - [x] Twenty-six Blender modeling/render/review cycles: reconstructed traveler faces/ears/hair/garments and wildlife anatomy, fitted eyes, coats and hooves (offline art only)
+- [x] Four supplied Rodin travelers with painted 2K textures, surface-based skins, separate open fingers and preserved selection/saves
 - [x] Four selectable Blender traveler exports with a first skinning pass, existing movement/tool animation, persisted choice, and original customization retained
 - [x] First-person articulated hand meshes and weapon grips; traveler surface materials, boar fur/hooves and Bellmaw silhouette refinement (actual Godot review)
 - [x] Focused Willow face/hair reconstruction with matched native comparisons, preserved other models and a refreshed playable export

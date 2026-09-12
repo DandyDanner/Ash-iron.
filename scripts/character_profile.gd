@@ -70,7 +70,7 @@ static func save_profile(profile: Dictionary, path: String = "") -> Error:
 static func skin_color(profile: Dictionary) -> Color:
 	var design: int = profile.get("traveler", 0)
 	if design < 4:
-		return [Color(.48, .285, .16), Color(.45, .24, .12), Color(.19, .088, .040), Color(.62, .37, .21)][design].linear_to_srgb()
+		return [Color("c79770"), Color("bc875f"), Color("825235"), Color("d3a17d")][design]
 	return SKINS[profile.skin]
 
 static func clothing_color(profile: Dictionary) -> Color:
