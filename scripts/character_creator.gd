@@ -295,6 +295,7 @@ func _build_stage(parent: Control) -> void:
 	stage.own_world_3d = true
 	stage.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	stage.msaa_3d = Viewport.MSAA_4X
+	stage.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA
 	container.add_child(stage)
 	var world := Node3D.new()
 	stage.add_child(world)
@@ -305,18 +306,35 @@ func _build_stage(parent: Control) -> void:
 	settings.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	settings.ambient_light_color = Color("ced9c3")
 	settings.ambient_light_energy = 0.65
+	settings.tonemap_mode = Environment.TONE_MAPPER_ACES
+	settings.tonemap_exposure = 1.0
+	# Contact shadows and a softer sun help the face read; ignored on the compatibility renderer.
+	settings.ssao_enabled = true
+	settings.ssao_radius = 0.5
+	settings.ssao_intensity = 2.0
+	settings.ssao_light_affect = 0.1
+	settings.glow_enabled = true
+	settings.glow_intensity = 0.25
+	settings.glow_bloom = 0.02
+	settings.glow_blend_mode = Environment.GLOW_BLEND_MODE_SOFTLIGHT
+	settings.glow_hdr_threshold = 1.0
 	environment.environment = settings
 	world.add_child(environment)
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-35, -35, 0)
 	sun.light_color = Color("ffdeae")
-	sun.light_energy = 0.85
+	sun.light_energy = 1.1
+	sun.light_angular_distance = 0.8
 	sun.shadow_enabled = true
+	sun.shadow_bias = 0.03
+	sun.shadow_normal_bias = 1.2
+	sun.shadow_blur = 1.5
+	sun.directional_shadow_max_distance = 12
 	world.add_child(sun)
 	var rim := OmniLight3D.new()
 	rim.position = Vector3(-2, 3, -1)
 	rim.light_color = Color("c5ddb8")
-	rim.light_energy = 0.55
+	rim.light_energy = 0.7
 	world.add_child(rim)
 	Traveler.cylinder(world, Vector3(0, -0.13, 0), 1.35, 0.22, Color("52664d"), 1.25)
 	Traveler.cylinder(world, Vector3(0, -0.3, 0), 1.36, 0.18, Color("3b4636"))

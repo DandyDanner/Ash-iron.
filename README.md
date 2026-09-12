@@ -80,7 +80,7 @@ The approved **Willow Scout** guides the shared character model: a short sage ca
 
 The scout and boar now have a focused model refinement pass: smoother shaped surfaces, swept hair and defined eyelids/lips, cape embroidery and a folded hood, and curved tusks with layered boar fur. These are still simplified procedural assets; the concept illustrations remain the target for future sculpted/textured models. This pass does not change the world.
 
-The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The bench has a planked top and braces. Supplied PBR models now provide layered pines, a plank chest with a hinged lid/interior, and jagged gray stone, copper and iron clusters. Tree and rock meshes switch to lighter versions at distance; ore icon colors match their deposits. [Actual prop captures and limits](docs/art/IMPORTED_PROPS_REVIEW.md). The HUD is shorter, with camera and full-screen hints beside the hotbar. The clearing combines procedural scenery and supplied models, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
+The clearing now has rolling outer terrain, paths, wind-driven grass, flowers, fuller pines, distant silhouettes, warm sunlight, and atmospheric haze. The game renders on Godot's Forward+ renderer with soft sun shadows, screen-space ambient occlusion, ACES tonemapping and light fog; the meadow shaders carry linear colors so the greens stay saturated. Each traveler's head has its own 1024 face maps (painted eyes, lids, brows and lips, plus normal and roughness), and skin uses subsurface scattering. Measurements and before/after captures: [Face and rendering pass](docs/art/FACE_AND_RENDERING_PASS.md). The bench has a planked top and braces. Supplied PBR models now provide layered pines, a plank chest with a hinged lid/interior, and jagged gray stone, copper and iron clusters. Tree and rock meshes switch to lighter versions at distance; ore icon colors match their deposits. [Actual prop captures and limits](docs/art/IMPORTED_PROPS_REVIEW.md). The HUD is shorter, with camera and full-screen hints beside the hotbar. The clearing combines procedural scenery and supplied models, ready for further refinement; the detailed concept illustration is the target, not a claim of finished graphics. See `docs/art/WILLOW_SCOUT.md`.
 
 ## Start with empty hands
 
@@ -161,7 +161,7 @@ The [actual crafting and Bellmaw review](docs/art/COPPERWORKING_REVIEW.md) shows
 
 ## Verification
 
-`Godot --path . --script res://tests/rodin_travelers_preview.gd` captures all four actual game models, faces, axe/bow holds and walking poses using temporary saves.
+`Godot --path . --script res://tests/rodin_travelers_preview.gd` captures all four actual game models, faces, axe/bow holds and walking poses using temporary saves. `Godot --path . --script res://tests/rendering_preview.gd -- --out=/absolute/prefix` captures the clearing and the creator face view; add `--rendering-method gl_compatibility` before `--script` to compare renderers. `Godot --path . --script res://tests/rendering_budget.gd` prints the frame-time ladder for renderer features at 2x, 1.5x and 1x internal resolution.
 
 For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (Command + R on Mac). Press O for portrait mode; J cycles axe carry/windup/contact/follow-through (U does the same for the pickaxe; T for the spear), K shows a drawn bow, and L orbits the camera. The J/U/T pose controls also work in first person. O enters/exits portrait mode and returns to play. B starts an isolated boar encounter with the spear; N shows its portrait. This scene uses temporary inventory and saves. Run Project returns to the regular game.
 
@@ -170,6 +170,7 @@ For reproducible actual-model images, run `Godot --path . --script res://tests/a
 Use your Godot executable in these commands (twenty-nine suites):
 
 - `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four textured Rodin previews and skins, separate fingers, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
+- `Godot --headless --path . --script res://tests/rendering_pass_test.gd` — Forward+ project setting, clearing and creator lighting flags (tonemap, SSAO, soft sun, no global illumination), dressed Rodin materials, and the 1024 face albedo/normal/roughness maps on all four travelers.
 
 - `Godot --headless --path . --script res://tests/willow_equipment_test.gd` — no fixed shoulder bow, carry clearance, fresh/crafted/held/stored equipment visibility. Add `-- --screenshots` with graphics enabled for actual front/back/side captures using temporary saves.
 

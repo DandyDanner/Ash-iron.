@@ -28,6 +28,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] First coordinated stylized asset pass: Willow Scout, trees, rocks, bench, chest, and shared materials
 - [x] Supplied textured pines with distance meshes, hollow hinged chest, and shared stone/copper/iron cluster art with matching icon colors; existing interactions and saves preserved
 - [x] Third-person camera with wall collision, first-person toggle, walking/jumping/tool/bow poses
+- [x] Forward+ rendering pass within the retina 60 fps budget: soft shadows, SSAO, ACES, linear meadow colors, and per-traveler 1024 face maps with painted eyes, lids, brows and lips
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot
 - [x] Twenty-six Blender modeling/render/review cycles: reconstructed traveler faces/ears/hair/garments and wildlife anatomy, fitted eyes, coats and hooves (offline art only)

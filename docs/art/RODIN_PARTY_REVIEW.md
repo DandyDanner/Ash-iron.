@@ -34,6 +34,10 @@ Actual Godot captures: [fresh back](rodin-party/willow-equipment-fresh-back.png)
 
 `willow_equipment_test.gd` checks that the fixed shoulder-bow geometry is absent, samples carry meshes against the rear clothing/bag envelope, and exercises real crafting and inventory-to-chest transfers. With `-- --screenshots` and graphics enabled it captures the states above. All 29 suites pass. Save data and recipes are unchanged.
 
+## Face maps and the Forward+ pass (2026-09-12)
+
+Each traveler's head skin is now a separate `Rodin Face` material with its own 1024 albedo, tangent-space normal and roughness maps, painted from the same front-view landmarks as the body atlas. The in-game face and idle captures above were refreshed on the Forward+ renderer; held-tool and stride captures predate it. Before/after captures, the frame budget ladder and the gamma-space finding are in [Face and rendering pass](FACE_AND_RENDERING_PASS.md).
+
 ## Remaining limits and useful next work
 
 These remain prototype character skins. Rodin fused clothing, fingers and equipment into sculpted surfaces; tight sleeves, the hip/hand contact areas and Ridge's bent-arm poncho still compress or stretch in strong poses. Some painted boundaries around hidden sides and pack straps need finer manual cleanup. The eyes are painted onto the existing sculpt, with no moving eyeballs, blinking or facial rig. Willow’s sculpted bow and arrow tips have been removed; her travel bag remains part of the outfit. The other models’ sculpted pick and packs remain cosmetic, so gameplay equipment can overlap those. There is no cloth simulation or foot IK; the source stance has one heel slightly raised.

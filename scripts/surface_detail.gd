@@ -31,3 +31,52 @@ static func refine(source: StandardMaterial3D, kind: String) -> StandardMaterial
 	material.metallic_specular = 0.22
 	materials[key] = material
 	return material
+
+## Rodin travelers arrive with painted UV1 maps. Treatments stay on the detail layer and
+## triplanar UV2 so the albedo, face normal and roughness maps survive untouched.
+static func dress(source: StandardMaterial3D) -> StandardMaterial3D:
+	# Blender numbers repeated names across the four figures ("Rodin Skin.001").
+	var name := source.resource_name.get_slice(".", 0)
+	var key := "dress:%s:%s" % [name, source.albedo_texture.get_rid() if source.albedo_texture else source.albedo_color.to_html()]
+	if materials.has(key): return materials[key]
+	var material: StandardMaterial3D
+	if name in ["Game Skin", "Game Fabric"]:
+		material = refine(source, "skin" if name == "Game Skin" else "fabric")
+	else:
+		material = source.duplicate()
+	# Godot's importer retains COLOR_0 but does not always enable it on the material.
+	material.vertex_color_use_as_albedo = true
+	material.vertex_color_is_srgb = false
+	match name:
+		"Rodin Face", "Rodin Skin":
+			material.subsurf_scatter_enabled = true
+			material.subsurf_scatter_strength = 0.3 if name == "Rodin Face" else 0.22
+			material.subsurf_scatter_skin_mode = true
+			material.metallic_specular = 0.4
+			if name == "Rodin Skin":
+				overlay(material, "skin", 7.0)
+		"Rodin Hair":
+			material.roughness = 0.55
+			material.metallic_specular = 0.45
+		"Rodin Fabric":
+			material.roughness = 0.9
+			overlay(material, "fabric", 4.0)
+		"Rodin Leather":
+			material.roughness = 0.72
+			material.metallic_specular = 0.35
+			overlay(material, "skin", 5.0)
+		"Rodin Metal":
+			material.metallic = 0.6
+			material.roughness = 0.45
+	materials[key] = material
+	return material
+
+## A normal grain on the detail layer, projected triplanar through UV2, leaves UV1 textures alone.
+static func overlay(material: StandardMaterial3D, kind: String, scale: float) -> void:
+	material.detail_enabled = true
+	material.detail_blend_mode = BaseMaterial3D.BLEND_MODE_MUL
+	material.detail_uv_layer = BaseMaterial3D.DETAIL_UV_2
+	material.detail_normal = grain(kind)
+	material.uv2_triplanar = true
+	material.uv2_triplanar_sharpness = 2.0
+	material.uv2_scale = Vector3.ONE * scale

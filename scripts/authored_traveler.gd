@@ -67,14 +67,9 @@ func build(owner_model: Node3D, design: int) -> void:
 			host.closed_right_fingers = host.gripping_fingers(host.tool_grip, host.skin_color)
 			host.closed_right_fingers.hide()
 	for mesh in imported.find_children("*", "MeshInstance3D", true, false):
-		# Godot's importer retains COLOR_0 but does not always enable it on the material.
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material: StandardMaterial3D = mesh.get_active_material(surface)
-			if material.resource_name in ["Game Skin", "Game Fabric"]:
-				material = preload("res://scripts/surface_detail.gd").refine(material, "skin" if material.resource_name == "Game Skin" else "fabric")
-			material.vertex_color_use_as_albedo = true
-			material.vertex_color_is_srgb = false
-			mesh.set_surface_override_material(surface, material)
+			mesh.set_surface_override_material(surface, preload("res://scripts/surface_detail.gd").dress(material))
 		if "Fingers" in mesh.name:
 			finger_meshes.append(mesh)
 	for i in range(skeleton.get_bone_count()):

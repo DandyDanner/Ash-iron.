@@ -8,6 +8,7 @@ void vertex() {
  VERTEX.z += cos(TIME*1.0+world.x*0.5)*VERTEX.y*0.10;
 }
 void fragment() {
- ALBEDO=mix(vec3(0.22,0.34,0.14),vec3(0.59,0.64,0.32),clamp(blade_height*2.6,0.0,1.0));
+ // Display-space colors converted to linear for Forward+.
+ ALBEDO=mix(vec3(0.040, 0.095, 0.017),vec3(0.307, 0.367, 0.084),clamp(blade_height*2.6,0.0,1.0));
  ROUGHNESS=1.0;
 }
