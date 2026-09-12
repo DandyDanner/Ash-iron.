@@ -111,7 +111,7 @@ func run() -> void:
 	await ticks()
 	attack(player)
 	await ticks(42)
-	check(current_scene.get_node("PracticePine").hits_left == 4, "Pickaxe chopped a tree")
+	check(current_scene.get_node("PracticePine").hits_left == current_scene.get_node("PracticePine").MAX_HITS, "Pickaxe chopped a tree")
 	player.global_position = Vector3(5, 1.1, -3.8)
 	player.camera.rotation = Vector3.ZERO
 	player.equip_axe(true)
@@ -131,7 +131,7 @@ func run() -> void:
 	check(not current_scene.get_node("Rock1").mine(Vector3.ZERO), "Depleted rock granted more stones")
 	# Save on the final chop, before its fall animation finishes.
 	var tree: Node3D = current_scene.get_node("PracticePine")
-	for i in range(4): tree.chop(Vector3.ZERO)
+	for i in range(tree.MAX_HITS): tree.chop(Vector3.ZERO)
 	check(get_nodes_in_group("wood_bundles").size() == 1, "Final chop did not secure wood before fall")
 	player.equip_item("torch")
 	player.assign_hotbar(4, "torch")

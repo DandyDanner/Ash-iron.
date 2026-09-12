@@ -85,8 +85,8 @@ func run() -> void:
 	player.camera.rotation = Vector3.ZERO
 	click(player)
 	await ticks(42)
-	check(current_scene.get_node("PracticePine").hits_left == 4, "Empty hands damaged a tree")
-	check(not player.axe.start_swing(), "Unequipped axe accepted an attack")
+	check(current_scene.get_node("PracticePine").hits_left == current_scene.get_node("PracticePine").MAX_HITS, "Empty hands damaged a tree")
+	check(player.axe.selected_item.is_empty() and not player.axe.get_node("Tool").visible, "Unequipped axe accepted an attack")
 	key(player, KEY_I)
 	check(player.inventory_panel.visible and not player.controls_active, "I did not open the backpack safely")
 	check(player.inventory_panel.bench_button.disabled and player.inventory_panel.axe_button.disabled, "Unavailable recipes were enabled")

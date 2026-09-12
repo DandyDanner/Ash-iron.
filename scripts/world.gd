@@ -169,13 +169,19 @@ func _apply(data: Dictionary) -> void:
 		bundle.amount = mini(amount, Bundle.AMOUNT)
 		add_child(bundle)
 		bundle.global_position = _vec(_dict(entry), Vector3.ZERO)
+	var saved_version := int(_num(data.get("version"), GameSave.VERSION))
 	var trees := {}
 	for tree in get_tree().get_nodes_in_group("harvest_trees"):
 		trees[tree.name] = tree
 	for entry in _list(data.get("trees")):
 		var tree: Node3D = trees.get(str(_dict(entry).get("name", "")))
 		if tree:
-			tree.restore(int(_num(_dict(entry).get("hits_left"), float(tree.MAX_HITS))))
+			var hits := int(_num(_dict(entry).get("hits_left"), float(tree.MAX_HITS)))
+			# Formats 1–12 felled a pine in four hits; keep the same share of trunk standing.
+			# Values above four cannot come from those formats, so they pass through unchanged.
+			if saved_version < 13 and hits <= 4:
+				hits = roundi(hits / 4.0 * tree.MAX_HITS)
+			tree.restore(hits)
 	var saved_benches := _list(data.get("workbenches"))
 	# Formats 1–4 recorded only the fixed camp bench's built flag.
 	if not data.has("workbenches") and _dict(data.get("workbench")).get("built", false) == true:
@@ -210,7 +216,6 @@ func _apply(data: Dictionary) -> void:
 	var saved := _dict(data.get("player"))
 	boar.restore(_dict(data.get("boar")))
 	var bell_data := _dict(data.get("bellmaw")).duplicate()
-	var saved_version := int(_num(data.get("version"), GameSave.VERSION))
 	if saved_version < 12 and bell_data.has("health"):
 		# Preserve the fraction remaining, including death, across both old health caps.
 		var old_max := 80.0 if saved_version <= 8 else 160.0

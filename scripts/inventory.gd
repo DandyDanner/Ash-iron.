@@ -12,7 +12,7 @@ const ITEMS := {
 	"copper_ingot": {"name": "Copper ingot", "stack": 10, "description": "Your first cast metal. Make fittings, improve your bench, then craft a copper axe."},
 	"copper_fittings": {"name": "Copper fittings", "stack": 10, "description": "Cast brackets and fasteners for the Copperworking kit."},
 	"copperworking": {"name": "Copperworking kit", "stack": 1, "description": "Permanently equips your workbenches for copper tools. Unlocks the copper axe and uses no backpack slot."},
-	"copper_axe": {"name": "Copper axe", "stack": 1, "description": "A cast copper axe: two chops per pine and 14 base melee damage. Made at a bench with the Copperworking kit."},
+	"copper_axe": {"name": "Copper axe", "stack": 1, "description": "A cast copper axe: two chops per swing (a pine falls in five) and 14 base melee damage. Made at a bench with the Copperworking kit."},
 	"bellmaw_hide": {"name": "Bellmaw hide", "stack": 10, "description": "Supple, strong hide from the Bellmaw at Echo Hollow. Bring it to a workbench for an Explorer Pack."},
 	"explorer_pack": {"name": "Explorer Pack", "stack": 1, "description": "A permanent backpack upgrade from eight to twelve slots. Crafted and fitted at your workbench; uses no inventory slot."},
 	"boar_hide": {"name": "Boar hide", "stack": 10, "description": "A hide from a Bristleback. Keep it for future leather equipment; no hide recipes yet."},

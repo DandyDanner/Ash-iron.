@@ -1,7 +1,8 @@
 extends StaticBody3D
 const Model = preload("res://scripts/traveler_model.gd")
 const Bundle = preload("res://scripts/wood_bundle.gd")
-const MAX_HITS := 4
+## Ten stone-axe hits fell a pine; a copper axe lands two per swing.
+const MAX_HITS := 10
 var hits_left := MAX_HITS
 var crown: Node3D
 var trunk_collision: CollisionShape3D

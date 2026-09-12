@@ -2,6 +2,7 @@ extends Control
 ## Shared look and slot-grid construction for the backpack and storage panels.
 const Inventory = preload("res://scripts/inventory.gd")
 const Icon = preload("res://scripts/item_icon.gd")
+const HoverButton = preload("res://scripts/hover_button.gd")
 const GOLD := Color("d4b372")
 const INK := Color("eee4cd")
 const MUTED := Color("a6b4a6")
@@ -13,8 +14,10 @@ func _slot_grid(parent: Node, count: int, columns: int, on_select: Callable, cel
 	grid.add_theme_constant_override("v_separation", 10)
 	parent.add_child(grid)
 	var result := {"grid": grid, "buttons": [], "icons": [], "names": [], "counts": []}
+	# Icons shrink with the cell so shorter cells still show the name beneath them.
+	var icon_scale := clampf((cell.y - 42.0) / 56.0, 0.6, 1.0)
 	for i in range(count):
-		var button := Button.new()
+		var button := HoverButton.new()
 		button.custom_minimum_size = cell
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.toggle_mode = true
@@ -22,18 +25,19 @@ func _slot_grid(parent: Node, count: int, columns: int, on_select: Callable, cel
 		grid.add_child(button)
 		result.buttons.append(button)
 		var icon := Icon.new()
-		icon.position = Vector2(cell.x / 2.0 - 30.0, 10)
+		icon.position = Vector2((cell.x - 60.0 * icon_scale) / 2.0, 7)
 		icon.size = Vector2(60, 56)
+		icon.scale = Vector2(icon_scale, icon_scale)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		button.add_child(icon)
 		result.icons.append(icon)
-		var title := _label(button, "", 14)
-		title.position = Vector2(6, cell.y - 41.0)
+		var title := _label(button, "", 13)
+		title.position = Vector2(6, cell.y - 30.0)
 		title.size = Vector2(cell.x - 12.0, 22)
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		result.names.append(title)
 		var amount := _label(button, "", 13, GOLD)
-		amount.position = Vector2(cell.x - 53.0, 7)
+		amount.position = Vector2(cell.x - 53.0, 5)
 		amount.size.x = 45
 		amount.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		result.counts.append(amount)
@@ -53,6 +57,8 @@ func _refresh_grid(grid: Dictionary, inventory: RefCounted, selected: int, held_
 		grid.counts[i].text = str(slot.amount) if not slot.is_empty() else ""
 		if not held_item.is_empty() and item == held_item:
 			grid.counts[i].text = "Held"
+		# Hovering any stack explains what it is and does.
+		grid.buttons[i].tooltip_text = "" if item.is_empty() else "%s  ×%d\n\n%s" % [Inventory.ITEMS[item].name, int(slot.amount), Inventory.ITEMS[item].description]
 
 func _label(parent: Node, text: String, font_size: int, color: Color = INK) -> Label:
 	var result := Label.new()

@@ -52,20 +52,20 @@ func setup(owner_player: Node3D) -> void:
 	columns.add_theme_constant_override("separation", 24)
 	layout.add_child(columns)
 	var left := VBoxContainer.new()
-	left.custom_minimum_size.x = 590
+	left.custom_minimum_size.x = 560
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left.add_theme_constant_override("separation", 6)
 	columns.add_child(left)
 	capacity_label = _label(left, "", 16, GOLD)
 	pack_help = _label(left, "Resources stack to 10. Each tool takes one slot.", 14, MUTED)
 	var pack_scroll := ScrollContainer.new()
-	pack_scroll.custom_minimum_size.y = 210
+	pack_scroll.custom_minimum_size.y = 270
 	pack_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	left.add_child(pack_scroll)
-	pack = _slot_grid(pack_scroll, Inventory.EXPLORER_CAPACITY, 4, func(i: int): selected = i; refresh(), Vector2(138, 96))
+	pack = _slot_grid(pack_scroll, Inventory.EXPLORER_CAPACITY, 4, func(i: int): selected = i; refresh(), Vector2(124, 82))
 	detail = _label(left, "", 16)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	detail.custom_minimum_size.y = 54
+	detail.custom_minimum_size.y = 46
 	var actions := HBoxContainer.new()
 	left.add_child(actions)
 	equip_button = _button(actions, "Equip axe")
@@ -82,7 +82,7 @@ func setup(owner_player: Node3D) -> void:
 		var result: String = player.drop_slot(selected)
 		message_label.text = result
 		refresh())
-	_label(left, "HOTBAR  •  Select a tool, then click a number or press its key.", 13, GOLD)
+	_label(left, "HOTBAR  •  Select a tool, then click a number or press its key. An empty slot clears it.", 13, GOLD)
 	var shortcuts := HBoxContainer.new()
 	shortcuts.add_theme_constant_override("separation", 5)
 	left.add_child(shortcuts)
@@ -91,33 +91,32 @@ func setup(owner_player: Node3D) -> void:
 		button.custom_minimum_size = Vector2(48, 34)
 		button.pressed.connect(_assign_shortcut.bind(i))
 		shortcut_buttons.append(button)
-	_label(left, "Select an empty backpack slot to clear a shortcut. Tools still use pack space.", 13, MUTED)
 	storage_note = _label(left, "", 14, MUTED)
 	storage_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	progression_note = _label(left, "", 15, GOLD)
 	progression_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var scroll := ScrollContainer.new()
 	scroll.name = "Recipes"
-	scroll.custom_minimum_size.x = 390
+	scroll.custom_minimum_size.x = 420
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	columns.add_child(scroll)
 	var right := VBoxContainer.new()
-	right.custom_minimum_size.x = 370
+	right.custom_minimum_size.x = 400
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 6)
 	scroll.add_child(right)
 	_label(right, "CRAFTABLES", 16, GOLD)
-	var help := _label(right, "Scroll icons • Hover for details. Select, then craft below.", 14, MUTED)
+	var help := _label(right, "Hover an icon for details. Select it, then craft.", 13, MUTED)
 	help.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	var grid := GridContainer.new()
 	grid.name = "CraftableGrid"
-	grid.columns = 4
-	grid.add_theme_constant_override("h_separation", 8)
-	grid.add_theme_constant_override("v_separation", 8)
+	grid.columns = 5
+	grid.add_theme_constant_override("h_separation", 6)
+	grid.add_theme_constant_override("v_separation", 6)
 	var grid_scroll := ScrollContainer.new()
 	grid_scroll.name = "RecipeIconsScroll"
-	grid_scroll.custom_minimum_size.y = 206
+	grid_scroll.custom_minimum_size.y = 268
 	grid_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	right.add_child(grid_scroll)
 	grid_scroll.add_child(grid)
@@ -136,40 +135,42 @@ func setup(owner_player: Node3D) -> void:
 		var recipe: Dictionary = catalog[id]
 		var tile := CraftableTile.new()
 		tile.name = "Recipe_" + id
-		tile.custom_minimum_size = Vector2(86, 94)
+		tile.custom_minimum_size = Vector2(76, 84)
 		tile.toggle_mode = true
 		tile.pressed.connect(_select_recipe.bind(id))
 		tile.focus_entered.connect(_select_recipe.bind(id))
 		grid.add_child(tile)
 		var icon := Icon.new()
 		icon.item_id = recipe.output
-		icon.position = Vector2(13, 3)
+		icon.position = Vector2(14, 4)
 		icon.size = Vector2(60, 56)
+		icon.scale = Vector2(0.8, 0.8)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tile.add_child(icon)
-		var title := _label(tile, recipe.short, 12)
-		title.position = Vector2(2, 60)
-		title.size.x = 82
+		var title := _label(tile, recipe.short, 11)
+		title.position = Vector2(2, 50)
+		title.size.x = 72
 		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		var availability := _label(tile, "", 10, MUTED)
-		availability.position = Vector2(2, 77)
-		availability.size.x = 82
+		var availability := _label(tile, "", 9, MUTED)
+		availability.position = Vector2(2, 66)
+		availability.size.x = 72
 		availability.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if int(recipe.amount) > 1:
-			var amount := _label(tile, "×%d" % recipe.amount, 13, GOLD)
-			amount.position = Vector2(63, 4)
+			var amount := _label(tile, "×%d" % recipe.amount, 11, GOLD)
+			amount.position = Vector2(52, 3)
 		var card := VBoxContainer.new()
 		card.add_theme_constant_override("separation", 8)
 		cards.add_child(card)
-		var card_title := _label(card, recipe.name, 20)
+		# Craft sits above the description so it never needs scrolling to reach.
+		var card_title := _label(card, recipe.name, 19)
 		card_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var note := _label(card, recipe.description, 14, MUTED)
-		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var cost := _label(card, "", 15)
+		var cost := _label(card, "", 13)
 		cost.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var status := _label(card, "", 14, MUTED)
+		var status := _label(card, "", 13, MUTED)
 		status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var button := _button(card, "Craft " + recipe.short.to_lower())
+		var note := _label(card, recipe.description, 13, MUTED)
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		craftables[id] = {"tile": tile, "icon": icon, "availability": availability, "card": card, "recipe": recipe, "cost": cost, "status": status, "button": button}
 		match id:
 			"bench":
@@ -253,7 +254,7 @@ func refresh() -> void:
 	var inventory: RefCounted = player.inventory
 	progression_note.text = player.crafting.next_step()
 	capacity_label.text = "YOUR BACKPACK    %d / %d slots" % [inventory.used_slots(), inventory.slots.size()]
-	pack_help.text = "Explorer Pack fitted • Scroll down for slots 9–12." if inventory.slots.size() > Inventory.CAPACITY else "Resources stack to 10. Each tool takes one slot."
+	pack_help.text = "Explorer Pack fitted • Twelve slots, all in view. Hover a stack for details." if inventory.slots.size() > Inventory.CAPACITY else "Resources stack to 10. Each tool takes one slot. Hover a stack for details."
 	_refresh_grid(pack, inventory, selected, player.equipped_item)
 	var chosen: Dictionary = inventory.slots[selected] if selected >= 0 else {}
 	drop_button.disabled = chosen.is_empty()
@@ -292,7 +293,7 @@ func refresh() -> void:
 				if need - have == 1:
 					missing_name = missing_name.trim_suffix("s")
 				missing.append("%d %s" % [need - have, missing_name])
-		row.cost.text = "MATERIALS  •  Have / need\n" + "    ".join(amounts)
+		row.cost.text = "MATERIALS  •  Have / need  •  " + "   ".join(amounts)
 		var reason := ""
 		match id:
 			"bench": reason = player.bench_requirement()

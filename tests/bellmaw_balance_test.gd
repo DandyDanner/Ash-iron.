@@ -44,7 +44,7 @@ func run() -> void:
 		check(current_scene.bellmaw.health == sample[2], "Saved health percentage/death changed for version %s" % sample[0])
 		if sample[1] == 0: check(current_scene.bellmaw.respawn.remaining == 47, "Migration reset the defeated enemy's countdown")
 		check(current_scene.save_game() == OK, "Migrated save failed")
-		check(Save.load_state().version == 12, "New health cap was not versioned")
+		check(Save.load_state().version == Save.VERSION, "New health cap was not versioned")
 		await enter()
 		check(current_scene.bellmaw.health == sample[2], "Reload scaled Bellmaw health a second time")
 	Save.clear()

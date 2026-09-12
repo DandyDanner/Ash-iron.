@@ -85,8 +85,8 @@ func _ready() -> void:
 	prompt_label.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
 	prompt_label.offset_left = -450
 	prompt_label.offset_right = 450
-	prompt_label.offset_top = -151
-	prompt_label.offset_bottom = -110
+	prompt_label.offset_top = -126
+	prompt_label.offset_bottom = -86
 	prompt_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prompt_label.add_theme_color_override("font_color", Color("fff1cb"))
 	first_left_hand = preload("res://scripts/first_person_hand.gd").new()
@@ -191,7 +191,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif equipped_item == "torch":
 			_show_feedback("Pine torch • Press its hotbar key again to put it away.")
 		else:
-			_show_feedback("Empty hands • Gather sticks and stones, then build at camp.")
+			axe.start_swing() # Bare-handed punch; the outcome message arrives at contact.
 	if event is InputEventMouseMotion and controls_active:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		camera.rotation.x = clampf(camera.rotation.x - event.relative.y * mouse_sensitivity, deg_to_rad(-85.0), deg_to_rad(85.0))
@@ -258,12 +258,21 @@ func _physics_process(delta: float) -> void:
 		_cancel_actions()
 		_show_feedback("Back in the clearing")
 	if axe.advance(delta):
-		var hit := _spear_target() if equipped_item == "stone_spear" else (_melee_target(REACH) if axe_equipped else _aim_target())
+		var hit := _spear_target() if equipped_item == "stone_spear" else (_melee_target(REACH) if axe_equipped else (_melee_target(Axe.PUNCH_REACH) if equipped_item.is_empty() else _aim_target()))
 		if equipped_item in ["stone_spear", "stone_axe", "copper_axe"] and not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
 			var damage := Axe.SPEAR_DAMAGE if equipped_item == "stone_spear" else (14 if equipped_item == "copper_axe" else Axe.AXE_DAMAGE)
 			var message: String = hit.collider.receive_melee_hit(damage, hit.position)
 			axe.impact.play()
 			_show_feedback(message)
+		elif equipped_item.is_empty():
+			if not hit.is_empty() and hit.collider.has_method("receive_melee_hit"):
+				var message: String = hit.collider.receive_melee_hit(Axe.PUNCH_DAMAGE, hit.position)
+				axe.impact.play()
+				_show_feedback("Punch! " + message if not message.is_empty() else "Punch! • A weapon would do far more.")
+			elif not hit.is_empty() and (hit.collider.has_method("chop") or hit.collider.has_method("mine")):
+				_show_feedback("Bare hands won't cut it • Craft a stone axe or pickaxe [Tab].")
+			else:
+				_show_feedback("Empty hands • Gather sticks and stones, then build at camp.")
 		elif equipped_item == "stone_spear" and not hit.is_empty():
 			_show_feedback("Spear blocked • Practice on the target at the far right of camp.")
 		elif axe_equipped and not hit.is_empty() and hit.collider.has_method("chop"):
@@ -941,7 +950,9 @@ func set_third_person(enabled: bool) -> void:
 	_progress_changed()
 
 func update_first_person_hands() -> void:
-	first_left_hand.position = Vector3(-0.32,-0.32,-0.65)
+	# The off hand counters the swing a little, so the body reads as one piece.
+	var sway := sin(axe.swing_progress() * PI)
+	first_left_hand.position = Vector3(-0.32,-0.32,-0.65) + Vector3(-0.02, 0.025, 0.02) * sway
 	first_left_hand.set_grip(equipped_item == "bow")
 	axe.hand.set_draw_pose(equipped_item == "bow" and bow.drawing)
 	axe.hand.position = Vector3.ZERO

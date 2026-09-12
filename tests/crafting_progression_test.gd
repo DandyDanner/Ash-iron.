@@ -169,10 +169,11 @@ func run() -> void:
 	await ticks()
 	click(player)
 	await ticks(45)
-	check(current_scene.get_node("PracticePine").hits_left == 2, "Copper axe did not deliver two chopping hits")
-	click(player)
-	await ticks(45)
-	check(current_scene.get_node("PracticePine").hits_left == 0 and get_nodes_in_group("wood_bundles").size() == 1, "Copper axe duplicated the tree reward")
+	check(current_scene.get_node("PracticePine").hits_left == current_scene.get_node("PracticePine").MAX_HITS - 2, "Copper axe did not deliver two chopping hits")
+	for i in range(4):
+		click(player)
+		await ticks(45)
+	check(current_scene.get_node("PracticePine").hits_left == 0 and get_nodes_in_group("wood_bundles").size() == 1, "Copper axe should fell a pine in five swings without duplicating the reward")
 	# Safe metal selection / partial return / full pack / save with an unfinished copper batch.
 	furnace.set_auto_feed(false)
 	player.inventory.add("copper_ore", 3)

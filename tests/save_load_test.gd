@@ -79,7 +79,7 @@ func run() -> void:
 	player.camera.rotation = Vector3.ZERO
 	await ticks()
 	var pine: Node3D = current_scene.get_node("PracticePine")
-	for i in range(4):
+	for i in range(pine.MAX_HITS):
 		click(player)
 		await ticks(45)
 	check(pine.hits_left == 0, "The practice pine was not felled")
@@ -101,7 +101,7 @@ func run() -> void:
 	await ticks()
 	click(player)
 	await ticks(45)
-	check(current_scene.get_node("Tree1").hits_left == 3, "Partial chop on Tree1 failed")
+	check(current_scene.get_node("Tree1").hits_left == 9, "Partial chop on Tree1 failed")
 	player.inventory.add("stick", 1)
 	player.global_position = player.workbench.global_position + Vector3(0, 0.9, 2.0)
 	await ticks()
@@ -136,7 +136,7 @@ func run() -> void:
 	check(player.global_position.distance_to(Vector3(3, 1.1, 5)) < 0.3 and absf(player.rotation.y - 0.7) < 0.01 and absf(player.camera.rotation.x + 0.3) < 0.01, "Player position and view were not restored")
 	check(player.inventory.to_data() == expected_slots and player.axe_equipped and player.axe.get_node("Tool").visible, "Backpack or equipped axe were not restored")
 	check(player.workbench.built, "Workbench was not restored")
-	check(current_scene.get_node("PracticePine").hits_left == 0 and current_scene.get_node("Tree1").hits_left == 3 and current_scene.get_node("Tree2").hits_left == 4, "Tree damage was not restored")
+	check(current_scene.get_node("PracticePine").hits_left == 0 and current_scene.get_node("Tree1").hits_left == 9 and current_scene.get_node("Tree2").hits_left == current_scene.get_node("Tree2").MAX_HITS, "Tree damage was not restored")
 	check(get_nodes_in_group("wood_bundles").is_empty(), "The felled pine dropped wood again after loading")
 	check(not current_scene.get_node("PracticePine").chop(Vector3.ZERO), "A restored stump could be chopped")
 	var pickups := get_nodes_in_group("pickups")
@@ -176,7 +176,7 @@ func run() -> void:
 	creator.find_child("BeginJourney", true, false).pressed.emit()
 	await scene_changed
 	await ticks(6)
-	check(current_scene.name == "Main" and not current_scene.loaded_from_save and get_nodes_in_group("pickups").size() == 32 and get_nodes_in_group("chests").is_empty() and current_scene.get_node("PracticePine").hits_left == 4 and not is_instance_valid(current_scene.get_node("Player").workbench), "Start over did not give a fresh clearing")
+	check(current_scene.name == "Main" and not current_scene.loaded_from_save and get_nodes_in_group("pickups").size() == 32 and get_nodes_in_group("chests").is_empty() and current_scene.get_node("PracticePine").hits_left == current_scene.get_node("PracticePine").MAX_HITS and not is_instance_valid(current_scene.get_node("Player").workbench), "Start over did not give a fresh clearing")
 	GameSave.clear()
 	if FileAccess.file_exists(Profile.storage_path):
 		DirAccess.remove_absolute(Profile.storage_path)

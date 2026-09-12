@@ -101,12 +101,12 @@ func run() -> void:
 	var pine: Node3D = current_scene.get_node("PracticePine")
 	player.axe.start_swing()
 	await ticks(45)
-	check(pine.hits_left == 3 and rig.held.stone_axe.visible, "Third-person axe did not strike the practice pine")
+	check(pine.hits_left == 9 and rig.held.stone_axe.visible, "Third-person axe did not strike the practice pine")
 	player.global_position.z = 4.5
 	await ticks(8)
 	player.axe.start_swing()
 	await ticks(45)
-	check(pine.hits_left == 3, "Third-person axe gained camera-length reach")
+	check(pine.hits_left == 9, "Third-person axe gained camera-length reach")
 	# Tools stay outside the forearm while their gripping hand follows the animation.
 	check(rig.avatar.closed_right_fingers.visible and not rig.avatar.open_right_fingers.visible, "Equipped axe did not close the gripping fingers")
 	for held_item in rig.held:
@@ -181,7 +181,7 @@ func run() -> void:
 	# Current saves preserve the camera preference; old snapshots retain progress and default to third person.
 	check(current_scene.save_game() == OK, "Saving the view failed")
 	player = await enter()
-	check(not player.view_rig.third_person and player.inventory.count("bow") == 1 and current_scene.get_node("PracticePine").hits_left == 3, "Save lost camera choice or progress")
+	check(not player.view_rig.third_person and player.inventory.count("bow") == 1 and current_scene.get_node("PracticePine").hits_left == 9, "Save lost camera choice or progress")
 	var old := GameSave.load_state()
 	old.version = 3
 	old.player.erase("third_person")
@@ -189,7 +189,7 @@ func run() -> void:
 	file.store_string(JSON.stringify(old))
 	file.close()
 	player = await enter()
-	check(player.view_rig.third_person and player.inventory.count("bow") == 1 and current_scene.get_node("PracticePine").hits_left == 3, "Version 3 migration lost progress or camera default")
+	check(player.view_rig.third_person and player.inventory.count("bow") == 1 and current_scene.get_node("PracticePine").hits_left == 9, "Version 3 migration lost progress or camera default")
 	GameSave.clear()
 	print("THIRD PERSON: %s" % ("PASS — camera modes/collision, gear, pickup reach/occlusion, axe, bow/obstruction, animation, terrain, save and v3 migration" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)
