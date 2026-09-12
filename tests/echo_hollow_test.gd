@@ -94,7 +94,7 @@ func run() -> void:
 	collider.shape = shape
 	wall.add_child(collider)
 	current_scene.add_child(wall)
-	wall.global_position = Bell.HOME + Vector3(0, 1.0, 2)
+	wall.global_position = Bell.HOME + Vector3(0, 1.0, 3.1)
 	await ticks(75)
 	check(player.health == 100, "Boom passed through solid cover")
 	wall.queue_free()
@@ -105,7 +105,7 @@ func run() -> void:
 	bell.set_physics_process(false)
 	bell.state = "recover"
 	bell.global_position = Vector3(12, 0.2, 12)
-	player.global_position = Vector3(12, 1.1, 14.3)
+	player.global_position = Vector3(12, 1.1, 15.4)
 	player.rotation = Vector3.ZERO
 	player.set_third_person(false)
 	player.camera.look_at(bell.global_position + Vector3.UP * 0.9)

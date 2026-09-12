@@ -1,0 +1,47 @@
+{
+  "source_filename": "fantasy+creature+3d+model.glb",
+  "selected": "largest connected creature; other two and backpack removed",
+  "vertices": 27000,
+  "triangles": 53999,
+  "bones": [
+    "Root",
+    "Spine",
+    "Head",
+    "Throat",
+    "FrontLUpper",
+    "FrontLLower",
+    "FrontLFoot",
+    "RearLUpper",
+    "RearLLower",
+    "RearLFoot",
+    "FrontRUpper",
+    "FrontRLower",
+    "FrontRFoot",
+    "RearRUpper",
+    "RearRLower",
+    "RearRFoot"
+  ],
+  "clips": [
+    "Idle",
+    "Walk",
+    "Warning",
+    "Recovery"
+  ],
+  "runtime_scale": 2,
+  "limitations": [
+    "Generated topology; no manual quad retopology",
+    "No foot IK; uneven slopes may slide",
+    "Creature face and rear toes retain source asymmetry"
+  ],
+  "source_bounds_dimensions": [
+    0.40206342935562134,
+    0.5559692978858948,
+    0.2678184509277344
+  ],
+  "exported_bounds_dimensions_m": [
+    2.010317087173462,
+    1.3299341201782227,
+    2.739104390144348
+  ],
+  "source_sha256": "37d4a9ee7ddb40b0bac7741a6efcda2372031af9686706cdb51fae83cc8f61ab"
+}

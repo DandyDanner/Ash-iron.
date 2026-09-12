@@ -49,11 +49,12 @@ func run() -> void:
 	for enemy in [current_scene.boar, current_scene.bellmaw]:
 		var original: Vector3 = enemy.position
 		enemy.position = Vector3(12, 0.2, 12)
+		var body_extension := 1.1 if enemy == current_scene.bellmaw else 0.0
 		for third in [false, true]:
 			enemy.health = enemy.MAX_HEALTH
 			enemy.state = "recover"
 			player.equip_item("stone_axe")
-			await aim(player, enemy, 2.2, third)
+			await aim(player, enemy, 2.2 + body_extension, third)
 			check(player._melee_target(player.REACH).get("collider") == enemy, "Axe fixture did not aim at enemy")
 			var before: int = enemy.health
 			click(player)
@@ -67,12 +68,12 @@ func run() -> void:
 			await ticks(45)
 			check(enemy.health == before - 30, "Spear no longer deals twice the axe's damage")
 			player.equip_item("stone_axe")
-			await aim(player, enemy, 4.5, third)
+			await aim(player, enemy, 4.5 + body_extension, third)
 			click(player)
 			await ticks(45)
 			check(enemy.health == before - 30, "Axe hit outside its reach")
 		# A wall must remain outside the body and be the first solid contact.
-		var wall_offset := 1.0 if enemy == current_scene.bellmaw else 0.0
+		var wall_offset := 2.1 if enemy == current_scene.bellmaw else 0.0
 		await aim(player, enemy, 2.2 + wall_offset, true)
 		var wall := StaticBody3D.new()
 		var collider := CollisionShape3D.new()

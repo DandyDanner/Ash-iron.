@@ -36,7 +36,7 @@ func _ready() -> void:
 	collider = CollisionShape3D.new()
 	var shape := CapsuleShape3D.new()
 	shape.radius = 0.66 * BODY_SCALE
-	shape.height = 1.6 * BODY_SCALE
+	shape.height = 2.7 * BODY_SCALE # Match the imported body/throat length.
 	collider.shape = shape
 	collider.position = Vector3(0, 0.67 * BODY_SCALE, 0)
 	collider.rotation.x = PI / 2

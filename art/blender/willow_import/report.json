@@ -1,0 +1,13 @@
+{
+  "source": "willow scout 3d model.glb",
+  "status": "offline candidate, not the playable traveler",
+  "repair": "Removed damaged head/neck; fitted clean cycle-30 Willow face, eyes, ears, hair and neck",
+  "preserved": "Front figure clothing, equipment and source textures",
+  "remaining": [
+    "Clothing has unpainted atlas patches",
+    "Generated hands and equipment are fused",
+    "Collar opening needs manual reconstruction",
+    "Body needs retopology and skinning before replacing playable Willow"
+  ],
+  "meshes": 83
+}
