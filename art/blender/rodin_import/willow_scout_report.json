@@ -5,7 +5,7 @@
   "source_triangles": 500000,
   "triangles": 90000,
   "vertices": 44960,
-  "bytes": 3889856,
+  "bytes": 3542008,
   "height_m": 2.06,
   "bones": [
     "Body",

@@ -326,13 +326,14 @@ def centre_column(fg, box, v_lo=.45, v_hi=.58):
 		if len(xs): cs.append(x0 + float(np.median(xs)))
 	return float(np.median(cs))
 
+loops = np.empty(len(me.loops), dtype=np.int32); me.loops.foreach_get('vertex_index', loops)
 projected = None; sheet_report = {'sheet': None}
 if SHEET.exists():
 	rgb, fg = load_sheet(SHEET); boxes = figure_boxes(fg)
 	if len(boxes) >= 3:
 		# Seed the spread from interior pixels so anti-aliased outlines do not tint the ring around each figure.
 		rgb_grown, fg_grown = grow(rgb, erode(fg, 2), 26)
-		rgb_grown = box_blur(rgb_grown, 3)
+		rgb_sharp = rgb_grown; rgb_grown = box_blur(rgb_grown, 3)
 		front_box, side_box, back_box = boxes[0], boxes[1], boxes[2]
 		N = np.empty(len(me.vertices) * 3, dtype=np.float32); me.vertex_normals.foreach_get('vector', N); N = N.reshape(-1, 3)
 		def fit_view(box, along, sign):
@@ -385,7 +386,8 @@ if SHEET.exists():
 				bent = np.where(Zc < SASH_Z, fit['base_y'] - Zc * (fit['base_y'] - sash) / SASH_Z, sash - (Zc - SASH_Z) * (sash - crown) / (HEIGHT - SASH_Z))
 				rows = np.where(body_only, bent, rows)
 			py = np.clip(np.rint(rows).astype(int), 0, rgb.shape[0] - 1)
-			return rgb_grown[py, px], fg_grown[py, px].astype(np.float32)
+			# The head samples the unblurred drawing so eyes, brows and mouth stay crisp; the body takes the softened one.
+			return np.where(head_mask[:, None], rgb_sharp[py, px], rgb_grown[py, px]), fg_grown[py, px].astype(np.float32)
 		front_sash = sash_row(front_box, fits['front'])
 		for key in fits:  # the side and back share the drawing's proportions, so the front's sash height carries over by scale
 			fits[key]['sash_row'] = None if front_sash is None else float(fits[key]['base_y'] - (fits['front']['base_y'] - front_sash) * fits[key]['ppm_y'] / fits['front']['ppm_y'])
@@ -407,11 +409,59 @@ if SHEET.exists():
 print('SHEET', json.dumps(sheet_report), flush=True)
 if projected is not None:
 	use = ~np.isnan(projected[:, 0]); colour[use] = projected[use]
+	# Head: the sculpt decides what is hair and what is skin; the drawing supplies the tones. The face itself gets a small
+	# texture (flat front projection of the head) so eyes, brows and mouth stay crisp at any vertex density.
+	hair_geom = head_mask & ((Zc > 1.945) | ((Zc > 1.78) & (Y > head_centre_y + .015)) | ((Zc > 1.83) & (np.abs(X - head_centre_x) > .10)))
+	face_geom = head_mask & ~hair_geom & (Zc > 1.74)
+	lum = colour @ np.array([.2126, .7152, .0722])
+	hair_ref = np.median(colour[hair_geom & (lum < .10)], axis=0) if np.any(hair_geom & (lum < .10)) else np.array(hair)
+	skin_ref = np.median(colour[face_geom & (lum > .10)], axis=0) if np.any(face_geom & (lum > .10)) else np.array(skin)
+	colour[hair_geom & (lum > .10)] = hair_ref
+	colour[face_geom] = skin_ref  # corners of face-material polygons are set to white later; the texture carries the face
+	category[face_geom] = 5
+	front_face = face_geom & (N[:, 1] < -.35); head_info = {'hair_ref': hair_ref.round(3).tolist(), 'skin_ref': skin_ref.round(3).tolist()}
+	# The nose tip is the most forward skin below the eye line and clear of the fringe; it fixes the face midline.
+	midline = front_face & (np.abs(X - head_centre_x) < .05) & (Zc > 1.80) & (Zc < 1.87)
+	tip = int(np.argmin(np.where(midline, Y, np.inf))) if midline.any() else None
+	mid_x, nose_z = (float(X[tip]), float(Zc[tip])) if tip is not None else (head_centre_x, 1.84)
+	head_info['head_centre_x'] = round(float(head_centre_x), 3)
+	E = np.empty(len(me.edges) * 2, dtype=np.int32); me.edges.foreach_get('vertices', E); E = E.reshape(-1, 2)
+	bend = 1 - np.einsum('ij,ij->i', N[E[:, 0]], N[E[:, 1]]); rough = np.zeros(len(P)); cnt = np.zeros(len(P))
+	np.add.at(rough, E[:, 0], bend); np.add.at(rough, E[:, 1], bend); np.add.at(cnt, E[:, 0], 1); np.add.at(cnt, E[:, 1], 1); rough /= np.maximum(cnt, 1)
+	eyes = {}
+	for side, sx in (('left', -1), ('right', 1)):
+		guess = (mid_x + sx * .031, nose_z + .045); centre = guess
+		zone = front_face & (Zc > nose_z + .015) & (Zc < nose_z + .075) & (sx * (X - mid_x) > .012) & (sx * (X - mid_x) < .06)
+		if zone.sum() >= 10:
+			crease = zone & (rough > np.quantile(rough[zone], .7))
+			found = (float(np.average(X[crease], weights=rough[crease])), float(np.average(Zc[crease], weights=rough[crease])))
+			if abs(found[0] - guess[0]) < .015 and abs(found[1] - guess[1]) < .015: centre = found
+		eyes[side] = centre
+	head_info.update({'nose_tip': [round(mid_x, 3), round(nose_z, 3)], 'eyes': {k: [round(v[0], 3), round(v[1], 3)] for k, v in eyes.items()}})
+	x0, x1, z0, z1 = head_centre_x - .17, head_centre_x + .17, 1.70, 2.10
+	TEX = 2048; tex = np.ones((TEX, TEX, 3)); span = int(TEX * .9)
+	gx = x0 + (np.arange(span) + .5) / span * (x1 - x0); gz = z0 + (np.arange(span) + .5) / span * (z1 - z0)
+	XX, ZZ = np.meshgrid(gx, gz); face_px = np.empty((span, span, 3)); face_px[:] = skin_ref
+	def to_srgb(c):
+		c = np.clip(np.asarray(c, dtype=float), 0, 1); return np.where(c > .0031308, 1.055 * c ** (1 / 2.4) - .055, 12.92 * c)
+	iris_col = to_linear(np.array([.30, .17, .09])); lip_col = skin_ref * np.array([.80, .50, .45])
+	for ex, ez in eyes.values():
+		d = np.sqrt((XX - ex) ** 2 + ((ZZ - ez) * 1.7) ** 2)
+		face_px[d < .019] = to_linear(np.array([.94, .91, .87])); face_px[d < .0095] = iris_col; face_px[d < .0042] = (.004, .003, .003)
+		face_px[np.sqrt((XX - ex + .0035) ** 2 + (ZZ - ez - .003) ** 2) < .0018] = (.9, .9, .9)
+		face_px[(np.abs(ZZ - (ez + .030)) < .0032 + .002 * (1 - np.abs(XX - ex) / .026)) & (np.abs(XX - ex) < .026)] = hair_ref
+	face_px[(np.abs(ZZ - (nose_z - .042) - .004 * (1 - (np.abs(XX - mid_x) / .021) ** 2)) < .0022) & (np.abs(XX - mid_x) < .021)] = lip_col
+	tex[:span, :span] = face_px  # rows from the bottom (v = 0) upward
+	import zlib, struct as _st
+	png_rows = (to_srgb(tex[::-1]) * 255 + .5).astype(np.uint8)  # PNG stores the top row first
+	raw = b''.join(b'\x00' + png_rows[r].tobytes() for r in range(TEX))
+	def chunk(tag, data): return _st.pack('>I', len(data)) + tag + data + _st.pack('>I', zlib.crc32(tag + data) & 0xffffffff)
+	face_path = OUT / (SLUG + '_face.png')
+	face_path.write_bytes(b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', _st.pack('>IIBBBBB', TEX, TEX, 8, 2, 0, 0, 0)) + chunk(b'IDAT', zlib.compress(raw, 6)) + chunk(b'IEND', b''))
+	head_info['face_texture'] = str(face_path.relative_to(R))
+	print('HEAD', json.dumps(head_info), flush=True)
 
-loops = np.empty(len(me.loops), dtype=np.int32); me.loops.foreach_get('vertex_index', loops)
-attr = me.color_attributes.new(name='GameColor', type='FLOAT_COLOR', domain='CORNER')
-rgba = np.concatenate([colour[loops], np.ones((len(loops), 1))], axis=1).astype(np.float32)
-attr.data.foreach_set('color', rgba.ravel()); me.color_attributes.active_color = attr
+on_face = np.zeros(len(loops), dtype=bool)
 
 def runtime_material(name, rough, metal=0):
 	m = bpy.data.materials.new('Game ' + name); m.use_nodes = True
@@ -421,11 +471,35 @@ def runtime_material(name, rough, metal=0):
 	m.node_tree.links.new(a.outputs['Color'], p.inputs['Base Color']); m.use_backface_culling = False
 	return m
 
+def face_material():
+	m = bpy.data.materials.new('Game Face'); m.use_nodes = True
+	p = m.node_tree.nodes.get('Principled BSDF'); p.inputs['Roughness'].default_value = .57
+	face_file = OUT / (SLUG + '_face.png')
+	if face_file.exists():
+		t = m.node_tree.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(str(face_file)); t.image.colorspace_settings.name = 'sRGB'
+		m.node_tree.links.new(t.outputs['Color'], p.inputs['Base Color'])
+	m.use_backface_culling = False
+	return m
+
 me.materials.clear()
-for m in (runtime_material('Fabric', .90), runtime_material('Skin', .57), runtime_material('Hair', .66), runtime_material('Brass', .4, .55), runtime_material('Eyes', .19)):
+for m in (runtime_material('Fabric', .90), runtime_material('Skin', .57), runtime_material('Hair', .66), runtime_material('Brass', .4, .55), runtime_material('Eyes', .19), face_material()):
 	me.materials.append(m)
 poly_verts = [list(p.vertices) for p in me.polygons]
-me.polygons.foreach_set('material_index', [int(np.bincount(category[v], minlength=3).argmax()) for v in poly_verts])
+material_index = [int(np.bincount(category[v], minlength=6).argmax()) for v in poly_verts]
+me.polygons.foreach_set('material_index', material_index)
+if projected is not None:
+	# Flat UV map of the head for every loop of a face-material polygon; all other loops point at a white texel.
+	x0, x1, z0, z1 = head_centre_x - .17, head_centre_x + .17, 1.70, 2.10
+	loop_total = np.empty(len(me.polygons), dtype=np.int32); me.polygons.foreach_get('loop_total', loop_total)
+	loop_material = np.repeat(np.array(material_index), loop_total)
+	for old_uv in list(me.uv_layers): me.uv_layers.remove(old_uv)
+	uv_layer = me.uv_layers.new(name='FaceUV'); on_face = loop_material == 5
+	uu = np.where(on_face, (X[loops] - x0) / (x1 - x0) * .9, .97); vv = np.where(on_face, (Zc[loops] - z0) / (z1 - z0) * .9, .97)
+	uv_layer.data.foreach_set('uv', np.stack([np.clip(uu, 0, .899), np.clip(vv, 0, .899)], axis=1).astype(np.float32).ravel())
+loop_rgb = colour[loops].copy(); loop_rgb[on_face] = 1.0  # Godot multiplies the face texture by the corner colour
+attr = me.color_attributes.new(name='GameColor', type='FLOAT_COLOR', domain='CORNER')
+rgba = np.concatenate([loop_rgb, np.ones((len(loops), 1))], axis=1).astype(np.float32)
+attr.data.foreach_set('color', rgba.ravel()); me.color_attributes.active_color = attr
 me.update()
 
 # ---------------------------------------------------------------- rig and export
@@ -471,4 +545,9 @@ render('front', (0, -4, .2), 2.3)
 render('back', (0, 4, .2), 2.3)
 render('three-quarter', (2.8, -2.8, .3), 2.3)
 render('face', (0, -2, .02), .6, (0, 0, 1.86))
+clay = bpy.data.materials.new('Review clay'); clay.use_nodes = True; clay.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value = (.7, .68, .64, 1); clay.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value = .6
+kept = [m for m in me.materials]; me.materials.clear(); me.materials.append(clay)
+render('face-clay', (0, -2, .02), .6, (0, 0, 1.86))
+me.materials.clear()
+for m in kept: me.materials.append(m)
 print('RODIN_TRAVELER_COMPLETE', flush=True)

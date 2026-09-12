@@ -10,14 +10,14 @@ Dallon generated the Willow Scout with Rodin (Hyper3D) from her turnaround sheet
 2. Reduces 171,626 triangles to 90,000 with a collapse decimate and shades smooth.
 3. Measures the figure's own joints from horizontal slices: hips and knees from the two largest leg blobs, hands and elbows from the outermost band of each side, the shoulder pivot 9 cm inside the shoulder silhouette. Joint heights stay on the reference points shared with the other travelers.
 4. Builds the 14-bone `TravelerRig` at those points and assigns positional weights (four influences, normalised) with smooth blends at the hips, knees, shoulders, elbows and wrists. Bow, quiver and arrows follow the torso.
-5. Colours the figure from the turnaround sheet it was generated from (`--sheet`, default `Willow Scout.png`): each of the three drawings is fitted to the mesh's silhouette by maximising overlap, every vertex samples the drawing it faces (front, side or back) through a small blur, and a torso-only correction bends the height map through the drawn sash, which Rodin placed about 10 cm lower on the body. Colours are stored as linear vertex colours; where no drawing covers a vertex, the Willow palette by region fills in. Materials are the shared `Game Fabric`, `Game Skin` and `Game Hair` set, so the runtime grain and lighting treatments apply.
+5. Colours the figure from the turnaround sheet it was generated from (`--sheet`, default `Willow Scout.png`): each of the three drawings is fitted to the mesh's silhouette by maximising overlap, every vertex samples the drawing it faces (front, side or back) through a small blur, and a torso-only correction bends the height map through the drawn sash, which Rodin placed about 10 cm lower on the body. Colours are stored as linear vertex colours; where no drawing covers a vertex, the Willow palette by region fills in. The face is the exception: at this vertex density an eye spans a dozen vertices, so the head gets a flat front-projected UV map and a small texture (`art/blender/rodin_import/willow_scout_face.png`) with clean skin from the sheet's tone plus eyes, brows and mouth painted at the sculpt's own nose and eyelid landmarks. Hair tufts hanging in front of the forehead are classed as hair by geometry. Materials are the shared `Game Fabric`, `Game Skin` and `Game Hair` set, so the runtime grain and lighting treatments apply.
 6. Exports `assets/characters/willow_scout.glb` (about 3.9 MB), saves `art/blender/rodin_import/willow_scout.blend`, writes `willow_scout_report.json` beside it and renders the images below.
 
 `scripts/authored_traveler.gd` now reads each export's bone rest positions for the joint pivots, so this figure keeps its own proportions. The three Blender travelers' bones sit exactly on the reference points (checked to 1e-7 m), so they animate as before.
 
 ## Actual renders
 
-Cycles renders of the exported geometry with the matching review studio: [front](rodin-traveler/front.png), [back](rodin-traveler/back.png), [three-quarter](rodin-traveler/three-quarter.png), [face](rodin-traveler/face.png).
+Cycles renders of the exported geometry with the matching review studio: [front](rodin-traveler/front.png), [back](rodin-traveler/back.png), [three-quarter](rodin-traveler/three-quarter.png), [face](rodin-traveler/face.png), and the same head as untextured [clay](rodin-traveler/face-clay.png) to show the sculpt itself.
 
 In-game captures from `tests/traveler_selection_test.gd -- --screenshots=...`: [character creator](rodin-traveler/game-creator.png), [axe grip in the clearing](rodin-traveler/game-axe.png), [bow held](rodin-traveler/game-bow.png).
 
@@ -33,7 +33,7 @@ In-game captures from `tests/traveler_selection_test.gd -- --screenshots=...`: [
 
 ## Limitations
 
-- Colours are a projection of a 2D illustration: its shading is baked in, thin features such as the chest strap and sash tails smear where the sculpt and the drawing differ by a centimetre or two, and the hair tint reaches onto the forehead. Rodin's own textured export of this generation would replace this with true textures; the `base_basic_pbr.glb` zip in Downloads belongs to the tree generation, not this one.
+- Body colours are a projection of a 2D illustration: its shading is baked in and thin features such as the chest strap and sash tails smear where the sculpt and the drawing differ by a centimetre or two. The painted eyes are stylised discs placed by landmark, not the illustration's eyes. Rodin's own textured export of this generation would replace this with true textures; the `base_basic_pbr.glb` zip in Downloads belongs to the tree generation, not this one.
 - Generated topology with no retopology; the decimate keeps the silhouette but not clean loops.
 - One mesh: when a tool is gripped, the game's procedural closed fingers draw over the open sculpted hand. Splitting the fingers into their own mesh named with "Fingers" would let the existing hide/show logic work.
 - The Cape bone carries no vertices, so the cape does not swing separately.
