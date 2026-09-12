@@ -24,6 +24,13 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Saves: format 11 adds permanent crafting milestones and furnace metal selection; versions 1–10 keep previous recipe access and old furnaces retain Iron/contents/progress. Copper outcrop depletion saves through the existing vein data. Format 10 adds saved stamina/recovery/exhaustion; format 9 includes enemy respawn timers and furnace auto-feed. Formats 1–9 migrate without clearing progress; old Bellmaw health scales from 80 to 160 at the same percentage, old defeated enemies get a fresh respawn delay. No real player save/profile was read or edited during tests.
 - Later: iron equipment, armor with optional ore/metal/mineral decorative trim and inlays (see `docs/CRAFTSMAN_PROGRESSION.md`), combat/jump stamina costs, resource regrowth, day/night pressure and the Wayfarer's Lantern; preserve discovery/villager direction and Threadwing concept in `docs/CREATURE_DIRECTION.md`. Furniture placement ghost/manual rotation, foot IK, cloth simulation and further deformation polish remain gaps.
 
+## 2026-09-11 — Claude: Rodin (Hyper3D) bridge addon installed
+
+- Added `addons/RodinBridge/` (DeemosTech Godot-Rodin-Plugin 0.1.0, Apache-2.0, LICENSE included) and enabled it in `project.godot` so Dallon can generate models on hyper3d.ai and have them land in the open scene. Not committed: Dallon decides whether the addon lives in the repository.
+- The stock addon fails on Godot 4.7.2 (`class_name` inside the scripts embedded in `rodin_bottom_panel.tscn`); patched locally, plus a dock-removal fix in `rodin_bridge.gd`. Details in `addons/RodinBridge/LOCAL_PATCHES.md`. Verified with a headless editor run of the patched addon: no script errors, local WebSocket server on 127.0.0.1:61883.
+- Usage: Rodin dock (right dock area), Replace Image, ControlNet None + One Click, Submit opens Google Chrome on hyper3d.ai; the generated GLB is added to the current scene as a MeshInstance3D at the origin and copied to the macOS temp folder. Keeper GLBs should be downloaded from hyper3d.ai into `assets/` rather than saved inside a scene.
+- Gameplay and saves untouched. All 24 headless suites pass after the change.
+
 ## 2026-09-11 — Codex: prepare supplied leather backpack
 
 - Inspected Dallon’s free backpack upload: one unrigged mesh, 3,134,796 triangles, 160 MiB, with an 8K color map and 4K material/normal maps. Created a separate optimized GLB at 0.6 m height with approximately 20k triangles and embedded 2K textures. Original download unchanged. Rebuild script and source/optimized front/back comparisons preserved.
