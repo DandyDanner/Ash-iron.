@@ -17,7 +17,9 @@ func run() -> void:
 	check(meshes.size() == 1, "Extra concept-sheet figures leaked into Bellmaw")
 	var mesh: MeshInstance3D = meshes[0]
 	check(mesh.skin != null, "Bellmaw mesh has no skin")
+	check(mesh.get_active_material(0).vertex_color_use_as_albedo, "Sculpt lost its vertex-color material in Godot")
 	var a := mesh.mesh.surface_get_arrays(0)
+	check(a[Mesh.ARRAY_COLOR].size() == a[Mesh.ARRAY_VERTEX].size(), "Sculpt is missing portable hide colors")
 	var weights: PackedFloat32Array = a[Mesh.ARRAY_WEIGHTS]
 	var bones: PackedInt32Array = a[Mesh.ARRAY_BONES]
 	var vertices: PackedVector3Array = a[Mesh.ARRAY_VERTEX]

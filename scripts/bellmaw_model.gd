@@ -1,5 +1,5 @@
 extends Node3D
-## Uploaded largest creature, weighted in Blender. Gameplay owns timing and collision.
+## Largest creature from the new Bellmaw sculpt, colored and weighted in Blender. Gameplay owns timing and collision.
 const Attacks = preload("res://scripts/bellmaw_attacks.gd")
 const M = preload("res://scripts/traveler_model.gd")
 const SCENE = preload("res://assets/creatures/bellmaw.glb")
@@ -48,6 +48,15 @@ func _ready() -> void:
 			named[key + "Foot"] = foot
 	var imported: Node3D = SCENE.instantiate()
 	body.add_child(imported)
+	# The sculpt uses portable vertex colors; Godot's glTF import leaves this flag off.
+	for mesh in imported.find_children("*", "MeshInstance3D", true, false):
+		for surface in range(mesh.mesh.get_surface_count()):
+			var source = mesh.get_active_material(surface)
+			if source is StandardMaterial3D:
+				var material: StandardMaterial3D = source.duplicate()
+				material.vertex_color_use_as_albedo = true
+				material.vertex_color_is_srgb = false
+				mesh.set_surface_override_material(surface, material)
 	# The source contains editable clips; runtime drives the same rig from combat state.
 	for animation in imported.find_children("*", "AnimationPlayer", true, false):
 		animation.stop()

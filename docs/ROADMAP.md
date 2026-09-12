@@ -103,7 +103,8 @@ Current order: spear and Bristleback Boar → ore/furnace → one strange creatu
 - [x] Bellmaw: warned radial boom, distance/cover counterplay, recovery, one saved hide reward per defeat
 - [x] Double Bellmaw body dimensions, matching collision/obstacle clearance and raised cues; warning ring now expanded to the actual 6 m blast radius
 - [x] Expand Bellmaw boom from 4.5 to 6 m, with matched warning ring and approach trigger
-- [x] More dangerous Bellmaw: 160 health, guarded hide, 34-damage boom, faster pursuit and shorter recovery
+- [x] More dangerous Bellmaw: 300 health, guarded hide, 34-damage boom, faster pursuit and shorter recovery
+- [x] New supplied Bellmaw sculpt: isolated largest creature, optimized/colorized/rigged, twice the previous runtime size with matching collision and paw reach; old save health percentages preserved
 - [x] Both enemies respawn after 120 active seconds, away from the player and only into clear space; timer persists
 - [x] Echo Hollow trail, marked warning, cover rocks, harvestable pines and Old Lookout iron vein
 - [x] Health/stamina HUD in both camera views, low-health/exhaustion cues, sprint drain/recovery and saved reserve

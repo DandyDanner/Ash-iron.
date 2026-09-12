@@ -6,7 +6,7 @@ const SWIPE_CONTACT := .12
 const SWIPE_RECOVERY := 1.05
 const SWIPE_COOLDOWN := 5.0
 const SWIPE_DAMAGE := 18
-const SWIPE_RADIUS := 3.8
+const SWIPE_RADIUS := 7.6 # Doubled reach follows the doubled paws; telegraph uses this too.
 const SWIPE_MIN_ANGLE := -10.0 * PI / 180.0
 const SWIPE_MAX_ANGLE := 100.0 * PI / 180.0
 

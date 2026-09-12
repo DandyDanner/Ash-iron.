@@ -31,7 +31,7 @@ func enter() -> Node3D:
 
 func reset(player: Node3D, bell: Node3D) -> void:
 	bell.restore({})
-	player.global_position = Bell.HOME + Vector3(0, 0.9, 3.7)
+	player.global_position = Bell.HOME + Vector3(0, 0.9, 5.5)
 	player.velocity = Vector3.ZERO
 	player.health = 100
 	player.damage_grace = 0
@@ -94,7 +94,7 @@ func run() -> void:
 	collider.shape = shape
 	wall.add_child(collider)
 	current_scene.add_child(wall)
-	wall.global_position = Bell.HOME + Vector3(0, 1.0, 3.1)
+	wall.global_position = Bell.HOME + Vector3(0, 1.0, 5.0)
 	await ticks(75)
 	check(player.health == 100, "Boom passed through solid cover")
 	wall.queue_free()
@@ -105,10 +105,10 @@ func run() -> void:
 	bell.set_physics_process(false)
 	bell.state = "recover"
 	bell.global_position = Vector3(12, 0.2, 12)
-	player.global_position = Vector3(12, 1.1, 15.4)
+	player.global_position = Vector3(12, 1.1, 18.0)
 	player.rotation = Vector3.ZERO
 	player.set_third_person(false)
-	player.camera.look_at(bell.global_position + Vector3.UP * 0.9)
+	player.camera.look_at(bell.global_position + Vector3(0, 2.4, 3.2))
 	player.inventory.add("stone_spear", 1)
 	player.equip_item("stone_spear")
 	await ticks()

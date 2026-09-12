@@ -30,7 +30,10 @@ func run() -> void:
 	player.set_physics_process(false)
 	bell.set_physics_process(false)
 	bell.rotation.y = 0
-	player.global_position = aim_point(bell, PI / 4, 3.2)
+	# Isolate the attack sector from scenic rocks; the explicit wall below tests cover.
+	for obstacle in current_scene.find_children("*", "StaticBody3D", true, false):
+		obstacle.collision_layer = 0
+	player.global_position = aim_point(bell, PI / 4, 6.4)
 	await ticks()
 	check(not bell._can_swipe(), "Fresh encounter must teach the slam before allowing a swipe")
 	bell.art.pose(0, 0, "warn", 0, 0)
@@ -87,7 +90,7 @@ func run() -> void:
 	player.health = 100
 	player.damage_grace = 0
 	bell._physics_process(.60)
-	player.global_position = bell.to_global(Vector3(0, .9, -3.4))
+	player.global_position = bell.to_global(Vector3(0, .9, -6.8))
 	await ticks()
 	bell._physics_process(.25)
 	bell._physics_process(.13)
@@ -96,7 +99,7 @@ func run() -> void:
 	bell._set_state("return")
 	check(not bell.swipe_ready, "Leaving the encounter did not reset its slam-first opening")
 	# Dodges: outside radius, behind, and on the opposite flank all avoid contact.
-	for point in [Vector3(0, .9, 4.2), Vector3(0, .9, -3.4), Vector3(-3.2, .9, 0)]:
+	for point in [Vector3(0, .9, 8.0), Vector3(0, .9, -6.8), Vector3(-6.4, .9, 0)]:
 		player.global_position = bell.to_global(point)
 		player.health = 100
 		player.damage_grace = 0
@@ -108,7 +111,7 @@ func run() -> void:
 	for side in [-1.0, 1.0]:
 		bell.swipe_side = side
 		bell.art.swipe_side = side
-		player.global_position = aim_point(bell, side * PI / 4, 3.2)
+		player.global_position = aim_point(bell, side * PI / 4, 6.4)
 		player.health = 100
 		player.damage_grace = 0
 		await ticks()
@@ -124,7 +127,7 @@ func run() -> void:
 	collider.shape = shape
 	wall.add_child(collider)
 	current_scene.add_child(wall)
-	wall.global_position = bell.to_global(Vector3(1.7, 1, 1.7))
+	wall.global_position = bell.to_global(Vector3(3.4, 1, 3.4))
 	wall.rotation.y = bell.rotation.y - PI / 4
 	await ticks()
 	player.health = 100

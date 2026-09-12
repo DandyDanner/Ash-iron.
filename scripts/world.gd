@@ -210,8 +210,11 @@ func _apply(data: Dictionary) -> void:
 	var saved := _dict(data.get("player"))
 	boar.restore(_dict(data.get("boar")))
 	var bell_data := _dict(data.get("bellmaw")).duplicate()
-	if int(_num(data.get("version"), GameSave.VERSION)) <= 8 and bell_data.has("health"):
-		bell_data.health = clampf(_num(bell_data.health, 80), 0, 80) * 2
+	var saved_version := int(_num(data.get("version"), GameSave.VERSION))
+	if saved_version < 12 and bell_data.has("health"):
+		# Preserve the fraction remaining, including death, across both old health caps.
+		var old_max := 80.0 if saved_version <= 8 else 160.0
+		bell_data.health = roundi(clampf(_num(bell_data.health, old_max), 0, old_max) / old_max * Bellmaw.MAX_HEALTH)
 	bellmaw.restore(bell_data)
 	if player:
 		player.health = clampi(int(_num(saved.get("health"), 100)), 1, 100)

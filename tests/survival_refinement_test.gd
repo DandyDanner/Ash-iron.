@@ -47,10 +47,10 @@ func run() -> void:
 	bell.set_physics_process(false)
 	bell.state = "approach"
 	for i in range(4): bell.receive_melee_hit(20, bell.position)
-	check(bell.health == 120, "Four guarded spear hits should not defeat the tougher Bellmaw")
+	check(bell.health == 260, "Four guarded spear hits should not defeat the tougher Bellmaw")
 	bell.state = "recover"
 	bell.receive_melee_hit(20, bell.position)
-	check(bell.health == 100, "Recovery did not expose Bellmaw to full spear damage")
+	check(bell.health == 240, "Recovery did not expose Bellmaw to full spear damage")
 	check(bell.BOOM_DAMAGE == 34 and bell.RECOVERY_TIME < 1.5 and bell.WARNING_TIME >= 1, "Threat tuning lost its readable warning or short opening")
 	for enemy in [current_scene.boar, bell]:
 		enemy.set_physics_process(false)
@@ -155,7 +155,7 @@ func run() -> void:
 	file.store_string(JSON.stringify(old))
 	file.close()
 	player = await enter()
-	check(current_scene.bellmaw.health == 80 and current_scene.boar.respawn.remaining > 119, "Version 8 migration lost health percentage or stranded a dead enemy")
+	check(current_scene.bellmaw.health == 150 and current_scene.boar.respawn.remaining > 119, "Version 8 migration lost health percentage or stranded a dead enemy")
 	Save.clear()
 	print("SURVIVAL REFINEMENTS: %s" % ("PASS — tougher hide, respawn/pause/clearance/save, falling drops, chest feed/range/atomicity/12s timing, hands and migration" if failures == 0 else "FAIL"))
 	quit(1 if failures else 0)
