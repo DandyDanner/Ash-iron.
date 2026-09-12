@@ -2,7 +2,7 @@
 
 Open `cycles/cycle_30/characters.blend` for the latest eight-model studies in Blender 5.2.1 LTS. See [the cycle review](cycles/REVIEW.md) for the actual renders, improvements, and remaining limitations. The native source studies remain unrigged. Separate skinned exports of all four travelers are playable; Willow uses cycle 30 and the other travelers retain cycle 26. Wildlife studies remain offline.
 
-`ash_iron_character_studio.blend` remains the original baseline.
+`ash_iron_character_studio.blend` remains the original baseline. Willow Scout's playable GLB now comes from a Rodin (Hyper3D) generation instead: `tools/blender/prepare_rodin_traveler.py` with source and report under `rodin_import/`, reviewed in `docs/art/RODIN_TRAVELER_REVIEW.md`.
 
 The original studio contains the **existing prototypes as a scale/rig baseline**, not newly sculpted or finished replacement characters. The approved Willow Scout turnaround and wildlife concept sheet are packed into the file. The wildlife target is panel #1, Bristleback.
 

@@ -1,0 +1,188 @@
+{
+  "source": "base.glb",
+  "figure": 0,
+  "figures_in_source": 3,
+  "source_triangles": 500000,
+  "triangles": 90000,
+  "vertices": 44960,
+  "bytes": 3889856,
+  "height_m": 2.06,
+  "bones": [
+    "Body",
+    "Torso",
+    "Head",
+    "Cape",
+    "LeftLeg",
+    "LeftKnee",
+    "LeftArm",
+    "LeftElbow",
+    "LeftHand",
+    "RightLeg",
+    "RightKnee",
+    "RightArm",
+    "RightElbow",
+    "RightHand"
+  ],
+  "joints_blender_zup": {
+    "Body": [
+      0,
+      0,
+      1.1058
+    ],
+    "Torso": [
+      0,
+      0,
+      1.14
+    ],
+    "Head": [
+      0,
+      0.0439,
+      1.7442
+    ],
+    "Cape": [
+      0,
+      0.0439,
+      1.71
+    ],
+    "LeftLeg": [
+      -0.1298,
+      -0.0356,
+      1.0944
+    ],
+    "LeftKnee": [
+      -0.1552,
+      -0.0154,
+      0.6156
+    ],
+    "LeftArm": [
+      -0.1872,
+      0.0342,
+      1.6439
+    ],
+    "LeftElbow": [
+      -0.2838,
+      -0.0223,
+      1.3543
+    ],
+    "LeftHand": [
+      -0.3517,
+      -0.0998,
+      1.0613
+    ],
+    "RightLeg": [
+      0.1298,
+      -0.0356,
+      1.0944
+    ],
+    "RightKnee": [
+      0.1552,
+      -0.0154,
+      0.6156
+    ],
+    "RightArm": [
+      0.1872,
+      0.0342,
+      1.6439
+    ],
+    "RightElbow": [
+      0.2838,
+      -0.0223,
+      1.3543
+    ],
+    "RightHand": [
+      0.3517,
+      -0.0998,
+      1.0613
+    ]
+  },
+  "joints_godot_yup": {
+    "Body": [
+      0,
+      1.1058,
+      0
+    ],
+    "Torso": [
+      0,
+      1.14,
+      0
+    ],
+    "Head": [
+      0,
+      1.7442,
+      -0.0439
+    ],
+    "Cape": [
+      0,
+      1.71,
+      -0.0439
+    ],
+    "LeftLeg": [
+      -0.1298,
+      1.0944,
+      0.0356
+    ],
+    "LeftKnee": [
+      -0.1552,
+      0.6156,
+      0.0154
+    ],
+    "LeftArm": [
+      -0.1872,
+      1.6439,
+      -0.0342
+    ],
+    "LeftElbow": [
+      -0.2838,
+      1.3543,
+      0.0223
+    ],
+    "LeftHand": [
+      -0.3517,
+      1.0613,
+      0.0998
+    ],
+    "RightLeg": [
+      0.1298,
+      1.0944,
+      0.0356
+    ],
+    "RightKnee": [
+      0.1552,
+      0.6156,
+      0.0154
+    ],
+    "RightArm": [
+      0.1872,
+      1.6439,
+      -0.0342
+    ],
+    "RightElbow": [
+      0.2838,
+      1.3543,
+      0.0223
+    ],
+    "RightHand": [
+      0.3517,
+      1.0613,
+      0.0998
+    ]
+  },
+  "landmark_samples": {
+    "hands": 396,
+    "forearm": 244,
+    "knees": 9,
+    "thighs": 7
+  },
+  "max_influences": 2,
+  "regions": {
+    "arm": 5222,
+    "head": 7937,
+    "gear": 2215
+  },
+  "limitations": [
+    "Generated topology, no manual retopology",
+    "Flat Willow palette by region; Rodin texture export not yet applied",
+    "Single mesh: gripped-tool poses show the game's procedural closed fingers over the open hand",
+    "Cape bone carries no vertices"
+  ]
+}

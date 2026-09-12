@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csn7v0q37dt41"
-path="res://.godot/imported/default.jpeg-ea2ed6778a7cd3643db5677703f56bbb.ctex"
+uid="uid://cpjix55kebj3a"
+path="res://.godot/imported/three-quarter.png-7e8f83629f8ab333eb2d3b5e08bd85d7.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/RodinBridge/asset/default.jpeg"
-dest_files=["res://.godot/imported/default.jpeg-ea2ed6778a7cd3643db5677703f56bbb.ctex"]
+source_file="res://docs/art/rodin-traveler/three-quarter.png"
+dest_files=["res://.godot/imported/three-quarter.png-7e8f83629f8ab333eb2d3b5e08bd85d7.ctex"]
 
 [params]
 

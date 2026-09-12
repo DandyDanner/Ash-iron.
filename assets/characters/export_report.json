@@ -1,16 +1,12 @@
 {
   "models": [
     {
-      "source": "art/blender/cycles/cycle_30/characters.blend",
+      "source": "art/blender/rodin_import/willow_scout.blend (Rodin base.glb, figure 0, via tools/blender/prepare_rodin_traveler.py)",
       "design": "willow_scout",
-      "triangles": 250359,
-      "bytes": 10208588,
+      "triangles": 90000,
+      "bytes": 3889856,
       "bones": 14,
-      "scale": [
-        1.1399999856948853,
-        1.1399999856948853,
-        1.1399999856948853
-      ]
+      "height_m": 2.06
     },
     {
       "design": "hearthland_ranger",

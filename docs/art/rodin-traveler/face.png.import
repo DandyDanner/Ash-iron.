@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csn7v0q37dt41"
-path="res://.godot/imported/default.jpeg-ea2ed6778a7cd3643db5677703f56bbb.ctex"
+uid="uid://du58si28hp3w3"
+path="res://.godot/imported/face.png-09f951dddeac754ab167800d8684f847.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/RodinBridge/asset/default.jpeg"
-dest_files=["res://.godot/imported/default.jpeg-ea2ed6778a7cd3643db5677703f56bbb.ctex"]
+source_file="res://docs/art/rodin-traveler/face.png"
+dest_files=["res://.godot/imported/face.png-09f951dddeac754ab167800d8684f847.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csn7v0q37dt41"
-path="res://.godot/imported/default.jpeg-ea2ed6778a7cd3643db5677703f56bbb.ctex"
+uid="uid://cwh1po786vymt"
+path="res://.godot/imported/game-bow.png-32e1713c9912e37c5c76d90b5e140a9c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/RodinBridge/asset/default.jpeg"
-dest_files=["res://.godot/imported/default.jpeg-ea2ed6778a7cd3643db5677703f56bbb.ctex"]
+source_file="res://docs/art/rodin-traveler/game-bow.png"
+dest_files=["res://.godot/imported/game-bow.png-32e1713c9912e37c5c76d90b5e140a9c.ctex"]
 
 [params]
 
