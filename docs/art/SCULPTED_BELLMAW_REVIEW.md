@@ -31,4 +31,4 @@ All 26 headless suites pass. Tests exercise skin weights/colors, actual weapon c
 
 The generated surface is smoother and more coherent than the previous mesh, but the color pass is basic. Eyes, claws and skin still need deliberate texture/detail work. Skin weights are an initial spatial blend rather than manual retopology/weight painting; shoulder deformation can stretch. Supporting feet are anchored relative to the body, not terrain-aware IK, and paws can intersect nearby props. The body capsule is approximate; the swipe uses the visible sector and cover query, not individual claw colliders. These are remaining polish limits, not finished cinematic animation.
 
-The work is committed separately from the shared playable checkout until its RodinBridge installation handoff is confirmed. Traveler/boar/world art and the original downloads remain untouched.
+The work was developed in a separate checkout and integrated with the committed RodinBridge handoff, preserving its addon/project configuration. Traveler/boar/world art and the original downloads remain untouched.

@@ -31,7 +31,7 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Inspected the new `Downloads/Bellmaw.glb`: 500k triangles, three creatures plus a pack, no textures/skin/animations. Isolated the largest connected creature, reduced to 54k triangles, added olive/amber vertex colors and a compatible 16-bone weighted rig with editable Blender baseline clips. Existing runtime slam/swipe/recovery drive the new skin. Original download remains unchanged; source hash and rebuild script saved.
 - Format 12 preserves old health percentages (including death) and respawn countdowns; new saves do not rescale on reload. Adjusted real weapon test positions to stay outside the larger capsule, and isolated swipe-sector tests from scenic rocks while retaining their explicit cover-wall check.
 - Validation: 26 headless suites, new 15/30-hit and version 8–12 migration/reload checks, native Godot scale comparison and 102-frame attack recording. Visual review caught missing vertex-color activation in Godot; corrected and covered by the skin test. Known macOS headless certificate warning remains. No real saves used.
-- Still on the isolated `codex/bellmaw-attacks` branch pending shared-checkout handoff: main has Claude's uncommitted RodinBridge project/addon/status changes. Do not overwrite or commit those implicitly. Current captures and limits: `docs/art/SCULPTED_BELLMAW_REVIEW.md`. Eye/skin paint, foot IK and shoulder deformation need further polish; color is an initial pass, not a painted texture atlas.
+- Prepared in the isolated `codex/bellmaw-attacks` checkout, then integrated with Claude’s committed RodinBridge handoff, preserving the addon/project changes and both status entries. Current captures and limits: `docs/art/SCULPTED_BELLMAW_REVIEW.md`. Eye/skin paint, foot IK and shoulder deformation need further polish; color is an initial pass, not a painted texture atlas.
 
 ## 2026-09-11 — Codex: Bellmaw ground slam and paw swipe
 
@@ -40,6 +40,13 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Godot code drives the existing weighted skeleton; Blender baseline clips are unchanged. No terrain IK or individual claw colliders. Shoulder deformation and rough-ground foot contact remain polish areas. Developed in an isolated Bellmaw checkout; no traveler, boar, crafting, world or save-format edits.
 - Verification: all 25 headless suites pass; new attack suite verifies real paw poses, contact/effect timing, selected/mirrored/rotated sectors, active dodge, cover, cooldown, pause and reset. Existing combat/saves/progression stay green. Native poses and 102-frame recording reviewed; camera moved clear of foliage and paw windup made clearer. Known headless certificate warning persists. Some attack-test shutdowns also reported two ObjectDB instances; explicit scene/audio cleanup and final ordinary/verbose reruns completed without that warning. Native preview was clean. No real saves used. See `docs/art/BELLMAW_ATTACKS_REVIEW.md`.
 - Next: Dallon playtests swipe fairness and how clearly slam/weakness read; inspect Claude’s traveler model when supplied without overwriting its ongoing work.
+
+## 2026-09-11 — Claude: Rodin (Hyper3D) bridge addon installed
+
+- Added `addons/RodinBridge/` (DeemosTech Godot-Rodin-Plugin 0.1.0, Apache-2.0, LICENSE included) and enabled it in `project.godot` so Dallon can generate models on hyper3d.ai and have them land in the open scene. Not committed: Dallon decides whether the addon lives in the repository.
+- The stock addon fails on Godot 4.7.2 (`class_name` inside the scripts embedded in `rodin_bottom_panel.tscn`); patched locally, plus a dock-removal fix in `rodin_bridge.gd`. Details in `addons/RodinBridge/LOCAL_PATCHES.md`. Verified with a headless editor run of the patched addon: no script errors, local WebSocket server on 127.0.0.1:61883.
+- Usage: Rodin dock (right dock area), Replace Image, ControlNet None + One Click, Submit opens Google Chrome on hyper3d.ai; the generated GLB is added to the current scene as a MeshInstance3D at the origin and copied to the macOS temp folder. Keeper GLBs should be downloaded from hyper3d.ai into `assets/` rather than saved inside a scene.
+- Gameplay and saves untouched. All 24 headless suites pass after the change.
 
 ## 2026-09-11 — Codex: prepare supplied leather backpack
 
