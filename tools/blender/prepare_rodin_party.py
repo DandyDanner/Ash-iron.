@@ -11,6 +11,7 @@ R=Path(__file__).resolve().parents[2];sys.path.insert(0,str(Path(__file__).paren
 from rodin_party_regions import PALETTES,FRONT,BACK,JOINTS,ARM_REGIONS
 from rodin_party_texture import texture
 from rodin_party_weights import bind
+from willow_equipment_cleanup import remove_archery
 ARGS=sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else []
 SOURCE=Path(next((a for a in ARGS if not a.startswith('--')),'/Users/dallonanderson/Downloads/Travelers.glb'))
 ONLY=int(next((a.split('=')[1] for a in ARGS if a.startswith('--only=')),-1))
@@ -141,6 +142,7 @@ for k,o in enumerate(figs):
  original=sum(len(p.vertices)-2 for p in o.data.polygons)
  if original>90000:
   dec=o.modifiers.new('Game mesh budget','DECIMATE');dec.ratio=90000/original;bpy.ops.object.modifier_apply(modifier=dec.name)
+ equipment_cleanup=remove_archery(o,paint) if k==0 else {}
  me=o.data;P=np.array([v.co[:] for v in me.vertices]);X,Y,Z=P.T
  if k==1:
   # Local sculpt correction, centered from rays through the offending jaw lobe.
@@ -251,7 +253,7 @@ for k,o in enumerate(figs):
  path=R/'assets/characters'/(SLUGS[k]+'.glb')
  bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_animations=False,export_skins=True,export_all_influences=False,export_def_bones=True,export_materials='EXPORT',export_attributes=False,export_yup=True,export_extras=True)
  # Save an editable character-only scene; other figures are excluded from the file.
- report=dict(source=SOURCE.name,sha256=source_hash,source_figure=k,discarded_miniatures=4,removed_hand_hip_web_faces=len(cuts),source_triangles=original,triangles=sum(len(p.vertices)-2 for q in objects for p in q.data.polygons),bones=BONES,points={n:points[n].tolist() for n in BONES},palette=PALETTES[k],open_finger_meshes=[q.name for q in finger_sets],cape_vertices=int(cape.sum()),max_weights=int((weights>1e-5).sum(1).max()),bytes=path.stat().st_size)
+ report=dict(source=SOURCE.name,sha256=source_hash,source_figure=k,**equipment_cleanup,discarded_miniatures=4,removed_hand_hip_web_faces=len(cuts),source_triangles=original,triangles=sum(len(p.vertices)-2 for q in objects for p in q.data.polygons),bones=BONES,points={n:points[n].tolist() for n in BONES},palette=PALETTES[k],open_finger_meshes=[q.name for q in finger_sets],cape_vertices=int(cape.sum()),max_weights=int((weights>1e-5).sum(1).max()),bytes=path.stat().st_size)
  (OUT/(SLUGS[k]+'.json')).write_text(json.dumps(report,indent=2)+'\n');print('PREPARED',SLUGS[k],json.dumps(report),flush=True)
  if '--no-render' not in ARGS:
   scene=bpy.context.scene;scene.render.engine='CYCLES';scene.cycles.samples=20;scene.cycles.use_denoising=True;scene.world.color=(.08,.08,.08);scene.view_settings.view_transform='AgX';scene.render.resolution_x=600;scene.render.resolution_y=900;scene.render.resolution_percentage=100

@@ -28,7 +28,8 @@ func _ready() -> void:
 	avatar.position.y = -0.9
 	avatar.scale = Vector3.ONE * 0.87
 	add_child(avatar)
-	avatar.rebuild(Profile.load_profile())
+	var appearance := Profile.load_profile()
+	avatar.rebuild(appearance)
 	facing = player.rotation.y + PI
 	avatar.rotation.y = PI
 	arm = SpringArm3D.new()
@@ -79,6 +80,12 @@ func _ready() -> void:
 	Archery.bow(back_bow)
 	quiver = Traveler.joint(avatar.body, "Quiver", Vector3(0.14, 1.25, -0.25))
 	quiver.rotation.z = -0.25
+	if int(appearance.get("traveler", 0)) == 0:
+		# Willow's authored travel bag is deeper than the original procedural body.
+		# Lay the earned bow flat across the back, with both props behind the bag.
+		back_bow.position = Vector3(-0.14, 1.31, -0.325)
+		back_bow.rotation = Vector3(0, PI / 2, -0.28)
+		quiver.position = Vector3(0.23, 1.30, -0.35)
 	Traveler.cylinder(quiver, Vector3.ZERO, 0.073, 0.43, Color("815d3e"), 0.085)
 	Traveler.cylinder(quiver, Vector3(0, 0.205, 0), 0.091, 0.05, Color("bd9862"))
 	arrow_feathers = Traveler.joint(quiver, "Arrows", Vector3.ZERO)

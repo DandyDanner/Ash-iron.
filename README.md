@@ -70,6 +70,8 @@ Your name and appearance are saved locally between launches. They are separate f
 
 Open `art/blender/rodin_party/travelers.blend` for the four current Rodin travelers, with their painted textures and animation skeletons. `tools/blender/prepare_rodin_party.py` rebuilds their game exports from the supplied `Travelers.glb`; surface selections, palettes and joint positions are editable in `rodin_party_regions.py`. Actual Blender and Godot captures, source details and remaining limitations are in [the Rodin party review](docs/art/RODIN_PARTY_REVIEW.md). The older procedural studies and Willow-only Rodin pipeline remain preserved; running either older exporter over these four asset names would replace the new models.
 
+Willow’s bow and arrow tips are no longer built into her body model. Her stowed bow and quiver follow the actual items in her backpack; equipping the bow moves it into her hand, and storing it removes it from her back. The carry fit clears her authored bag. [Actual equipment views](docs/art/RODIN_PARTY_REVIEW.md#willow-equipment-follows-inventory).
+
 Each traveler has a repacked 2K albedo, a 14-bone skin, separate open-finger meshes for equipment, and the existing gameplay poses. The source models still contain fused clothing and equipment; these are prototype skins, without facial animation, cloth simulation or foot IK. The original editable Custom Scout remains available.
 
 ## Coordinated visual pass
@@ -165,9 +167,11 @@ For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (C
 
 For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
-Use your Godot executable in these commands (twenty-eight suites):
+Use your Godot executable in these commands (twenty-nine suites):
 
 - `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four textured Rodin previews and skins, separate fingers, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
+
+- `Godot --headless --path . --script res://tests/willow_equipment_test.gd` — no fixed shoulder bow, carry clearance, fresh/crafted/held/stored equipment visibility. Add `-- --screenshots` with graphics enabled for actual front/back/side captures using temporary saves.
 
 - `Godot --headless --path . --script res://tests/rodin_deformation_test.gd` — measures skinned hip-triangle stretch for all four travelers while holding an axe, bow or spear and walking, guarding against hand-to-clothing webs.
 
