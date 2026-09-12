@@ -33,6 +33,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Four selectable Blender traveler exports with a first skinning pass, existing movement/tool animation, persisted choice, and original customization retained
 - [x] First-person articulated hand meshes and weapon grips; traveler surface materials, boar fur/hooves and Bellmaw silhouette refinement (actual Godot review)
 - [x] Focused Willow face/hair reconstruction with matched native comparisons, preserved other models and a refreshed playable export
+- [x] Articulated Bellmaw ground slam, paw dust, exhausted recovery and warned left/right swipe with cooldown/cover/dodge tests
 - [x] Isolate the largest supplied Bellmaw, build weighted skeleton/movement, integrate and verify actual Godot combat/rendering
 - [x] Offline repair candidate for the uploaded Willow sheet: isolate front figure, replace corrupt head and fit neck/collar; preserve current playable traveler
 - [ ] Retopologize/texture the imported Willow body, separate hands/equipment and rig before playable replacement; refine Bellmaw foot contact and facial detail

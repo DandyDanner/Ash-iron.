@@ -1,5 +1,6 @@
 extends CharacterBody3D
 ## Echo Hollow's territorial creature. A planted, warned radial boom rewards distance/cover.
+const Attacks = preload("res://scripts/bellmaw_attacks.gd")
 const Art = preload("res://scripts/bellmaw_model.gd")
 const Pickup = preload("res://scripts/resource_pickup.gd")
 const HOME := Vector3(42, 1.03, -20)
@@ -22,6 +23,12 @@ var sound: AudioStreamPlayer3D
 var warning_sound: AudioStreamWAV
 var boom_sound: AudioStreamWAV
 var hit_flash := 0.0
+var swipe_ready := false
+var swipe_cooldown := 0.0
+var swipe_side := 1.0
+var swipe_hit_sent := false
+var swipe_warning_sound: AudioStreamWAV
+var swipe_sound: AudioStreamWAV
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -53,6 +60,8 @@ func _ready() -> void:
 	add_child(sound)
 	warning_sound = _tone(125, 0.65)
 	boom_sound = _tone(55, 0.55)
+	swipe_warning_sound = _tone(190, .35)
+	swipe_sound = _tone(80, .20)
 	player = get_parent().get_node_or_null("Player")
 	_refresh()
 
@@ -63,6 +72,7 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player) or not player.controls_active:
 		return
 	state_time += delta
+	swipe_cooldown = maxf(0, swipe_cooldown - delta)
 	hit_flash = maxf(0, hit_flash - delta)
 	var offset: Vector3 = player.global_position - global_position
 	offset.y = 0
@@ -77,13 +87,28 @@ func _physics_process(delta: float) -> void:
 		"approach":
 			direction = offset.normalized()
 			speed = 3.3
-			if distance < BOOM_RADIUS - 0.3 and _sees_player(): _set_state("warn")
+			if _can_swipe():
+				swipe_side = -1.0 if to_local(player.global_position).x < 0 else 1.0
+				art.swipe_side = swipe_side
+				swipe_ready = false
+				swipe_cooldown = Attacks.SWIPE_COOLDOWN
+				_set_state("swipe_warn")
+			elif distance < BOOM_RADIUS - 0.3 and _sees_player(): _set_state("warn")
 		"warn":
 			if state_time >= WARNING_TIME:
 				_boom()
 				_set_state("recover")
 		"recover":
 			if state_time >= RECOVERY_TIME: _set_state("approach")
+		"swipe_warn":
+			if state_time >= Attacks.SWIPE_WARNING: _set_state("swipe")
+		"swipe":
+			if not swipe_hit_sent and state_time >= Attacks.SWIPE_CONTACT:
+				swipe_hit_sent = true
+				_swipe()
+			if state_time >= Attacks.SWIPE_SWING: _set_state("swipe_recover")
+		"swipe_recover":
+			if state_time >= Attacks.SWIPE_RECOVERY: _set_state("approach")
 		"return":
 			var home_offset := HOME - global_position
 			home_offset.y = 0
@@ -92,7 +117,7 @@ func _physics_process(delta: float) -> void:
 			if home_offset.length() < 0.4:
 				health = MAX_HEALTH
 				_set_state("idle")
-	if state in ["warn", "recover", "idle"]: speed = 0
+	if state in ["warn", "recover", "swipe_warn", "swipe", "swipe_recover", "idle"]: speed = 0
 	if speed > 0:
 		direction = _clear_direction(direction)
 		if direction.length_squared() > 0.1:
@@ -122,7 +147,21 @@ func _sees_player() -> bool:
 	var hit := get_world_3d().direct_space_state.intersect_ray(query)
 	return not hit.is_empty() and hit.collider == player
 
+func _can_swipe() -> bool:
+	if not swipe_ready or swipe_cooldown > 0: return false
+	var local_offset := to_local(player.global_position)
+	var side := -1.0 if local_offset.x < 0 else 1.0
+	return Attacks.in_swipe_arc(local_offset, side) and _sees_player()
+
+func _swipe() -> void:
+	sound.stream = swipe_sound
+	sound.play()
+	# One contact in a fixed, visibly warned side sector. Never tracks through the windup.
+	if Attacks.in_swipe_arc(to_local(player.global_position), swipe_side) and _sees_player():
+		player.receive_damage(Attacks.SWIPE_DAMAGE, "Bellmaw paw swipe! • Back away or circle behind.")
+
 func _boom() -> void:
+	swipe_ready = true
 	sound.stream = boom_sound
 	sound.play()
 	var offset: Vector3 = player.global_position - global_position
@@ -133,16 +172,22 @@ func _boom() -> void:
 func _set_state(next: String) -> void:
 	state = next
 	state_time = 0
+	swipe_hit_sent = false
+	if next in ["idle", "return"]: swipe_ready = false
+	if next == "swipe_warn":
+		sound.stream = swipe_warning_sound
+		sound.play()
 	if next == "warn":
 		sound.stream = warning_sound
 		sound.play()
 	_refresh()
 
 func _refresh() -> void:
-	label.visible = health > 0 and state in ["approach", "warn", "recover"]
-	var cue := "THROAT SWELLING — back away or take cover!" if state == "warn" else ("SOFT THROAT — strike now!" if state == "recover" else "Thick hide • half damage until recovery")
+	label.visible = health > 0 and state in ["approach", "warn", "recover", "swipe_warn", "swipe", "swipe_recover"]
+	var cue := "GROUND SLAM — back away or take cover!" if state == "warn" else ("SOFT THROAT — strike now!" if state in ["recover", "swipe_recover"] else "Thick hide • half damage until recovery")
+	if state in ["swipe_warn", "swipe"]: cue = "PAW SWIPE — back away or circle behind!"
 	label.text = "Bellmaw  %d / %d\n%s" % [health, MAX_HEALTH, cue]
-	label.modulate = Color("f9c26b") if state == "warn" else Color("f0e5c5")
+	label.modulate = Color("f9c26b") if state in ["warn", "swipe_warn", "swipe"] else Color("f0e5c5")
 
 func receive_melee_hit(damage: int, _point: Vector3) -> String:
 	return _take_hit(damage)
@@ -152,7 +197,7 @@ func hit_by_arrow(_point: Vector3) -> String:
 
 func _take_hit(damage: int) -> String:
 	if health <= 0 or damage <= 0: return ""
-	var applied := damage if state == "recover" else maxi(1, int(damage * 0.5))
+	var applied := damage if state in ["recover", "swipe_recover"] else maxi(1, int(damage * 0.5))
 	health = maxi(0, health - applied)
 	hit_flash = 0.25
 	if health == 0:
@@ -179,6 +224,10 @@ func to_data() -> Dictionary:
 func restore(data: Dictionary) -> void:
 	health = clampi(int(get_parent()._num(data.get("health"), MAX_HEALTH)), 0, MAX_HEALTH)
 	respawn.restore(data, health <= 0)
+	swipe_ready = false
+	swipe_cooldown = 0
+	swipe_side = 1
+	art.swipe_side = swipe_side
 	global_position = HOME
 	velocity = Vector3.ZERO
 	_set_state("idle" if health > 0 else "dead")
