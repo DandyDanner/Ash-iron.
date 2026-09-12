@@ -19,3 +19,8 @@ scratch/
 
 # Python tool caches
 __pycache__/
+
+# reorg Sep 12 2026: art pipeline and old zips stay local (1.6GB)
+graphics/
+archive/
+*.zip
