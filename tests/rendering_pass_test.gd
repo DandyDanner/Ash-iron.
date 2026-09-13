@@ -32,7 +32,10 @@ func ticks(count: int = 3) -> void:
 
 func check_dressed_rodin_materials(avatar: Node3D, label: String) -> void:
 	var names := {}
-	for mesh in avatar.body.find_children("*", "MeshInstance3D", true, false):
+	# Held equipment can have its own skin (the native bow bend rig).
+	# Keep equipment materials outside the traveler material checks.
+	var traveler_mesh: Node3D = avatar.body.get_node("TravelerMesh")
+	for mesh in traveler_mesh.find_children("*", "MeshInstance3D", true, false):
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material: StandardMaterial3D = mesh.get_active_material(surface)
 			names[material.resource_name.get_slice(".", 0)] = material
@@ -78,7 +81,9 @@ func run() -> void:
 	var willow_meshes := 0
 	var willow_surfaces := 0
 	var shared_willow_material: StandardMaterial3D
-	for mesh in avatar.body.find_children("*", "MeshInstance3D", true, false):
+	# The bow also has a skin; only the imported traveler owns these three meshes.
+	var willow_import: Node3D = avatar.body.get_node("TravelerMesh")
+	for mesh in willow_import.find_children("*", "MeshInstance3D", true, false):
 		if mesh.skin == null: continue
 		willow_meshes += 1
 		for surface in range(mesh.mesh.get_surface_count()):

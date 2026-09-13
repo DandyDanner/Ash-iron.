@@ -90,8 +90,10 @@ func _ready() -> void:
 	Traveler.cylinder(quiver, Vector3(0, 0.205, 0), 0.091, 0.05, Color("bd9862"))
 	arrow_feathers = Traveler.joint(quiver, "Arrows", Vector3.ZERO)
 	for i in range(4):
-		Traveler.cylinder(arrow_feathers, Vector3((i % 2 - 0.5) * 0.05, 0.27, (i / 2.0 - 0.5) * 0.035), 0.007, 0.32, Color("c9b482"))
-		Traveler.oval(arrow_feathers, Vector3((i % 2 - 0.5) * 0.05, 0.40, (i / 2.0 - 0.5) * 0.035), Vector3(0.027, 0.08, 0.02), Color("e5ddc0"))
+		var carried_arrow := Archery.arrow(arrow_feathers)
+		carried_arrow.position = Vector3((i % 2 - 0.5) * 0.05, 0.11, (i / 2.0 - 0.5) * 0.035)
+		carried_arrow.rotation.x = -PI / 2
+		carried_arrow.scale = Vector3.ONE * .62
 	for mesh in avatar.find_children("*", "MeshInstance3D", true, false):
 		mesh.layers = 4
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON

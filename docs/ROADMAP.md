@@ -30,6 +30,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Third-person camera with wall collision, first-person toggle, walking/jumping/tool/bow poses
 - [x] Forward+ rendering pass within the retina 60 fps budget: soft shadows, SSAO, ACES, linear meadow colors, and per-traveler 1024 face maps with painted eyes, lids, brows and lips
 - [x] Modern HUD bars and compact hotbar; backpack shows all twelve slots with hover cards; crafting never scrolls to reach Craft
+- [x] Rodin equipment in both views and pickups; native workbench/furnace with earned copper kit and state-driven fire; chest retained
 - [x] First-person swings pivot at the elbow; bare-handed punch (3 damage); pines take ten stone-axe hits or five copper swings, with save migration
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot

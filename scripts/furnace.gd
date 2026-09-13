@@ -1,6 +1,7 @@
 extends StaticBody3D
 ## A placeable stone furnace. Load iron ore and wood; it smelts on its own while you work elsewhere.
 const Model = preload("res://scripts/traveler_model.gd")
+const NATIVE_SCENE = preload("res://assets/props/furnace.glb")
 const ORE_PER_INGOT := 2
 const FUEL_PER_INGOT := 1
 const SMELT_TIME := 12.0
@@ -27,26 +28,16 @@ func _ready() -> void:
 	collision.shape = shape
 	collision.position.y = SIZE.y * 0.5
 	add_child(collision)
-	var stone := Color("6d6f68")
-	var mortar := Color("4d4b45")
-	# Stacked stone courses on a slab, a lintel over the mouth, a cap, and a chimney at the back.
-	Model.box(self, Vector3(0, 0.08, 0), Vector3(1.0, 0.16, 1.0), mortar)
-	for course in range(3):
-		var y := 0.27 + course * 0.22
-		for side in [-1.0, 1.0]:
-			Model.box(self, Vector3(side * 0.34, y, 0.0), Vector3(0.30, 0.20, 0.96), stone.lightened(course * 0.04))
-		Model.box(self, Vector3(0, y, -0.34), Vector3(0.40, 0.20, 0.28), stone.darkened(0.05))
-		if course > 0:
-			Model.box(self, Vector3(0, y, 0.30), Vector3(0.40, 0.20, 0.34), stone.lightened(0.02))
-	Model.box(self, Vector3(0, 0.88, 0), Vector3(0.98, 0.10, 0.98), mortar)
-	Model.box(self, Vector3(0, 1.10, -0.25), Vector3(0.36, 0.40, 0.36), stone.darkened(0.08))
-	Model.box(self, Vector3(0, 1.31, -0.25), Vector3(0.42, 0.04, 0.42), mortar)
-	# The mouth: a dark cavity with embers that glow while smelting.
-	Model.box(self, Vector3(0, 0.27, 0.30), Vector3(0.38, 0.20, 0.36), Color("1e1a17"))
-	embers = Model.oval(self, Vector3(0, 0.21, 0.36), Vector3(0.30, 0.10, 0.20), Color("3a2a22"))
+	var native: Node3D = NATIVE_SCENE.instantiate()
+	native.name = "NativeFurnace"
+	add_child(native)
+	# The supplied shell stays cold. This ember bed and light alone show smelting state.
+	embers = Model.oval(self, Vector3(0, 0.31, 0.12), Vector3(0.24, 0.055, 0.13), Color("3a2a22"))
+	embers.name = "EmberBed"
 	ember_material = embers.material_override
 	glow = OmniLight3D.new()
-	glow.position = Vector3(0, 0.35, 0.6)
+	glow.name = "FurnaceGlow"
+	glow.position = Vector3(0, 0.39, 0.18)
 	glow.light_color = Color("ff9a3c")
 	glow.light_energy = 1.4
 	glow.omni_range = 4.0

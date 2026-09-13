@@ -1,0 +1,93 @@
+{
+  "key": "arrow",
+  "source": "art/blender/equipment_rodin_refresh/arrow/source.glb",
+  "source_sha256": "b6c4fced049618bb4156f2b8a33bdc93dfc0cd5612a5ab7832d2885179e7381d",
+  "source_bytes": 7651164,
+  "source_qa": {
+    "dimensions": [
+      0.23600533604621887,
+      0.2302309274673462,
+      1.8968924283981323
+    ],
+    "checks": "upright, triangle budget, UV"
+  },
+  "triangles": 4000,
+  "expected_triangles": 4000,
+  "game_triangles": 3477,
+  "vertices": 2558,
+  "uv_layers": 1,
+  "materials": [
+    "Arrow Native PBR"
+  ],
+  "textures": {
+    "albedo": {
+      "file": "assets/equipment/arrow_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "4cb73511a379a51c582aec1e7573b5375ef57ea9bbb6bc209c994b48121ecc77"
+    },
+    "metallic_roughness": {
+      "file": "assets/equipment/arrow_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "370d91a4c06d9227b7331dc8cd4a4d624eb1b278fb9ce58dd26a3780efc2af2b"
+    },
+    "normal": {
+      "file": "assets/equipment/arrow_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "33ed2090fc5e8564f4a51b7ff119f05dd85af4878a725f11b20d0a9ca1f1bf3c"
+    }
+  },
+  "bones": [],
+  "modifications": {
+    "removed_midshaft_crossbar_vertices": 632,
+    "compressed_native_head_vertices": 1197,
+    "native_head_length_scale": 0.25,
+    "measured_native_shaft_diameter_before_m": 0.061476730034179826,
+    "final_shaft_diameter_m": 0.009,
+    "measured_native_head_width_before_m": 0.10634847281961322,
+    "final_native_head_width_m": 0.03600000018322567,
+    "added_compact_feather_triangles": 36
+  },
+  "normalization": {
+    "source_bounds": {
+      "min": [
+        -0.06796020269393921,
+        -0.06138278543949127,
+        -0.9482239484786987
+      ],
+      "max": [
+        0.09585059434175491,
+        0.047064609825611115,
+        0.5596671104431152
+      ]
+    },
+    "game_blender_bounds": {
+      "min": [
+        -0.044540636241436005,
+        -0.33500000834465027,
+        -0.029487164691090584
+      ],
+      "max": [
+        0.044540636241436005,
+        0.48500001430511475,
+        0.029487164691090584
+      ]
+    },
+    "uniform_scale": 0.5438058639238327,
+    "cross_section_landmark_source": [
+      0.013945195823907852,
+      -0.007159087806940079
+    ],
+    "contract": "grip at origin; point/head follows the existing held-art local axes"
+  },
+  "output": "assets/equipment/arrow.glb",
+  "output_bytes": 7630460
+}

@@ -1,5 +1,6 @@
 extends StaticBody3D
 const Model = preload("res://scripts/traveler_model.gd")
+const NATIVE_SCENE = preload("res://assets/props/workbench.glb")
 const USE_DISTANCE := 3.2
 const STORAGE_RANGE := 8.0
 var built := false
@@ -49,22 +50,9 @@ func build() -> bool:
 	built = true
 	for child in art.get_children():
 		child.queue_free()
-	for side in [-1.0, 1.0]:
-		for depth in [-1.0, 1.0]:
-			var leg := Model.box(art, Vector3(side * 0.65, 0.43, depth * 0.32), Vector3(0.13, 0.85, 0.13), Color("795a3d"))
-			leg.rotation.z = side * -0.08
-	for i in range(5):
-		Model.box(art, Vector3(0, 0.94, (i - 2) * 0.185), Vector3(1.9, 0.15, 0.175), Color("b18a57").lightened((i % 3) * 0.025))
-		for side in [-1.0, 1.0]:
-			Model.cylinder(art, Vector3(side * 0.66, 1.017, (i - 2) * 0.185), 0.014, 0.006, Color("674f37"))
-	for side in [-1.0, 1.0]:
-		Model.segment(art, Vector3(side * 0.65, 0.25, -0.32), Vector3(side * 0.65, 0.83, 0.32), 0.047, Color("947246"))
-		Model.box(art, Vector3(side * 0.65, 0.83, 0), Vector3(0.15, 0.12, 0.9), Color("86633e"))
-	Model.box(art, Vector3(0, 0.45, 0), Vector3(1.5, 0.1, 0.1), Color("795a3d"))
-	Model.oval(art, Vector3(0.4, 1.06, 0), Vector3(0.28, 0.12, 0.25), Color("8e978b"))
-	Model.box(art, Vector3(-0.3, 1.04, 0), Vector3(0.3, 0.035, 0.25), Color("c5b582"))
-	Model.segment(art, Vector3(-0.66, 1.045, 0.20), Vector3(-0.22, 1.045, 0.30), 0.020, Color("715336"))
-	Model.oval(art, Vector3(-0.61, 1.075, 0.21), Vector3(0.14, 0.11, 0.20), Color("8b9585"))
+	var native: Node3D = NATIVE_SCENE.instantiate()
+	native.name = "NativeWorkbench"
+	art.add_child(native)
 	sign_label.text = "SIMPLE WORKBENCH\nE • Craft tools"
 	var shape := BoxShape3D.new()
 	shape.size = Vector3(1.9, 1.05, 1.0)
@@ -76,9 +64,12 @@ func show_copperworking() -> void:
 	if copperworking: return
 	copperworking = true
 	sign_label.text = "COPPERWORKING BENCH\nE • Craft tools"
+	var kit := Node3D.new()
+	kit.name = "CopperworkingKit"
+	art.add_child(kit)
 	for x in [-0.78, 0.78]:
-		Model.box(art, Vector3(x, 1.025, 0), Vector3(0.11, 0.035, 0.95), Color("bd784b"))
-	Model.box(art, Vector3(0.15, 1.09, -0.2), Vector3(0.36, 0.14, 0.24), Color("c98752"))
+		Model.box(kit, Vector3(x, 0.825, 0), Vector3(0.08, 0.035, 0.78), Color("bd784b"))
+	Model.box(kit, Vector3(0.15, 0.89, -0.2), Vector3(0.36, 0.14, 0.24), Color("c98752"))
 
 func to_data() -> Dictionary:
 	return {"x": global_position.x, "y": global_position.y, "z": global_position.z, "yaw": rotation.y}

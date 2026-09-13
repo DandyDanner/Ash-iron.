@@ -1,0 +1,20 @@
+00:00.678  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/arrow/arrow.blend"
+BLEND_CHECK arrow.blend missing []
+00:00.708  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/bow/short_bow.blend"
+BLEND_CHECK short_bow.blend missing []
+00:00.747  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/copper_axe/copper_axe.blend"
+BLEND_CHECK copper_axe.blend missing []
+00:00.782  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/furnace/furnace.blend"
+BLEND_CHECK furnace.blend missing []
+00:00.815  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/stone_axe/stone_axe.blend"
+BLEND_CHECK stone_axe.blend missing []
+00:00.849  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/stone_pickaxe/stone_pickaxe.blend"
+BLEND_CHECK stone_pickaxe.blend missing []
+00:00.882  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/stone_spear/stone_spear.blend"
+BLEND_CHECK stone_spear.blend missing []
+00:00.906  blend            | Read blend: "/Users/dallonanderson/Documents/Codex/2026-09-10/referenced-chatgpt-conversation-this-is-an/outputs/ash-and-iron-equipment/art/blender/equipment_rodin_refresh/workbench/workbench.blend"
+BLEND_CHECK workbench.blend missing []
+ALL EIGHT BLENDS REOPEN: PASS
+Blender 5.2.1 LTS (hash 9e2066aef7ef built 2026-08-25 01:35:57)
+
+Blender quit

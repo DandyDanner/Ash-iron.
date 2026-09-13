@@ -1,0 +1,84 @@
+{
+  "key": "stone_spear",
+  "source": "art/blender/equipment_rodin_refresh/stone_spear/source.glb",
+  "source_sha256": "b40ee30e97566cb3a7baf1540eb9d9efe033d37a5f321bfcf55bb8d8ad0c1880",
+  "source_bytes": 5955476,
+  "source_qa": {
+    "dimensions": [
+      0.05516834557056427,
+      0.11633215099573135,
+      1.898148775100708
+    ],
+    "checks": "upright, triangle budget, UV, and shaft proportions"
+  },
+  "triangles": 12000,
+  "expected_triangles": 12000,
+  "game_triangles": 12000,
+  "vertices": 9531,
+  "uv_layers": 1,
+  "materials": [
+    "Stone Spear Native PBR"
+  ],
+  "textures": {
+    "albedo": {
+      "file": "assets/equipment/stone_spear_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "8dda2c60bed2d21357ecb1e5ba5bcd5200b6d23ad7ec6abf663f36d02635823d"
+    },
+    "metallic_roughness": {
+      "file": "assets/equipment/stone_spear_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "b16d81e60e1757e41bc79a9a50dde6ccfd50d5144d08cbe99a455b5dbc8499c6"
+    },
+    "normal": {
+      "file": "assets/equipment/stone_spear_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "24396463a4c632d1b2107fe237bc66db035fb4a347dfea373c6465b5d66f528b"
+    }
+  },
+  "bones": [],
+  "modifications": {},
+  "normalization": {
+    "source_bounds": {
+      "min": [
+        -0.02738727629184723,
+        -0.05827666074037552,
+        -0.9485592842102051
+      ],
+      "max": [
+        0.02778106927871704,
+        0.058055490255355835,
+        0.9495894908905029
+      ]
+    },
+    "game_blender_bounds": {
+      "min": [
+        -0.025431253015995026,
+        -0.4699999988079071,
+        -0.05362626537680626
+      ],
+      "max": [
+        0.025431253015995026,
+        1.2799999713897705,
+        0.05362626537680626
+      ]
+    },
+    "uniform_scale": 0.9219509149946121,
+    "cross_section_landmark_source": [
+      0.000196896493434906,
+      -0.00011058524250984192
+    ],
+    "contract": "grip at origin; point/head follows the existing held-art local axes"
+  },
+  "output": "assets/equipment/stone_spear.glb",
+  "output_bytes": 5955596
+}

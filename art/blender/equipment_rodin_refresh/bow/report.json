@@ -1,0 +1,88 @@
+{
+  "key": "bow",
+  "source": "art/blender/equipment_rodin_refresh/bow/source.glb",
+  "source_sha256": "01527ded4b7e6b23b0162f62ea88e5056382310cd7b7be29e0b0b99ec7f4284a",
+  "source_bytes": 9390324,
+  "source_qa": {
+    "dimensions": [
+      0.4034533202648163,
+      0.0675497055053711,
+      1.9040517807006836
+    ],
+    "checks": "upright, triangle budget, UV"
+  },
+  "triangles": 12000,
+  "expected_triangles": 12000,
+  "game_triangles": 12000,
+  "vertices": 9234,
+  "uv_layers": 1,
+  "materials": [
+    "Short Bow Native PBR"
+  ],
+  "textures": {
+    "albedo": {
+      "file": "assets/equipment/short_bow_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "a55283ca63064c52fa5b64b2906ce981a20914764b221dd72ee755771e6238f0"
+    },
+    "metallic_roughness": {
+      "file": "assets/equipment/short_bow_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "2dd1e2c5e172391167a8279657448573bc6074d8be861c9b7e202dfdf584cfb9"
+    },
+    "normal": {
+      "file": "assets/equipment/short_bow_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "26bb666304113eeabe197a678f28dbf201f979ab0faae2461b025675cfc0eb66"
+    }
+  },
+  "bones": [
+    "BowRoot",
+    "UpperLimb",
+    "LowerLimb"
+  ],
+  "modifications": {},
+  "normalization": {
+    "source_bounds": {
+      "min": [
+        -0.2023967057466507,
+        -0.03386051952838898,
+        -0.9550641775131226
+      ],
+      "max": [
+        0.2010566145181656,
+        0.03368918597698212,
+        0.948987603187561
+      ]
+    },
+    "game_blender_bounds": {
+      "min": [
+        -0.03271039202809334,
+        -0.2420361489057541,
+        -0.6800000071525574
+      ],
+      "max": [
+        0.01553808432072401,
+        0.04613695666193962,
+        0.6800000071525574
+      ]
+    },
+    "uniform_scale": 0.7142662892810223,
+    "cross_section_landmark_source": [
+      -0.13780321180820465,
+      0.011935276910662651
+    ],
+    "contract": "grip at origin; point/head follows the existing held-art local axes"
+  },
+  "output": "assets/equipment/short_bow.glb",
+  "output_bytes": 9576568
+}

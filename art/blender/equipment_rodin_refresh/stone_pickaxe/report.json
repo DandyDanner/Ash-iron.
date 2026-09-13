@@ -1,0 +1,84 @@
+{
+  "key": "stone_pickaxe",
+  "source": "art/blender/equipment_rodin_refresh/stone_pickaxe/source.glb",
+  "source_sha256": "4ef5f9455708342058923316f12e49b035d31d35e4baf9eb35118954e63cd016",
+  "source_bytes": 9676480,
+  "source_qa": {
+    "dimensions": [
+      0.15450362861156464,
+      0.8982782959938049,
+      1.8989191055297852
+    ],
+    "checks": "upright, triangle budget, UV"
+  },
+  "triangles": 12000,
+  "expected_triangles": 12000,
+  "game_triangles": 12000,
+  "vertices": 12194,
+  "uv_layers": 1,
+  "materials": [
+    "Stone Pickaxe Native PBR"
+  ],
+  "textures": {
+    "albedo": {
+      "file": "assets/equipment/stone_pickaxe_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "239361466996213488abfb8b646c459c52da72ac91ae71e0806bba102aa2fabc"
+    },
+    "metallic_roughness": {
+      "file": "assets/equipment/stone_pickaxe_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "2c48342f9604843cf45f894f25834ed82037c9ba4af54efbad1c83927f57b876"
+    },
+    "normal": {
+      "file": "assets/equipment/stone_pickaxe_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "0110dbbd22ce2c65d498cf82d1e3cb40006895fc0d43caa48cb059c20d38b4f0"
+    }
+  },
+  "bones": [],
+  "modifications": {},
+  "normalization": {
+    "source_bounds": {
+      "min": [
+        -0.07690615206956863,
+        -0.45056357979774475,
+        -0.9495385885238647
+      ],
+      "max": [
+        0.077597476541996,
+        0.4477147161960602,
+        0.9493805170059204
+      ]
+    },
+    "game_blender_bounds": {
+      "min": [
+        -0.0916324034333229,
+        -0.034686021506786346,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.24896155297756195,
+        0.023896047845482826,
+        0.5199999809265137
+      ]
+    },
+    "uniform_scale": 0.3791630711931381,
+    "cross_section_landmark_source": [
+      0.20604453975627124,
+      0.014574334196753705
+    ],
+    "contract": "grip at origin; point/head follows the existing held-art local axes"
+  },
+  "output": "assets/equipment/stone_pickaxe.glb",
+  "output_bytes": 9676612
+}

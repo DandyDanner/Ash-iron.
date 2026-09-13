@@ -1,0 +1,81 @@
+{
+  "station": "workbench",
+  "display_name": "Native Timber Workbench",
+  "source": "art/blender/equipment_rodin_refresh/workbench/source.glb",
+  "source_sha256": "7bcd744e3e4cb3cc120c5d02c18eddb8984ebaf708dce267f428a7c8c66a4035",
+  "source_bytes": 8014868,
+  "asset": "assets/props/workbench.glb",
+  "asset_bytes": 8015096,
+  "editable_blend": "art/blender/equipment_rodin_refresh/workbench/workbench.blend",
+  "mesh_count": 1,
+  "triangles": 18000,
+  "game_triangles": 18000,
+  "vertices": 17253,
+  "normalization_scale": 0.8699520970842481,
+  "orientation": "source X retained as width",
+  "source_bounds": {
+    "min": [
+      -0.9455360174179077,
+      -0.4888269603252411,
+      -0.45850807428359985
+    ],
+    "max": [
+      0.951120138168335,
+      0.4888724386692047,
+      0.4671919345855713
+    ],
+    "dimensions": [
+      1.8966561555862427,
+      0.9776993989944458,
+      0.9257000088691711
+    ]
+  },
+  "game_bounds_blender_z_up": {
+    "min": [
+      -0.824999988079071,
+      -0.4252758026123047,
+      0.0
+    ],
+    "max": [
+      0.824999988079071,
+      0.4252758026123047,
+      0.8053146600723267
+    ],
+    "dimensions": [
+      1.649999976158142,
+      0.8505516052246094,
+      0.8053146600723267
+    ]
+  },
+  "textures": {
+    "albedo": {
+      "file": "assets/props/workbench_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "5aca602e847fc6621eb94f8fa7d7648337249c8cca694aa0cdab5d3c15f8f68c"
+    },
+    "normal": {
+      "file": "assets/props/workbench_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "bad726ba9f09df3c8a1bd8c0401ede826f64d4a28102037117cca5f6e4a47731"
+    },
+    "metallic_roughness": {
+      "file": "assets/props/workbench_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "e716cb784dba62a3e730fa2f12ba5fe353c9c350ba6cdcc01bf3f07a88d15a90"
+    }
+  },
+  "removed_fixed_fire_triangles": 0,
+  "added_charcoal_baffle_triangles": 0,
+  "godot_orientation": "+Y up, +Z forward",
+  "shape_changes": "Uniform scale, horizontal recentering, ground offset, and optional quarter-turn only. Source topology and UVs are unchanged; no sculpt, repaint, remesh, weld, or decimation.",
+  "runtime_contract": "Gameplay body retains its existing collision, interaction, placement, persistence, and crafting/smelting logic. Copper kit and furnace fire remain runtime overlays."
+}

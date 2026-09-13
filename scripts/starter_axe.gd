@@ -1,6 +1,7 @@
 extends Node3D
 ## The player advances the swing during physics ticks; contact happens once per swing.
 const Model = preload("res://scripts/traveler_model.gd")
+const Equipment = preload("res://scripts/native_equipment.gd")
 const CONTACT_TIME := 0.22
 const SWING_DURATION := 0.6
 const SPEAR_REACH := 2.8
@@ -27,37 +28,12 @@ func setup(cloth: Color, skin: Color) -> void:
 	hand.name = "RightHand"
 	add_child(hand)
 	hand.build(skin, cloth)
-	var tool := Node3D.new()
-	tool.name = "Tool"
+	var tool := Equipment.add(self, "stone_axe", "Tool")
 	tool.rotation.y = -PI / 2 # Cutting edge faces camera-forward (-Z).
 	tool.scale = Vector3.ONE * 0.85
-	add_child(tool)
-	Model.cylinder(tool, Vector3(0, 0.18, 0), 0.025, 0.66, Color("86603c"), 0.02)
-	for i in range(5):
-		Model.cylinder(tool, Vector3(0, -0.08 + i * 0.037, 0), 0.029, 0.025, Color("49352b"))
-	Model.box(tool, Vector3(0.02, 0.46, 0), Vector3(0.11, 0.16, 0.1), Color("65705f"))
-	# A flared blade with a thin cutting edge and a thicker socket at the handle.
-	var points := [Vector3(-0.22, -0.12, 0.016), Vector3(-0.22, 0.12, 0.016), Vector3(0, 0.065, 0.05), Vector3(0, -0.065, 0.05), Vector3(-0.22, -0.12, -0.016), Vector3(-0.22, 0.12, -0.016), Vector3(0, 0.065, -0.05), Vector3(0, -0.065, -0.05)]
-	var surface := SurfaceTool.new()
-	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
-	for face in [[0, 1, 2, 3], [7, 6, 5, 4], [1, 5, 6, 2], [4, 0, 3, 7], [4, 5, 1, 0], [3, 2, 6, 7]]:
-		for vertex in [face[0], face[1], face[2], face[0], face[2], face[3]]:
-			surface.add_vertex(points[vertex])
-	surface.generate_normals()
-	Model.part(tool, surface.commit(), Vector3(0, 0.46, 0), Color("788374"))
-	Model.box(tool, Vector3(-0.218, 0.46, 0), Vector3(0.012, 0.235, 0.033), Color("98a38f"))
-	for i in range(3):
-		Model.box(tool, Vector3(0, 0.415 + i * 0.035, 0.06), Vector3(0.135, 0.021, 0.035), Color("c2ac7c"))
-	var copper := tool.duplicate()
-	copper.name = "CopperTool"
-	add_child(copper)
-	for mesh in copper.find_children("*", "MeshInstance3D", true, false):
-		if mesh.position.y >= 0.4:
-			var finish := StandardMaterial3D.new()
-			finish.albedo_color = Color("c98752")
-			finish.metallic = 0.65
-			finish.roughness = 0.42
-			mesh.material_override = finish
+	var copper := Equipment.add(self, "copper_axe", "CopperTool")
+	copper.rotation.y = -PI / 2
+	copper.scale = Vector3.ONE * 0.85
 	copper.hide()
 	var pick := Node3D.new()
 	pick.name = "Pickaxe"

@@ -1,0 +1,96 @@
+{
+  "key": "copper_axe",
+  "source": "art/blender/equipment_rodin_refresh/copper_axe/source.glb",
+  "source_sha256": "9ab6b08df6b522b0c4cd9b0988f791b9d6895d6359bb08fa7739f2014da7f991",
+  "source_bytes": 7394852,
+  "source_qa": {
+    "dimensions": [
+      0.20523539185523987,
+      0.6565185189247131,
+      1.8992841243743896
+    ],
+    "checks": "upright, triangle budget, UV"
+  },
+  "triangles": 12000,
+  "expected_triangles": 12000,
+  "game_triangles": 12000,
+  "vertices": 7999,
+  "uv_layers": 1,
+  "materials": [
+    "Copper Axe Native PBR",
+    "Copper Axe Head Finish"
+  ],
+  "textures": {
+    "albedo": {
+      "file": "assets/equipment/copper_axe_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "2628be8de96e6e4e9ebd6c54e8be6e1f23cad7e7d7efb9c80068a52010fee8ed"
+    },
+    "metallic_roughness": {
+      "file": "assets/equipment/copper_axe_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "23f80790631cc406013e7705e8a5cbc55d9c9fd7505a3dd57322a1b50d3dff32"
+    },
+    "normal": {
+      "file": "assets/equipment/copper_axe_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "d99441723e7a22a25e8ced4065bd996e34636055810a3c6d45369e534b456591"
+    }
+  },
+  "bones": [],
+  "modifications": {
+    "copper_head_finish_triangles": 3308,
+    "copper_head_luminance_grade": [
+      1.0,
+      0.38,
+      0.1
+    ],
+    "copper_head_metallic_factor": 0.82,
+    "copper_head_albedo": "assets/equipment/copper_axe_head_albedo.png",
+    "copper_head_albedo_sha256": "628cb35a65a2ce06fc3ba18a73578d2906c559ce5b87ae042a2254f551702da9",
+    "copper_head_finish": "material split above the head socket; native albedo luminance and native normal/metallic-roughness texture detail retained"
+  },
+  "normalization": {
+    "source_bounds": {
+      "min": [
+        -0.10355331003665924,
+        -0.3277219831943512,
+        -0.9497750997543335
+      ],
+      "max": [
+        0.10168208181858063,
+        0.32879653573036194,
+        0.9495090246200562
+      ]
+    },
+    "game_blender_bounds": {
+      "min": [
+        -0.1371246725320816,
+        -0.032932206988334656,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.11175507307052612,
+        0.044870518147945404,
+        0.5199999809265137
+      ]
+    },
+    "uniform_scale": 0.3790902007550675,
+    "cross_section_landmark_source": [
+      -0.032923881844196735,
+      -0.016681614542536645
+    ],
+    "contract": "grip at origin; point/head follows the existing held-art local axes"
+  },
+  "output": "assets/equipment/copper_axe.glb",
+  "output_bytes": 9690204
+}

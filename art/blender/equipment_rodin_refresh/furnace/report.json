@@ -1,0 +1,81 @@
+{
+  "station": "furnace",
+  "display_name": "Native Clay Stone Bloomery",
+  "source": "art/blender/equipment_rodin_refresh/furnace/source.glb",
+  "source_sha256": "ab822122498d86368ca0dbf191238f336251f0f4664d6e1e5186b711c0d94b33",
+  "source_bytes": 8070268,
+  "asset": "assets/props/furnace.glb",
+  "asset_bytes": 7920656,
+  "editable_blend": "art/blender/equipment_rodin_refresh/furnace/furnace.blend",
+  "mesh_count": 3,
+  "triangles": 18000,
+  "game_triangles": 15588,
+  "vertices": 29392,
+  "normalization_scale": 0.5034544894619237,
+  "orientation": "source axes retained",
+  "source_bounds": {
+    "min": [
+      -0.9051697254180908,
+      -0.9516392946243286,
+      -0.9468685984611511
+    ],
+    "max": [
+      0.9003366231918335,
+      0.9551864862442017,
+      0.9503554701805115
+    ],
+    "dimensions": [
+      1.8055063486099243,
+      1.9068257808685303,
+      1.8972240686416626
+    ]
+  },
+  "game_bounds_blender_z_up": {
+    "min": [
+      -0.4544951617717743,
+      -0.48000001907348633,
+      0.0
+    ],
+    "max": [
+      0.4544951617717743,
+      0.48000001907348633,
+      0.9551659822463989
+    ],
+    "dimensions": [
+      0.9089903235435486,
+      0.9600000381469727,
+      0.9551659822463989
+    ]
+  },
+  "textures": {
+    "albedo": {
+      "file": "assets/props/furnace_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "f4fbb547de16e9b230afdeef12769ac0a70e8b19d61f34cdfad462332ff8cfc5"
+    },
+    "normal": {
+      "file": "assets/props/furnace_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "bcfd9d8ac17486358735a8ab8c0fb0c6b6a0cbe84fe9d1fc86f7caf63adb5b81"
+    },
+    "metallic_roughness": {
+      "file": "assets/props/furnace_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "6650cb984e8970dda6757f858fcb42359bd9286280da2ee32a89c5e832cab039"
+    }
+  },
+  "removed_fixed_fire_triangles": 2436,
+  "added_charcoal_baffle_triangles": 24,
+  "godot_orientation": "+Y up, +Z forward",
+  "shape_changes": "Uniform scale, horizontal recentering, and ground offset. The bounded generated upper fire cluster was removed and two 12-triangle matte charcoal baffles finish that cavity as cold refractory; the native exterior topology, UVs, and PBR atlas are unchanged. No repaint, remesh, weld, or decimation.",
+  "runtime_contract": "Gameplay body retains its existing collision, interaction, placement, persistence, and crafting/smelting logic. Copper kit and furnace fire remain runtime overlays."
+}

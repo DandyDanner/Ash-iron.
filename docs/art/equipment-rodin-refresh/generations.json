@@ -1,0 +1,134 @@
+{
+  "created": "2026-09-12",
+  "purpose": "Native Rodin weapons and crafting stations; chest excluded",
+  "settings": {
+    "tier": "Gen-2.5-Medium",
+    "mesh_mode": "Raw",
+    "geometry_file_format": "glb"
+  },
+  "assets": {
+    "stone_axe": {
+      "generation_id": "64dea301-75dc-4add-86e1-563ce7839d29",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/64dea301-75dc-4add-86e1-563ce7839d29",
+      "prompt": "One complete primitive stone axe matching this reference exactly. Keep single knapped gray cutting head, sinew binding, slender full wooden haft and lower leather grip. Original fine PBR textures and realistic handmade detail.",
+      "quality_override": 12000,
+      "reference": "stone_axe-reference.png",
+      "reference_imagegen_prompt": "Use case: stylized-concept. Create one clean physically detailed 3D product render to guide a game asset modeler. Exactly ONE whole object upright centered on plain light gray background, all extremities visible, no text, no multi-view, no other objects, no pedestal, no hands. Warm natural frontier materials with fine detail and credible construction, stylized realism matching a woodland traveler. Camera near orthographic broadside with slight three-quarter depth, gentle studio lighting. A primitive one-handed stone axe, 65cm straight slender wooden haft, lower-third brown leather grip. A SINGLE dark gray knapped flint wedge axe head lashed at the top with tan rawhide. Large sharp cutting edge on LEFT, tiny blunt poll at RIGHT. Blade upperquarter only, haft spans whole remaining height to rounded butt. Fine chipped facets, woodgrain, visible wrapped sinew, simple practical silhouette. Not double-bladed, no metal or stone block.",
+      "reference_imagegen_tool": "built-in image_gen",
+      "previous_attempts": [
+        {
+          "generation_id": "fccbfe59-f789-40ac-a152-6328e335b34f",
+          "status": "completed",
+          "display_url": "https://hyper3d.ai/workspace/rodin/fccbfe59-f789-40ac-a152-6328e335b34f",
+          "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. A primitive one-handed stone axe: one straight subtly tapered ash wood haft, a dark gray knapped flint wedge axehead lashed tightly near the top with rough tan rawhide cord. Broad curved sharp cutting edge projects to the left of the upright vertical shaft, small poll on right. Head occupies upper quarter, haft slender round cross section with leather palm grip on lower third. Entire axe upright fully visible. No metal. Tool length about 65cm, useful compact cutting head, deeply chipped stone facets, authentic wood grain and worn leather.",
+          "quality_override": 12000,
+          "accepted": false,
+          "reason": "Source silhouette did not match the requested weapon; rejected after Blender inspection."
+        }
+      ],
+      "source_sha256": "47d02ab7966aefc567e3f89a0c43d785e7dc28643f8dd2ffee306547e352b108"
+    },
+    "copper_axe": {
+      "generation_id": "998de6fe-246b-41c5-846c-f111155480cf",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/998de6fe-246b-41c5-846c-f111155480cf",
+      "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. A practical one-handed early copper woodworking axe, straight slender ash haft upright, one compact solid reddish copper wedge head near its top. Broad sharp slightly curved cutting edge projects left, short squared poll right. Hammered copper surface, bright burnished bevel and subtle dark oxidized recesses; no green paint or fantasy spikes. Brown leather palm grip lower third. Haft70cm, headcompactupperquarter. Finely grained wood, credible wrappedsocket, crafted attainable early-game tool. One complete axe, no duplicate heads.",
+      "quality_override": 12000,
+      "design_note": "Accepted a clean double-bit silhouette as a distinct copper upgrade.",
+      "source_sha256": "9ab6b08df6b522b0c4cd9b0988f791b9d6895d6359bb08fa7739f2014da7f991"
+    },
+    "stone_pickaxe": {
+      "generation_id": "2a019fdc-3209-46cb-a2f9-32b160e5f51a",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/2a019fdc-3209-46cb-a2f9-32b160e5f51a",
+      "prompt": "One complete primitive stone mining pick matching the reference exactly. Long narrow sharply pointed stone pick on left, blunt short poll on right, rawhide bindings and full slender wooden haft. Preserve pointed silhouette and detailed PBR materials.",
+      "quality_override": 12000,
+      "reference": "stone_pickaxe-reference.png",
+      "reference_imagegen_prompt": "Use case: stylized-concept. Create one clean physically detailed 3D product render to guide a game asset modeler. Exactly ONE whole object upright centered on plain light gray background, all extremities visible, no text, no multi-view, no other objects, no pedestal, no hands. Warm natural frontier materials with fine detail and credible construction, stylized realism matching a woodland traveler. Camera near orthographic broadside with slight three-quarter depth, gentle studio lighting. A primitive mining PICKAXE, 65cm straight slender wooden haft with lower-third leather grip. At top one narrow dark-gray hardstone pick head spans horizontally: long sharp curved tapered point extends LEFT and curves downward; very short squared chisel poll RIGHT. Head is pointed and slender, NOT an axe blade. Rawhide lashing holds center to shaft. Knapped stone facets, wood grain, practical authentic construction. Entire handle from top to butt visible, no metal.",
+      "reference_imagegen_tool": "built-in image_gen",
+      "previous_attempts": [
+        {
+          "generation_id": "2745fc57-2759-416c-886b-4ea6941969ad",
+          "status": "completed",
+          "display_url": "https://hyper3d.ai/workspace/rodin/2745fc57-2759-416c-886b-4ea6941969ad",
+          "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. One primitive stone mining pickaxe, upright straight slender hardwood handle65cm long with dark brown leather palm grip lower third. A narrow curved charcoal-gray stone head spans horizontally across top, long tapered downward-curved pointed pick extending to LEFT and short flattened chisel poll to right. Angular knapped hardstone facets, clearly recognizable sharp pick silhouette not oval. Tan rawhide binding secures head to haft. No metal, blades or duplicate tools. Handle straight, head upperquarter, believable handmade construction.",
+          "quality_override": 12000,
+          "accepted": false,
+          "reason": "Source silhouette did not match the requested weapon; rejected after Blender inspection."
+        }
+      ],
+      "source_sha256": "4ef5f9455708342058923316f12e49b035d31d35e4baf9eb35118954e63cd016"
+    },
+    "stone_spear": {
+      "generation_id": "c2074bbf-5748-4596-a4e6-7137b17a8e33",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/c2074bbf-5748-4596-a4e6-7137b17a8e33",
+      "prompt": "One full-length primitive hunting spear matching the reference exactly. Very long straight slender wooden shaft with small sharp flint leaf point at top and central leather grip. Preserve the long shaft proportions and subtle detailed PBR materials.",
+      "quality_override": 12000,
+      "reference": "stone_spear-reference.png",
+      "reference_imagegen_prompt": "Use case: stylized-concept. Create one clean physically detailed 3D product render to guide a game asset modeler. Exactly ONE whole object upright centered on plain light gray background, all extremities visible, no text, no multi-view, no other objects, no pedestal, no hands. Warm natural frontier materials with fine detail and credible construction, stylized realism matching a woodland traveler. Camera near orthographic broadside with slight three-quarter depth, gentle studio lighting. A long primitive hunting SPEAR, upright full length 175cm. One straight very slender wooden pole makes up 85 percent of entire length. Small knapped gray flint leaf-shaped pointed head at very top makes up only15percent, sinew-bound securely to pole. Tiny leather wrapped grip slightly below middle. Ash woodgrain, delicate rawhide binding, sharpened flint facets. No crossguard, no sword hilt. It must read unmistakably as a long shafted spear, not a dagger.",
+      "reference_imagegen_tool": "built-in image_gen",
+      "previous_attempts": [
+        {
+          "generation_id": "330a33cc-6562-4357-a6e9-effd3011bc86",
+          "status": "completed",
+          "display_url": "https://hyper3d.ai/workspace/rodin/330a33cc-6562-4357-a6e9-effd3011bc86",
+          "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. A single primitive stone spear, perfectly straight long slender round ash shaft upright with point UP. Sharp leaf-shaped knapped gray flint spearhead securely bound to tip with tan sinew, small dark leather wrapped grip slightly BELOW shaft center. Total length175cm, point27cm, shaftdiameter3cm. Straight uncurved shaft, pointedheadsymmetrical, balanced believable proportions. Fine woodgrain, chippedflint edges, wovenbinding; no feathers, metal, person, swordguard or ornaments.",
+          "quality_override": 12000,
+          "accepted": false,
+          "reason": "Source silhouette did not match the requested weapon; rejected after Blender inspection."
+        }
+      ],
+      "source_sha256": "b40ee30e97566cb3a7baf1540eb9d9efe033d37a5f321bfcf55bb8d8ad0c1880"
+    },
+    "bow": {
+      "generation_id": "608436d2-fb69-4752-bdbb-f2296d2da75f",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/608436d2-fb69-4752-bdbb-f2296d2da75f",
+      "prompt": "One wooden hunting bow matching this reference exactly. Single curved slender wooden stave, leather grip in middle, symmetric tapered upper and lower limbs with nock grooves. Unstrung bow, empty space between the tips, realistic detailed PBR wood and leather.",
+      "quality_override": 12000,
+      "reference": "bow-reference.png",
+      "reference_imagegen_prompt": "Use case: stylized-concept. Create one clean physically detailed 3D product render to guide a game asset modeler. Exactly ONE whole object upright centered on plain light gray background, all extremities visible, no text, no multi-view, no other objects, no pedestal, no hands. Warm natural frontier materials with fine detail and credible construction, stylized realism matching a woodland traveler. Camera near orthographic broadside with slight three-quarter depth, gentle studio lighting. An elegant simple wooden hunting BOW WITHOUT A STRING, upright full 130cm height. One slender gently curved stave with upper and lower limbs tapering to small string nock tips. Both tips sweep to the RIGHT of the central brown leather grip; broadside silhouette a shallow left parenthesis. Carefully grained honey-brown wood, subtle binding at central grip, tips modestly recurved. Bow only, no arrows, no furniture, no string. Thin realistic limbs, credible flexible self-bow proportions.",
+      "reference_imagegen_tool": "built-in image_gen",
+      "previous_attempts": [
+        {
+          "generation_id": "e41ea6c2-0d5b-4ba6-91aa-430d49ba5136",
+          "status": "completed",
+          "display_url": "https://hyper3d.ai/workspace/rodin/e41ea6c2-0d5b-4ba6-91aa-430d49ba5136",
+          "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. One UNSTRUNG wooden self bow, a long slender single curved ash stave with symmetric upper and lower limbs. Bow upright, center leather grip, both tapered tips sweep gently backward to same side, broadside silhouette forms shallow curved parenthesis. Limb length120cm overall, slender flattened oval cross section, very fine woodgrain, bound brown leather grip central12cm, small string nock grooves at tips. No bowstring, no string, no arrows, no hand, no quiver. Functional grounded short hunting bow, mild natural recurve ends, no aggressive fantasy ornament.",
+          "quality_override": 12000,
+          "accepted": false,
+          "reason": "Source silhouette did not match the requested weapon; rejected after Blender inspection."
+        }
+      ],
+      "source_sha256": "01527ded4b7e6b23b0162f62ea88e5056382310cd7b7be29e0b0b99ec7f4284a"
+    },
+    "arrow": {
+      "generation_id": "fe8954af-965c-455e-b25c-d678eb68d727",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/fe8954af-965c-455e-b25c-d678eb68d727",
+      "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. One single straight primitive hunting arrow fully visible upright with point UP. Slender straight wooden shaft, tiny sharp triangular knapped flint arrowhead at top fixed with fine tan thread, three compact brown feather vanes near lower nock. Total70cm long, shaft7mm, head4cm. Precise clean aerodynamic silhouette, subtle woodgrain, detailed feather barbs, no bow, no quiver, no bundle, no metal. No extra arrows.",
+      "quality_override": 4000,
+      "design_note": "Source fletching requires cleanup/repositioning in Blender; see preparation report.",
+      "source_sha256": "b6c4fced049618bb4156f2b8a33bdc93dfc0cd5612a5ab7832d2885179e7381d"
+    },
+    "workbench": {
+      "generation_id": "3d75f37c-a25f-408c-94c3-48be350ec3e5",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/3d75f37c-a25f-408c-94c3-48be350ec3e5",
+      "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. A primitive woodland craftsman's timber workbench, one sturdy rectangular table viewed from threequarters, 165cm wide,90cm deep,90cm tall. Thick weathered split oak plank top with rounded worn edges, four chunky square timber legs, pegged mortise joinery and diagonally braced lower shelf. Fully assembled grounded on allfourfeet. Warm medium brown naturalwoodgrain, hewmarks, exposed wooden pegs and subtle rawhide lashing. No metal, no anvil, no large tools or clutter, no drawers, no chest. Top flat and accessible. Simple believable sturdy handmade early-game crafting table.",
+      "quality_override": 18000,
+      "source_sha256": "7bcd744e3e4cb3cc120c5d02c18eddb8984ebaf708dce267f428a7c8c66a4035"
+    },
+    "furnace": {
+      "generation_id": "db106a57-0506-4202-9c9d-3061a346b3ee",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/db106a57-0506-4202-9c9d-3061a346b3ee",
+      "prompt": "Single isolated game-ready object, original grounded stylized frontier adventure art, believable fine material detail and clean readable silhouette. PBR albedo roughness normal textures. No person, hands, pedestal, floor, labels or extra objects. One primitive compact clay-and-stone smelting furnace, rounded squat vertical bloomery 130cm high100cmwide, rough gray fieldstone lower shell with weathered russetclay refractory upper chimney. Clearly OPEN arched front stoking mouth in lower third, dark hollow interior, circular open vent at top. Thick walls, chipped edges, soot-stained mouth. Stable flat bottom, no groundbase. UNLIT, no fire, no flames, no glowingcoals, no metal fixtures or ingots. Fully visible standalone crafted frontier furnace, rich masonry mortar and clay surface detail.",
+      "quality_override": 18000,
+      "design_note": "Generated baked fire must be removed so runtime fuel state controls fire; see preparation report.",
+      "source_sha256": "ab822122498d86368ca0dbf191238f336251f0f4664d6e1e5186b711c0d94b33"
+    }
+  }
+}

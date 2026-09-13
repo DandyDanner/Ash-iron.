@@ -37,9 +37,10 @@ func _ready() -> void:
 				var log_mesh := Model.cylinder(self, Vector3((i - 1) * 0.17, 0.12, 0), 0.1, 0.6, Color("95633f"))
 				log_mesh.rotation.x = PI / 2
 		"stone_axe", "copper_axe":
-			var handle := Model.cylinder(self, Vector3(0, 0.08, 0), 0.026, 0.6, Color("86603c"))
-			handle.rotation.x = PI / 2
-			Model.oval(self, Vector3(0, 0.1, -0.22), Vector3(0.34, 0.16, 0.2), Color("c98752") if item_id == "copper_axe" else Color("89948c"))
+			var art := preload("res://scripts/native_equipment.gd").add(self, item_id)
+			art.rotation.x = -PI / 2
+			art.position = Vector3(0, 0.08, 0.13)
+			art.scale = Vector3.ONE * .78
 		"stone_pickaxe":
 			var art := Node3D.new()
 			add_child(art)
@@ -56,7 +57,9 @@ func _ready() -> void:
 			add_child(art)
 			preload("res://scripts/archery_art.gd").bow(art)
 			art.rotation.x = PI / 2
-			art.position.y = 0.11
+			# Native recurves are deeper than the old procedural strip; raise the
+			# laid-down bow so its grip and limbs rest on the terrain surface.
+			art.position.y = 0.17
 			art.scale = Vector3.ONE * 0.6
 		"stone_spear":
 			var art := Node3D.new()
@@ -68,18 +71,22 @@ func _ready() -> void:
 			var art := preload("res://scripts/archery_art.gd").arrow(self)
 			art.position.y = 0.08
 		"bench":
-			Model.box(self, Vector3(0, 0.16, 0), Vector3(0.60, 0.09, 0.34), Color("b18a57"))
-			for x in [-0.20, 0.20]:
-				Model.box(self, Vector3(x, 0.07, 0), Vector3(0.06, 0.14, 0.26), Color("795a3d"))
+			var native: Node3D = preload("res://assets/props/workbench.glb").instantiate()
+			native.name = "PackedNativeWorkbench"
+			native.scale = Vector3.ONE * .60
+			native.position.y = .02
+			add_child(native)
 		"iron_ore", "copper_ore":
 			preload("res://scripts/imported_props.gd").rock(self, Vector3(.35, .25, .30), item_id)
 		"iron_ingot", "copper_ingot", "copper_fittings":
 			for i in range(2):
 				Model.box(self, Vector3((i - 0.5) * 0.16, 0.05, 0), Vector3(0.12, 0.08, 0.34), (Color("c98752") if item_id.begins_with("copper") else Color("7f8a93")).lightened(i * 0.05))
 		"furnace":
-			Model.box(self, Vector3(0, 0.12, 0), Vector3(0.36, 0.22, 0.36), Color("6d6f68"))
-			Model.box(self, Vector3(0, 0.30, -0.08), Vector3(0.14, 0.14, 0.14), Color("5d5f59"))
-			Model.box(self, Vector3(0, 0.1, 0.185), Vector3(0.14, 0.09, 0.02), Color("1e1a17"))
+			var native: Node3D = preload("res://assets/props/furnace.glb").instantiate()
+			native.name = "PackedNativeFurnace"
+			native.scale = Vector3.ONE * .48
+			native.position.y = .02
+			add_child(native)
 		"chest":
 			var holder := Node3D.new()
 			add_child(holder)

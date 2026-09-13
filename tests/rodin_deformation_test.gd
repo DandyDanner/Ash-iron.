@@ -12,12 +12,17 @@ func hip_stretch(avatar: Node3D) -> float:
 	var skeleton: Skeleton3D = avatar.authored.skeleton
 	skeleton.force_update_all_bone_transforms()
 	var largest := 0.0
-	for mesh in avatar.body.find_children("*", "MeshInstance3D", true, false):
+	# Equipment has independent skins; assess only the imported traveler geometry.
+	for mesh in avatar.body.get_node("TravelerMesh").find_children("*", "MeshInstance3D", true, false):
 		if mesh.skin == null or not mesh.visible: continue
 		var transforms: Array[Transform3D] = []
 		for bind in range(mesh.skin.get_bind_count()):
 			var bone: int = mesh.skin.get_bind_bone(bind)
 			if bone < 0: bone = skeleton.find_bone(mesh.skin.get_bind_name(bind))
+			if bone < 0 or bone >= skeleton.get_bone_count():
+				failures += 1
+				push_error("Traveler skin bind does not resolve to the traveler skeleton")
+				return INF
 			transforms.append(skeleton.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind))
 		for surface in range(mesh.mesh.get_surface_count()):
 			var arrays: Array = mesh.mesh.surface_get_arrays(surface)
@@ -42,7 +47,7 @@ func hip_stretch(avatar: Node3D) -> float:
 func check_ranger_jaw(avatar: Node3D) -> void:
 	var checked := 0
 	var incorrect := 0
-	for mesh in avatar.body.find_children("*", "MeshInstance3D", true, false):
+	for mesh in avatar.body.get_node("TravelerMesh").find_children("*", "MeshInstance3D", true, false):
 		if mesh.skin == null: continue
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material: Material = mesh.get_active_material(surface)

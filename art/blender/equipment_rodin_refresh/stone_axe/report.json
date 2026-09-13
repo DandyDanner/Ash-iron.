@@ -1,0 +1,84 @@
+{
+  "key": "stone_axe",
+  "source": "art/blender/equipment_rodin_refresh/stone_axe/source.glb",
+  "source_sha256": "47d02ab7966aefc567e3f89a0c43d785e7dc28643f8dd2ffee306547e352b108",
+  "source_bytes": 10186756,
+  "source_qa": {
+    "dimensions": [
+      0.18476347625255585,
+      0.5349862575531006,
+      1.9002845287322998
+    ],
+    "checks": "upright, triangle budget, UV"
+  },
+  "triangles": 12000,
+  "expected_triangles": 12000,
+  "game_triangles": 12000,
+  "vertices": 12645,
+  "uv_layers": 1,
+  "materials": [
+    "Stone Axe Native PBR"
+  ],
+  "textures": {
+    "albedo": {
+      "file": "assets/equipment/stone_axe_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "57dcc8239aaa98a9f03def37ed37a5518f705a679c4a556d7624517927bb5ec1"
+    },
+    "metallic_roughness": {
+      "file": "assets/equipment/stone_axe_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "53f2a804d46fbad97b1f0a372be69d11c7106d14f9a97cf8174d2d1bd1afc8e7"
+    },
+    "normal": {
+      "file": "assets/equipment/stone_axe_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "38976c81269e816565309c3cd72b2c6a87c9f783d82db90c89b41224ba958899"
+    }
+  },
+  "bones": [],
+  "modifications": {},
+  "normalization": {
+    "source_bounds": {
+      "min": [
+        -0.09260371327400208,
+        -0.26810193061828613,
+        -0.9491562247276306
+      ],
+      "max": [
+        0.09215976297855377,
+        0.26688432693481445,
+        0.9511283040046692
+      ]
+    },
+    "game_blender_bounds": {
+      "min": [
+        -0.057047516107559204,
+        -0.03524209186434746,
+        -0.20000000298023224
+      ],
+      "max": [
+        0.14565376937389374,
+        0.03476305678486824,
+        0.5199999809265137
+      ]
+    },
+    "uniform_scale": 0.3788906288051083,
+    "cross_section_landmark_source": [
+      0.11631972759479373,
+      0.00041017868740610993
+    ],
+    "contract": "grip at origin; point/head follows the existing held-art local axes"
+  },
+  "output": "assets/equipment/stone_axe.glb",
+  "output_bytes": 10186808
+}
