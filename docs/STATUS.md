@@ -4,6 +4,8 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 
 ## Now
 
+- First-person axe: corrected the stone blade facing so the cutting edge leads away from the player throughout the chop.
+
 - First-person hands: original connected relaxed/grip meshes, forward resting fingers, and independently fitted sleeves attached to wrist and lower camera corners. Tool pivots and bow nock tracking retained. See `docs/art/FIRST_PERSON_HANDS_REVIEW.md`.
 
 - Bellmaw motion: anchored shoulder/elbow/paw solve, planted four-beat gait, slow bounded home patrols and native eyelid blinking. Attack timings, damage, radius, size, saves and world assets retained. See `docs/art/BELLMAW_MOTION_REVIEW.md`.
@@ -37,6 +39,11 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Player vitals: upper-left red health and green stamina bars with values, low-health cue (≤25) and exhaustion cue. Sprinting spends 16/s from 100; walking/rest recovers 22/s after 0.9 s. Exhaustion clears at 20; idle Shift costs nothing. Menus/focus pause, defeat resets, and both views share the HUD.
 - Saves: format 12 migrates prior Bellmaw health caps (80/160) to 300 at the same percentage, preserves death/countdowns and does not scale again on reload. Format 11 adds permanent crafting milestones and furnace metal selection; versions 1–10 keep previous recipe access and old furnaces retain Iron/contents/progress. Copper outcrop depletion saves through the existing vein data. Format 10 adds saved stamina/recovery/exhaustion; format 9 includes enemy respawn timers and furnace auto-feed. Formats 1–9 migrate without clearing progress; old Bellmaw health scales to 300 at the same percentage, old defeated enemies get a fresh respawn delay. No real player save/profile was read or edited during tests.
 - Later: iron equipment, armor with optional ore/metal/mineral decorative trim and inlays (see `docs/CRAFTSMAN_PROGRESSION.md`), combat/jump stamina costs, resource regrowth, day/night pressure and the Wayfarer's Lantern; preserve discovery/villager direction and Threadwing concept in `docs/CREATURE_DIRECTION.md`. Furniture placement ghost/manual rotation, foot IK, cloth simulation and further deformation polish remain gaps.
+
+## 2026-09-12 — Codex: first-person axe facing correction
+
+- Turned the held stone axe 180 degrees around its shaft so the native cutting edge faces forward. Hand pose, grip pivot, swing path and damage retained.
+- Added a forward-edge check across the existing swing samples and corrected the old impact check for the native blade axis. All 37 headless suites pass; reviewed native idle/raised/contact captures. Evidence is in `docs/art/axe-facing/`.
 
 ## 2026-09-12 — Codex: first-person hand and sleeve refinement
 

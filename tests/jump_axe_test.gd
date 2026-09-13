@@ -59,7 +59,9 @@ func check_swing_path(player: Node3D) -> void:
 			if frame == 8: raised = point
 			if frame == 22:
 				impact = point
-				var edge: Vector3 = player.camera.global_basis.inverse() * -tool.global_basis.x.normalized()
+				# Native stone axe edge is +X; the pick's striking point is -X.
+				var edge_axis := Vector3.RIGHT if tool_name == "Tool" else Vector3.LEFT
+				var edge: Vector3 = player.camera.global_basis.inverse() * (tool.global_basis * edge_axis).normalized()
 				check(edge.dot(Vector3.FORWARD) > 0.8, "%s cutting edge does not face forward at impact" % tool_name)
 		check(impact.z < raised.z - 0.5 and impact.y < raised.y, "%s does not strike forward and down from its backswing" % tool_name)
 	player.axe.cancel_swing()

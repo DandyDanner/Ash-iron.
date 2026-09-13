@@ -41,6 +41,11 @@ func run() -> void:
 			if item != "torch": player.axe.pose_swing(player.axe.elapsed)
 			player.update_first_person_hands()
 			check_sleeves(player)
+			if item == "stone_axe":
+				# Native cutting edge is +X from the haft; it must lead toward the target.
+				var tool: Node3D = player.axe.get_node("Tool")
+				var edge_lead: Vector3 = player.camera.to_local(tool.to_global(Vector3(.14,.4,0))) - player.camera.to_local(tool.to_global(Vector3(0,.4,0)))
+				check(edge_lead.z < -.08, "Stone axe cutting edge faces back toward the player")
 			check(player.axe.hand.position.is_zero_approx(), "Tool hand moved away from the shaft grip")
 		player.axe.cancel_swing()
 	player.inventory.add("bow",1)

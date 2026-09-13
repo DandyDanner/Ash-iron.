@@ -29,7 +29,7 @@ func setup(cloth: Color, skin: Color) -> void:
 	add_child(hand)
 	hand.build(skin, cloth)
 	var tool := Equipment.add(self, "stone_axe", "Tool")
-	tool.rotation.y = -PI / 2 # Cutting edge faces camera-forward (-Z).
+	tool.rotation.y = PI / 2 # Native blade extends along +X; turn it toward camera-forward (-Z).
 	tool.scale = Vector3.ONE * 0.85
 	var copper := Equipment.add(self, "copper_axe", "CopperTool")
 	copper.rotation.y = -PI / 2
