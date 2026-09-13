@@ -34,8 +34,8 @@ The Stone/Copper sequence below is playable. Existing iron deposits and furnace 
 ## Starter controls
 
 - The project opens with character creation. Choose a background, customize your traveler, pick a keepsake, then select **Begin your journey**.
-- Use the **Traveler** dropdown to choose **Willow Scout**, **Hearthland Ranger**, **Ridge Wayfarer**, or **Ember Forager**. All four use colored and skinned figures from the supplied Rodin (Hyper3D) model. They have fixed outfits/hair. **Custom Scout (original)** restores the original build, face, hair, and color controls.
-- Press **C** in the clearing to change travelers, then **Continue your journey**. Your inventory, placed furniture, and world progress are kept. Existing profiles retain their original look until you choose a new traveler.
+- Use the **Traveler** dropdown to choose **Willow Scout**, **Hearthland Ranger**, **Ridge Wayfarer**, or **Ember Forager**. Willow uses the newly approved native-textured Rodin model; the other three retain their supplied Rodin figures. They have fixed outfits/hair. **Custom Scout (original)** restores the original build, face, hair, and color controls.
+- Press **C** in the clearing to change travelers, then **Continue your journey**. Your inventory, placed furniture, and world progress are kept. Existing profiles retain their traveler selection; saved Willow profiles receive the new model automatically.
 - Travelers, backgrounds and keepsakes are cosmetic. Classes and abilities are deferred.
 - `W A S D` — move
 - `Shift` — sprint while stamina is available
@@ -64,11 +64,11 @@ The Stone/Copper sequence below is playable. Existing iron deposits and furnace 
 3. Press **F5** or the **Run Project** button in the top-right. On some Mac keyboards use **Fn + F5**.
 4. Create your traveler, or choose **Continue your journey**, then enter the stylized forest clearing. On Mac, **Command + B** also runs the project.
 
-Your name and appearance are saved locally between launches. They are separate from the clearing save. All four travelers now use colored, skinned figures from the supplied Rodin model; the original procedural customization remains available. These are still prototype models with further art and animation work ahead. See `docs/CHARACTER_CREATION.md` for the current feature set.
+Your name and appearance are saved locally between launches. They are separate from the clearing save. All four travelers use colored, skinned Rodin figures, with the approved September 12 replacement for Willow; the original procedural customization remains available. These are still prototype models with further art and animation work ahead. See `docs/CHARACTER_CREATION.md` for the current feature set.
 
 ## Character modeling in Blender
 
-Open `art/blender/rodin_party/travelers.blend` for the four current Rodin travelers, with their painted textures and animation skeletons. `tools/blender/prepare_rodin_party.py` rebuilds their game exports from the supplied `Travelers.glb`; surface selections, palettes and joint positions are editable in `rodin_party_regions.py`. Actual Blender and Godot captures, source details and remaining limitations are in [the Rodin party review](docs/art/RODIN_PARTY_REVIEW.md). The older procedural studies and Willow-only Rodin pipeline remain preserved; running either older exporter over these four asset names would replace the new models.
+Open `art/blender/willow_rodin_v2/willow_scout.blend` for the current Willow Scout, with her approved face/outfit and native 2K PBR textures. Rebuild her with `tools/blender/prepare_willow_native.py`; see [native Willow integration](docs/art/WILLOW_NATIVE_REVIEW.md). Open `art/blender/rodin_party/travelers.blend` for the other three travelers and the prior Willow, with their painted textures and animation skeletons. `tools/blender/prepare_rodin_party.py` rebuilds their game exports from the supplied `Travelers.glb`; surface selections, palettes and joint positions are editable in `rodin_party_regions.py`. Actual Blender and Godot captures, source details and remaining limitations are in [the Rodin party review](docs/art/RODIN_PARTY_REVIEW.md). The older procedural studies and Willow-only Rodin pipeline remain preserved; running either older exporter over these four asset names would replace the new models.
 
 Willow’s bow and arrow tips are no longer built into her body model. Her stowed bow and quiver follow the actual items in her backpack; equipping the bow moves it into her hand, and storing it removes it from her back. The carry fit clears her authored bag. [Actual equipment views](docs/art/RODIN_PARTY_REVIEW.md#willow-equipment-follows-inventory).
 
@@ -161,16 +161,18 @@ The [actual crafting and Bellmaw review](docs/art/COPPERWORKING_REVIEW.md) shows
 
 ## Verification
 
+- `Godot --headless --path . --script res://tests/willow_native_asset_test.gd` — native Willow seam weights, rigid head binding and grounded height.
+
 `Godot --path . --script res://tests/rodin_travelers_preview.gd` captures all four actual game models, faces, axe/bow holds and walking poses using temporary saves. `Godot --path . --script res://tests/rendering_preview.gd -- --out=/absolute/prefix` captures the clearing and the creator face view; add `--rendering-method gl_compatibility` before `--script` to compare renderers. `Godot --path . --script res://tests/rendering_budget.gd` prints the frame-time ladder for renderer features at 2x, 1.5x and 1x internal resolution. `Godot --path . --script res://tests/hud_preview.gd -- --out=/absolute/folder` captures the HUD, backpack and crafting panels, the first-person swing and the punch.
 
 For visual gear checks, run `scenes/visual_preview.tscn` as the current scene (Command + R on Mac). Press O for portrait mode; J cycles axe carry/windup/contact/follow-through (U does the same for the pickaxe; T for the spear), K shows a drawn bow, and L orbits the camera. The J/U/T pose controls also work in first person. O enters/exits portrait mode and returns to play. B starts an isolated boar encounter with the spear; N shows its portrait. This scene uses temporary inventory and saves. Run Project returns to the regular game.
 
 For reproducible actual-model images, run `Godot --path . --script res://tests/art_portrait.gd -- --output=/absolute/output/folder` with graphics enabled. It renders scout front/back/face, the boar, and both in the existing clearing, using isolated temporary saves. The neutral studio lighting belongs only to this utility.
 
-Use your Godot executable in these commands (twenty-nine suites):
+Use your Godot executable in these commands (thirty-two suites):
 
 - `Godot --headless --path . --script res://tests/traveler_selection_test.gd` — all four textured Rodin previews and skins, separate fingers, menu selection, profile migration, movement, held equipment, and continuing with inventory intact. Add `-- --screenshots=/absolute/existing/folder` with graphics enabled to capture each traveler in the creator and clearing.
-- `Godot --headless --path . --script res://tests/rendering_pass_test.gd` — Forward+ project setting, clearing and creator lighting flags (tonemap, SSAO, soft sun, no global illumination), dressed Rodin materials, and the 1024 face albedo/normal/roughness maps on all four travelers.
+- `Godot --headless --path . --script res://tests/rendering_pass_test.gd` — Forward+ project setting, clearing and creator lighting flags (tonemap, SSAO, soft sun, no global illumination), native 2K Willow PBR material and the other three travelers’ dressed materials and 1024 face maps.
 - `Godot --headless --path . --script res://tests/unarmed_punch_test.gd` — bare-handed punch: three damage once per swing in both views, reach limit, no effect on pines, torch excluded, miss hint.
 
 - `Godot --headless --path . --script res://tests/willow_equipment_test.gd` — no fixed shoulder bow, carry clearance, fresh/crafted/held/stored equipment visibility. Add `-- --screenshots` with graphics enabled for actual front/back/side captures using temporary saves.

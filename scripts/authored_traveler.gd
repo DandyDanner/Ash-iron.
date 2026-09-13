@@ -62,7 +62,10 @@ func build(owner_model: Node3D, design: int) -> void:
 		else:
 			host.right_hand = hand
 			host.open_right_fingers = fingers
-			host.tool_grip = host.joint(hand, "ToolGrip", Vector3(0, -.02, .045))
+			# Willow's new wrist pivot needs a deeper palm offset so the haft clears her
+			# shortened forearm. Keep the established socket for the legacy Rodin rigs.
+			var grip_position := Vector3(0, -.02, .08) if design == 0 else Vector3(0, -.02, .045)
+			host.tool_grip = host.joint(hand, "ToolGrip", grip_position)
 			host.tool_grip.rotation.x = 1.35
 			host.closed_right_fingers = host.gripping_fingers(host.tool_grip, host.skin_color)
 			host.closed_right_fingers.hide()

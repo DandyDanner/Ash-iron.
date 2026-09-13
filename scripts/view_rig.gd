@@ -112,9 +112,14 @@ func _sync_equipment() -> void:
 	held_bow.visible = player.equipped_item == "bow"
 	held_spear.visible = player.equipped_item == "stone_spear"
 	if held_spear.visible:
-		held_spear.position = Vector3(0.38, 1.27, 0.16 + player.axe.thrust_distance(player.axe.elapsed) * 0.5)
-		held_spear.global_basis = avatar.global_basis.orthonormalized() * Basis(Vector3.UP, PI) * Basis.from_scale(Vector3.ONE * avatar.scale.x)
-		avatar.reach_hand(1, held_spear.to_global(Vector3(-0.075, 0, 0)), Vector3(1, -0.4, 0))
+		var willow: bool = int(avatar.body.get_meta("traveler_design", -1)) == 0
+		held_spear.position = Vector3(0.34 if willow else 0.38, 1.27, 0.16 + player.axe.thrust_distance(player.axe.elapsed) * 0.5)
+		# Willow's broader wrist needs a slightly inboard, outward-angled shaft and a
+		# deeper palm target. Retain the established pose for every other traveler.
+		var spear_yaw := PI + (0.20 if willow else 0.0)
+		held_spear.global_basis = avatar.global_basis.orthonormalized() * Basis(Vector3.UP, spear_yaw) * Basis.from_scale(Vector3.ONE * avatar.scale.x)
+		var palm_offset := -0.080 if willow else -0.075
+		avatar.reach_hand(1, held_spear.to_global(Vector3(palm_offset, 0, 0)), Vector3(1, -0.4, 0))
 		avatar.right_hand.global_basis = held_spear.global_basis * Basis(Vector3.RIGHT, PI / 2)
 		avatar.open_right_fingers.hide()
 	avatar.left_hand.get_node("OpenFingers").visible = not held_bow.visible

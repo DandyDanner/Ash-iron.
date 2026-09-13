@@ -65,7 +65,7 @@ func run() -> void:
 			avatar.authored.sync()
 		camera.position = avatar.to_global(Vector3(1.4, 1.4, 3.4))
 		camera.look_at(avatar.to_global(Vector3(0, 1, 0)))
-		for item in ["stone_axe", "bow", ""]:
+		for item in ["stone_axe", "bow", "stone_spear", ""]:
 			if not item.is_empty():player.inventory.add(item, 1)
 			player.equip_item(item)
 			avatar.animate_movement(.01, 0, true, 0, item, -1, 0)

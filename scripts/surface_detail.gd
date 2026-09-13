@@ -35,6 +35,10 @@ static func refine(source: StandardMaterial3D, kind: String) -> StandardMaterial
 ## Rodin travelers arrive with painted UV1 maps. Treatments stay on the detail layer and
 ## triplanar UV2 so the albedo, face normal and roughness maps survive untouched.
 static func dress(source: StandardMaterial3D) -> StandardMaterial3D:
+	# Willow's replacement arrives with its final authored PBR response. Returning the
+	# shared resource also keeps all three skinned meshes on the same material identity.
+	if source.resource_name == "Willow Native PBR":
+		return source
 	# Blender numbers repeated names across the four figures ("Rodin Skin.001").
 	var name := source.resource_name.get_slice(".", 0)
 	var key := "dress:%s:%s" % [name, source.albedo_texture.get_rid() if source.albedo_texture else source.albedo_color.to_html()]

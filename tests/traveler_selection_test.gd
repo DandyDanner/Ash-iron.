@@ -54,7 +54,11 @@ func run() -> void:
 			check(mesh.skin.get_bind_count() == 14, "Mesh is not bound to the rig")
 			for surface in range(mesh.mesh.get_surface_count()):
 				var material: StandardMaterial3D = mesh.get_active_material(surface)
-				check(material.vertex_color_use_as_albedo, "Imported colors are disabled")
+				if design == 0:
+					check(material.resource_name == "Willow Native PBR", "Willow lost its native atlas material")
+					check(not material.vertex_color_use_as_albedo, "Willow native material unexpectedly requires vertex colors")
+				else:
+					check(material.vertex_color_use_as_albedo, "Imported colors are disabled")
 				check(material.albedo_texture != null, "Rodin surface lost its painted texture")
 				if material.albedo_texture != null:
 					check(material.albedo_texture.get_width() == (1024 if material.resource_name.begins_with("Rodin Face") else 2048), "Rodin atlas detail was lost during import")
