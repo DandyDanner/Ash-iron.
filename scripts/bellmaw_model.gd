@@ -25,6 +25,16 @@ var swipe_marker: MeshInstance3D
 var dust: Node3D
 var dust_puffs: Array[MeshInstance3D] = []
 var dust_material: StandardMaterial3D
+var blink_meshes: Array[MeshInstance3D] = []
+var blink_indices: Array[int] = []
+var blink_amount := 0.0
+var blink_clock := 0.0
+var next_blink := 3.4
+var blink_number := 0
+var previous_pose: Array[Transform3D] = []
+var transition_pose: Array[Transform3D] = []
+var previous_walking := false
+var transition_time := .18
 
 func _ready() -> void:
 	body = M.joint(self, "Body", Vector3.ZERO)
@@ -57,6 +67,11 @@ func _ready() -> void:
 				material.vertex_color_use_as_albedo = true
 				material.vertex_color_is_srgb = false
 				mesh.set_surface_override_material(surface, material)
+	for mesh: MeshInstance3D in imported.find_children("*", "MeshInstance3D", true, false):
+		var index := mesh.find_blend_shape_by_name("Blink")
+		if index >= 0:
+			blink_meshes.append(mesh)
+			blink_indices.append(index)
 	# Combat state drives the rig; stop optional source clips to avoid competing poses.
 	for animation in imported.find_children("*", "AnimationPlayer", true, false):
 		animation.stop()
@@ -88,11 +103,12 @@ func _ready() -> void:
 
 func pose(delta: float, speed: float, state: String, state_time: float, hit_flash: float) -> void:
 	elapsed += delta
-	var walking := state in ["approach", "return"] and speed > .05
+	var walking := state in ["approach", "return", "roam"] and speed > .05
 	stride = move_toward(stride, minf(speed / 3.3, 1.0) if walking else 0.0, delta * 7.0)
 	# Warning plants the feet immediately so the attack remains readable.
 	if not walking: stride = 0.0
-	gait += delta * maxf(speed, .2) * 2.1
+	# Advance by distance: slow patrol steps stay slow, blocked movement stops the gait.
+	gait += delta * speed / 2.25 * TAU
 	var inflation := clampf(state_time / 1.2, 0, 1) if state == "warn" else 0.0
 	if state == "recover": inflation = exp(-state_time * 8.0)
 	throat.scale = Vector3(1 + inflation * .20, 1 + inflation * .22, 1 + inflation * .25)
@@ -101,14 +117,21 @@ func pose(delta: float, speed: float, state: String, state_time: float, hit_flas
 	head.rotation = Vector3.ZERO
 	spine.position.y = .83 + sin(elapsed * PI) * .012 + absf(sin(gait)) * stride * .015
 	head.rotation.x = -.045 * inflation + hit_flash * .08
+	if state == "idle":
+		head.rotation.y = sin(elapsed * .47) * .04
 	if state == "recover": head.rotation.x += .08 * sin(clampf(state_time / 1.25, 0, 1) * PI)
 	for i in range(limbs.size()):
-		var wave := sin(gait + (PI if i in [1, 2] else 0)) * stride
 		limbs[i].position = limb_rest[i]
-		limbs[i].rotation = Vector3(wave * .16, 0, 0)
-		knees[i].rotation.x = -wave * .12
-		feet[i].rotation.x = -wave * .04
+		limbs[i].rotation = Vector3.ZERO
+		knees[i].rotation = Vector3.ZERO
+		feet[i].rotation = Vector3.ZERO
+	if walking:
+		_pose_walk()
+	else:
+		for i in range(4): _plant_limb(i)
+	_pose_blink(delta, state)
 	_pose_attack(state, state_time)
+	_blend_locomotion_transition(delta, walking)
 	_pose_effects(state, state_time)
 	for i in range(controls.size()):
 		var desired := skeleton.global_transform.affine_inverse() * controls[i].global_transform * inverse_bind[i] * bone_rest[i]
@@ -118,20 +141,102 @@ func pose(delta: float, speed: float, state: String, state_time: float, hit_flas
 		pulse.scale = Vector3(boom_radius, 1, boom_radius)
 		pulse.material_override.albedo_color.a = (.25 + inflation * .4) if state == "warn" else (1 - state_time / .45) * .65
 
-func _plant_limb(index: int, knee_bend: float = 0.0) -> void:
-	# Counter torso motion at the shoulder/hip so weight-bearing paws stay in place.
-	var side := -1.0 if index < 2 else 1.0
-	var z := .68 if index in [0, 2] else -.87
-	var foot_z := .81 if index in [0, 2] else -.74
-	var anchor := body.to_global(Vector3(side * .84, .085, foot_z))
-	limbs[index].position = spine.transform.affine_inverse() * Vector3(side * .64, .83, z)
-	limbs[index].quaternion = spine.quaternion.inverse()
-	knees[index].rotation = Vector3.ZERO
-	feet[index].rotation = Vector3.ZERO
-	if knee_bend > 0:
-		knees[index].rotation.x = knee_bend
-		feet[index].rotation.x = -knee_bend * .45
-	limbs[index].global_position += anchor - feet[index].global_position
+func _blend_locomotion_transition(delta: float, walking: bool) -> void:
+	# Blend the solved joint pose when starting/stopping, including walking into
+	# a warning. This also eases the torso height instead of snapping it down.
+	# Zero-delta poses are explicit preview/test seeks to the requested pose.
+	if delta <= 0:
+		transition_time = .18
+	elif walking != previous_walking and not previous_pose.is_empty():
+		transition_pose = previous_pose.duplicate()
+		transition_time = 0
+	transition_time = minf(.18, transition_time + delta)
+	if transition_time < .18 and not transition_pose.is_empty():
+		var blend := smoothstep(0, .18, transition_time)
+		for i in range(controls.size()):
+			if controls[i] == body: continue # Runtime owns creature scale and placement.
+			controls[i].transform = transition_pose[i].interpolate_with(controls[i].transform, blend)
+	previous_walking = walking
+	previous_pose.clear()
+	for control in controls: previous_pose.append(control.transform)
+
+func _foot_rest(index: int) -> Vector3:
+	return Vector3(-.84 if index < 2 else .84, .085, .81 if index in [0, 2] else -.74)
+
+func _solve_limb(index: int, target: Vector3) -> void:
+	# Analytic two-bone solve in body space. Keep the shoulder attached to the
+	# torso and bend the elbow instead of translating the entire leg to its goal.
+	var upper := limbs[index]
+	var lower := knees[index]
+	var foot := feet[index]
+	upper.position = limb_rest[index]
+	upper.quaternion = Quaternion.IDENTITY
+	lower.quaternion = Quaternion.IDENTITY
+	foot.quaternion = Quaternion.IDENTITY
+	var shoulder := body.to_local(upper.global_position)
+	var rest_elbow := body.to_local(lower.global_position)
+	var reach := target - shoulder
+	var first_length := lower.position.length()
+	var second_length := foot.position.length()
+	var distance := clampf(reach.length(), absf(first_length - second_length) + .0001, first_length + second_length - .0001)
+	var direction := reach.normalized() if reach.length() > .0001 else Vector3.DOWN
+	var along := (first_length * first_length - second_length * second_length + distance * distance) / (2 * distance)
+	var height := sqrt(maxf(0, first_length * first_length - along * along))
+	# Keep the elbow bending in the source model's anatomical plane, using
+	# its rest elbow offset as a stable bend direction throughout the paw arc.
+	var rest_direction := (body.to_local(foot.global_position) - shoulder).normalized()
+	var pole := (rest_elbow - shoulder).slide(rest_direction).normalized()
+	var perpendicular := pole - direction * pole.dot(direction)
+	if perpendicular.length_squared() < .00001:
+		perpendicular = (rest_elbow - shoulder).slide(direction)
+	var elbow := shoulder + direction * along + perpendicular.normalized() * height
+	var desired_upper: Vector3 = upper.get_parent().to_local(body.to_global(elbow)) - upper.position
+	upper.quaternion = Quaternion(lower.position.normalized(), desired_upper.normalized())
+	var reached := shoulder + direction * distance
+	var desired_lower := upper.to_local(body.to_global(reached)) - lower.position
+	lower.quaternion = Quaternion(foot.position.normalized(), desired_lower.normalized())
+	# Paws stay level instead of rolling sideways with the shoulder swing.
+	foot.quaternion = (body.global_basis.orthonormalized().inverse() * lower.global_basis.orthonormalized()).get_rotation_quaternion().inverse()
+
+func _plant_limb(index: int, _knee_bend: float = 0.0) -> void:
+	_solve_limb(index, _foot_rest(index))
+
+func _pose_walk() -> void:
+	# Four-beat walk: each paw swings for one quarter of a cycle, leaving three
+	# supporting paws. The stance moves back at the creature's forward speed.
+	var offsets := [0.0, .75, .5, .25]
+	spine.position.y = .745 + sin(gait * 2) * .008
+	var length := 2.25 / maxf(body.scale.x, 1.0)
+	var travel := length * .75
+	for i in range(4):
+		var phase := fposmod(gait / TAU + offsets[i], 1.0)
+		var target := _foot_rest(i)
+		if phase < .75:
+			target.z += lerpf(travel * .5, -travel * .5, phase / .75)
+		else:
+			var swing := (phase - .75) / .25
+			target.z += lerpf(-travel * .5, travel * .5, smoothstep(0, 1, swing))
+			target.y += sin(swing * PI) * .11
+		# Approach/return use the same planted cadence as a calm patrol.
+		_solve_limb(i, target)
+	head.rotation.y += sin(gait * .5) * .025
+	head.rotation.x += sin(gait) * .018
+
+func _pose_blink(delta: float, state: String) -> void:
+	blink_clock += delta
+	# Avoid closing the eyes during a warning or hit; blinks resume naturally later.
+	if state in ["warn", "swipe_warn", "swipe", "dead"]:
+		blink_clock = minf(blink_clock, next_blink - .01)
+		blink_amount = 0.0
+	else:
+		var time := blink_clock - next_blink
+		blink_amount = smoothstep(0, .07, time) * (1.0 - smoothstep(.10, .23, time))
+		if time >= .23:
+			blink_number += 1
+			blink_clock = 0.0
+			next_blink = 3.2 + fposmod(float(blink_number) * 1.618, 2.8)
+	for i in range(blink_meshes.size()):
+		blink_meshes[i].set_blend_shape_value(blink_indices[i], blink_amount)
 
 func _pose_attack(state: String, time: float) -> void:
 	if state == "warn":
@@ -172,23 +277,25 @@ func _pose_attack(state: String, time: float) -> void:
 		var release := 1.0 - smoothstep(.10, .92, time) if state == "swipe_recover" else 1.0
 		if state == "swipe_recover": sweep = 1.0
 		var weight := windup * release
-		spine.position.x = -swipe_side * .075 * weight
-		spine.position.y -= .03 * weight
-		spine.rotation.z = swipe_side * .075 * weight
-		spine.rotation.y = swipe_side * lerpf(-.07, .11, sweep) * weight
-		head.rotation.y = swipe_side * lerpf(-.14, .19, sweep) * weight
-		head.rotation.z = -swipe_side * .035 * weight
+		spine.position.x = -swipe_side * .045 * weight
+		spine.position.y -= .085 * weight
+		spine.rotation.z = swipe_side * .035 * weight
+		spine.rotation.y = swipe_side * lerpf(-.04, .07, sweep) * weight
+		head.rotation.y = swipe_side * lerpf(-.10, .12, sweep) * weight
 		for i in range(4):
-			if i != active:
-				var support_bend := .11 if i == (3 if active == 0 else 1) else .055
-				_plant_limb(i, support_bend * weight)
-		limbs[active].rotation.x = lerpf(-.92, -.20, sweep) * weight
-		limbs[active].rotation.z = swipe_side * lerpf(.60, -.72, sweep) * weight
-		limbs[active].position.x += swipe_side * (.045 + .10 * sin(sweep * PI)) * weight
-		limbs[active].position.y += lerpf(.19, .035, sweep) * weight
-		limbs[active].position.z += lerpf(-.08, .16, sweep) * weight
-		knees[active].rotation.x = lerpf(.72, .16, sweep) * weight
-		feet[active].rotation.x = lerpf(.14, -.06, sweep) * weight
+			if i != active: _plant_limb(i)
+		# Lift beside the chest, sweep forwards/inwards, then settle the paw back.
+		# The shoulder never leaves its socket; the elbow solves the whole arc.
+		var raised := Vector3(swipe_side * 1.10, .43, .69)
+		var follow := Vector3(swipe_side * .34, .23, 1.11)
+		var target := raised.lerp(follow, sweep)
+		target.z += sin(sweep * PI) * .17
+		target.y += sin(sweep * PI) * .045
+		target = _foot_rest(active).lerp(target, weight)
+		_solve_limb(active, target)
+		# An airborne paw follows the forearm; forcing a flat planted wrist here
+		# over-flexes the carpal joint and collapses the generated skin.
+		feet[active].quaternion = feet[active].quaternion.slerp(Quaternion.IDENTITY, .65 * weight)
 
 func _make_attack_effects() -> void:
 	swipe_marker = MeshInstance3D.new()

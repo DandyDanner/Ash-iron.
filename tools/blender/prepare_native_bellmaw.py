@@ -1,8 +1,9 @@
 """Prepare the single native-PBR Bellmaw for the existing sixteen combat controls.
 Run in Blender: --background --factory-startup --python tools/blender/prepare_native_bellmaw.py
-Source shape/UVs/textures remain intact apart from uniform grounding and seam welding.
+Source shape/UVs/textures remain intact apart from uniform grounding, seam welding,
+and the optional Blink shape key at nonzero values.
 """
-import bpy, bmesh, json, hashlib
+import bpy, bmesh, json, hashlib, heapq
 import numpy as np
 from pathlib import Path
 from mathutils import Vector
@@ -60,18 +61,82 @@ x,y,z = P.T
 def smooth(t):
     t = np.clip(t,0,1)
     return t*t*(3-2*t)
+def segment_distance(samples, start, end):
+    start = np.asarray(start, dtype=float)
+    delta = np.asarray(end, dtype=float) - start
+    t = np.clip(((samples-start)@delta)/(delta@delta),0,1)
+    return np.linalg.norm(samples-(start+t[:,None]*delta),axis=1)
+adjacency = [[] for _ in obj.data.vertices]
+for edge in obj.data.edges:
+    a,b = edge.vertices
+    length = float(np.linalg.norm(P[a]-P[b]))
+    adjacency[a].append((b,length))
+    adjacency[b].append((a,length))
+def surface_distance(seeds):
+    distances = np.full(len(P),np.inf)
+    queue = []
+    for seed in seeds:
+        distances[seed] = 0
+        heapq.heappush(queue,(0,int(seed)))
+    while queue:
+        distance,vertex = heapq.heappop(queue)
+        if distance != distances[vertex]:
+            continue
+        for neighbor,length in adjacency[vertex]:
+            candidate = distance+length
+            if candidate < distances[neighbor]:
+                distances[neighbor] = candidate
+                heapq.heappush(queue,(candidate,neighbor))
+    return distances
+body_distance = surface_distance(np.nonzero(np.abs(x) < .26)[0])
+anatomical_fields = {}
+for side,sign in [('L',-1),('R',1)]:
+    for end in ['Front','Rear']:
+        key = end+side
+        end_seed = y < .08 if end == 'Front' else y >= .08
+        seeds = np.nonzero((x*sign > .70)&end_seed&(z < .68))[0]
+        limb_distance = surface_distance(seeds)
+        finite = np.isfinite(body_distance)&np.isfinite(limb_distance)
+        ownership = np.ones(len(P))
+        ownership[finite] = smooth((body_distance[finite]-limb_distance[finite]+.05)/.30)
+        anatomical_fields[key] = ownership
 weights = np.zeros((len(P),len(bones)))
 for side, sign in [('L',-1), ('R',1)]:
     for end in ['Front','Rear']:
         key = end+side
-        domain = (x*sign >= 0) & ((y < .1) if end == 'Front' else (y >= .1))
-        limb = smooth((np.abs(x)-.36)/.26)*smooth((1.07-z)/.43)
-        limb *= smooth((y-.16)/.33) if end == 'Rear' else 1-smooth((y+.40)/.40)
-        lower = 1-smooth((z-.26)/.33)
-        foot = 1-smooth((z-.10)/.17)
-        weights[domain,index[key+'Upper']] = (limb*(1-lower))[domain]
-        weights[domain,index[key+'Lower']] = (limb*lower*(1-foot))[domain]
-        weights[domain,index[key+'Foot']] = (limb*lower*foot)[domain]
+        upper = np.asarray(points[key+'Upper'])
+        lower = np.asarray(points[key+'Lower'])
+        foot = np.asarray(points[key+'Foot'])
+        toe = foot + np.asarray((0,-.16 if end == 'Front' else .28,0))
+        centerline = np.minimum.reduce((
+            segment_distance(P,upper,lower),
+            segment_distance(P,lower,foot),
+            segment_distance(P,foot,toe),
+        ))
+        # The source's legs are thick, but each remains a distinct anatomical
+        # column. Bound the field around that column before blending it into the
+        # torso so moving one shoulder cannot drag the chest or opposite quarter.
+        radial = 1-smooth((centerline-.18)/.24)
+        lateral = smooth((x*sign-.32)/.30)
+        height = 1-smooth((z-.79)/.25)
+        end_gate = (1-smooth((y+.04)/.32)) if end == 'Front' else smooth((y-.02)/.32)
+        ownership = anatomical_fields[key]
+        limb = np.clip(radial*lateral*height*end_gate*ownership,0,1)
+        # Bellmaw's palms and low forearms flare beyond their joint centerlines
+        # and overlap the throat in XYZ space. Surface distance distinguishes
+        # the true limb shell from the nearby body, then gives that distal shell
+        # full ownership below the wrist. The ramp fades through the forearm and
+        # does not alter the soft shoulder transition.
+        side_gate = smooth((x*sign-.30)/.14)
+        distal_ownership = (1-smooth((z-.54)/.18))*smooth((ownership-.25)/.45)*side_gate*end_gate
+        limb = np.maximum(limb,distal_ownership)
+        foot_share = 1-smooth((z-.10)/.15)
+        upper_share = smooth((z-.32)/.25)
+        lower_share = np.maximum(0,1-foot_share-upper_share)
+        shares = foot_share+lower_share+upper_share
+        weights[:,index[key+'Upper']] = limb*upper_share/shares
+        weights[:,index[key+'Lower']] = limb*lower_share/shares
+        weights[:,index[key+'Foot']] = limb*foot_share/shares
 limb = weights.sum(1)
 head = (1-smooth((y+.68)/.56))*(1-limb)
 throat = (1-smooth((y+1.04)/.42))*(1-smooth((z-.74)/.22))*(1-smooth((np.abs(x)-.40)/.18))
@@ -79,20 +144,12 @@ throat = np.minimum(throat, 1-limb)
 weights[:,index['Throat']] = throat
 weights[:,index['Head']] = np.maximum(0,head-throat)
 weights[:,index['Spine']] = np.maximum(0,1-weights.sum(1))
-# Feet must not tear under planted impacts; face follows the head, not the throat.
+# The face follows the head rigidly. Weight fields are already continuous in
+# model space, so topology diffusion is intentionally omitted: diffusion was
+# pulling shoulder influence into the torso and across the front/rear boundary.
 face = (y < -.40) & (z > .96) & (np.abs(x) < .46)
 weights[face] = 0
 weights[face,index['Head']] = 1
-edges = np.array([tuple(e.vertices) for e in obj.data.edges])
-a,b = edges.T
-counts = np.bincount(np.r_[a,b], minlength=len(P))
-for _ in range(6):
-    previous = weights.copy()
-    for j in range(len(bones)):
-        average = np.bincount(np.r_[a,b], weights=np.r_[previous[b,j],previous[a,j]], minlength=len(P))/np.maximum(counts,1)
-        weights[:,j] = .6*previous[:,j] + .4*average
-    weights[face] = 0
-    weights[face,index['Head']] = 1
 order = np.argsort(weights,axis=1)[:,:-4]
 np.put_along_axis(weights,order,0,axis=1)
 weights /= weights.sum(1)[:,None]
@@ -100,6 +157,27 @@ for j,name in enumerate(bones):
     group = obj.vertex_groups.new(name=name)
     for i in np.nonzero(weights[:,j] > 1e-6)[0]:
         group.add([int(i)],float(weights[i,j]),'REPLACE')
+# The sculpt includes asymmetric upper/lower lid folds around both eyes. Closing
+# those native folds produces a subtle blink without overlay geometry, eyeball
+# scaling, repainting, or any change to the neutral Basis geometry.
+obj.shape_key_add(name='Basis')
+blink = obj.shape_key_add(name='Blink')
+blink_displacements = []
+for i,vertex in enumerate(obj.data.vertices):
+    p = vertex.co
+    eye_x,eye_y,eye_z,seam_z = ((.302,-.895,1.122,1.117) if p.x >= 0 else (-.225,-.930,1.108,1.103))
+    dx,dy,dz = abs(p.x-eye_x),abs(p.y-eye_y),abs(p.z-eye_z)
+    lid_distance = (dx/.105)**2+(dy/.078)**2+(dz/.086)**2
+    if lid_distance >= 1:
+        continue
+    lid = (1-lid_distance)**2
+    inner_distance = (dx/.078)**2+(dy/.060)**2+(dz/.061)**2
+    inner = max(0,1-inner_distance)**2
+    target = blink.data[i].co
+    target.z += (seam_z-p.z)*.88*lid
+    target.y += .026*inner
+    blink_displacements.append(float((target-p).length))
+blink.value = 0
 armdata = bpy.data.armatures.new('BellmawRig')
 arm = bpy.data.objects.new('BellmawRig',armdata)
 bpy.context.scene.collection.objects.link(arm)
@@ -118,8 +196,20 @@ obj.parent = arm
 obj.select_set(True)
 arm['generation_id'] = '2d8dcd9c-7db7-44a1-9aa5-14fd5802c9d1'
 path = R/'assets/creatures/bellmaw.glb'
-bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_animations=False,export_skins=True,export_all_influences=False,export_yup=True,export_extras=True)
+bpy.ops.export_scene.gltf(filepath=str(path),export_format='GLB',use_selection=True,export_animations=False,export_skins=True,export_all_influences=False,export_yup=True,export_extras=True,export_morph=True,export_morph_normal=True,export_morph_tangent=False)
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'bellmaw.blend'))
-report = {'source_sha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),'generation_id':arm['generation_id'],'height_m':1.34,'runtime_scale':4,'source_center':center.tolist(),'uniform_scale':float(scale),'triangles':sum(len(p.vertices)-2 for p in obj.data.polygons),'bones':bones,'pivots_blender':points,'welded_seam_vertices':before_weld-len(P),'material':material.name,'textures':textures,'max_weights':int((weights>1e-6).sum(1).max()),'shape_changes':'Uniform normalization and coincident seam welding only; no remesh, decimation or repaint.','limitations':['Procedural combat-driven poses, no baked animation clips','No terrain foot IK or independent toes','Generated topology and broad shoulder weights need further polish'],'bytes':path.stat().st_size}
+weight_extents = {}
+distal_residuals = {}
+for end in ['Front','Rear']:
+    for side in ['L','R']:
+        key = end+side
+        mask = weights[:,index[key+'Upper']] > .1
+        weight_extents[key+'Upper'] = {'vertices_over_10pct':int(mask.sum()),'bounds_over_10pct':[P[mask].min(0).tolist(),P[mask].max(0).tolist()]}
+        limb_indices = [index[key+'Upper'],index[key+'Lower'],index[key+'Foot']]
+        end_region = y < -.04 if end == 'Front' else y >= .30
+        distal = (anatomical_fields[key] > .95)&(z < .54)&(x*(-1 if side == 'L' else 1) > .44)&end_region
+        residual = 1-weights[:,limb_indices].sum(1)
+        distal_residuals[key] = {'region':'geodesic ownership > 0.95, z < 0.54 m, signed x > 0.44 m, inside the fully gated front/rear quarter','vertices':int(distal.sum()),'min_limb_weight':float(weights[:,limb_indices].sum(1)[distal].min()),'max_spine_weight':float(weights[distal,index['Spine']].max()),'max_head_or_throat_weight':float(weights[distal][:,[index['Head'],index['Throat']]].sum(1).max()),'max_non_limb_weight':float(residual[distal].max())}
+report = {'source_sha256':hashlib.sha256(SOURCE.read_bytes()).hexdigest(),'generation_id':arm['generation_id'],'height_m':1.34,'runtime_scale':4,'source_center':center.tolist(),'uniform_scale':float(scale),'triangles':sum(len(p.vertices)-2 for p in obj.data.polygons),'bones':bones,'pivots_blender':points,'welded_seam_vertices':before_weld-len(P),'material':material.name,'textures':textures,'max_weights':int((weights>1e-6).sum(1).max()),'weighting':{'method':'Surface-geodesic anatomical ownership gating with bounded shoulder-elbow-paw fields','topology_smoothing_passes':0,'distal_ownership':'Front paw and forearm shells are fully limb-owned below 0.54 m; geodesic body seeds exclude nearby throat geometry and the ramp fades through the upper forearm to the shoulder. Rear limbs retain their softer gait-oriented boundary.','distal_residuals':distal_residuals,'upper_limb_extents':weight_extents},'morphs':{'Blink':{'interface':'0 = unchanged native open eyes; 1 = locally closed native lids','moved_vertices':len(blink_displacements),'max_displacement_m':max(blink_displacements),'mean_displacement_m':sum(blink_displacements)/len(blink_displacements),'neutral_basis_unchanged':True}},'shape_changes':'Uniform normalization and coincident seam welding; Blink changes only the existing local eye/lid vertices at nonzero values. No remesh, decimation or repaint.','limitations':['Procedural combat-driven poses, no baked animation clips','No terrain foot IK or independent toes','Blink is a local sculpted lid closure; no gaze, pupil or independent eyelid controls'],'bytes':path.stat().st_size}
 (OUT/'report.json').write_text(json.dumps(report,indent=2)+'\n')
 print('BELLMAW NATIVE READY',json.dumps(report),flush=True)

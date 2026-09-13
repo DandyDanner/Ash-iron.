@@ -165,11 +165,17 @@ The [concept sheet](docs/art/bellmaw-concept-v1.png) is an art target; [actual G
 
 The [actual crafting and Bellmaw review](docs/art/COPPERWORKING_REVIEW.md) shows the unlock menu, copper furnace/axe and expanded warning ring.
 
+## Bellmaw movement
+
+Bellmaw now takes short, slow patrols around home with a four-beat walking cycle and native eyelid blinks. Its swipe keeps the shoulder anchored, bends at the elbow and settles back onto the ground. Attack timing, damage and warning sectors remain. See [motion review and captures](docs/art/BELLMAW_MOTION_REVIEW.md).
+
 ## Equipment and crafting-station art
 
 The stone axe, copper axe, pickaxe, spear, bow and arrows use prepared Rodin models in both camera views and their carried/dropped forms. The bow has a bend rig with strings attached to its moving tips. The workbench and furnace also use textured models; the Copperworking kit remains an earned visible upgrade, and the furnace lights only while smelting. The existing chest is unchanged. See [actual captures, sources and preparation details](docs/art/EQUIPMENT_RODIN_REVIEW.md).
 
 ## Verification
+
+- `Godot --headless --path . --script res://tests/bellmaw_motion_test.gd` — anchored swipes, planted gait, native blinking and home patrol behavior.
 
 - `Godot --headless --path . --script res://tests/native_equipment_test.gd` — native weapon materials, grip/point landmarks and bow/string attachment.
 - `Godot --headless --path . --script res://tests/native_stations_test.gd` — station materials, footprints, copper upgrade and cold/burning furnace state.

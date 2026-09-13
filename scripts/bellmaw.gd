@@ -11,6 +11,9 @@ const BOOM_RADIUS := Attacks.SLAM_RADIUS
 const WARNING_TIME := Attacks.SLAM_WARNING
 const RECOVERY_TIME := 1.25
 const LEASH_RADIUS := 12.0
+const ROAM_SPEED := 1.15
+const ROAM_RADIUS := 3.0
+const ROAM_PAUSE := 4.0
 var respawn := preload("res://scripts/enemy_respawn.gd").new()
 var health := MAX_HEALTH
 var state := "idle"
@@ -29,6 +32,8 @@ var swipe_side := 1.0
 var swipe_hit_sent := false
 var swipe_warning_sound: AudioStreamWAV
 var swipe_sound: AudioStreamWAV
+var roam_step := 0
+var roam_target := HOME
 
 func _ready() -> void:
 	add_to_group("enemies")
@@ -77,13 +82,36 @@ func _physics_process(delta: float) -> void:
 	var offset: Vector3 = player.global_position - global_position
 	offset.y = 0
 	var distance := offset.length()
-	if state != "return" and (global_position.distance_to(HOME) > LEASH_RADIUS or player.global_position.distance_to(HOME) > LEASH_RADIUS + 2 or player.global_position.distance_to(player.spawn_position) < 6):
+	if state not in ["idle", "roam", "return"] and (global_position.distance_to(HOME) > LEASH_RADIUS or player.global_position.distance_to(HOME) > LEASH_RADIUS + 2 or player.global_position.distance_to(player.spawn_position) < 6):
 		_set_state("return")
 	var direction := Vector3.ZERO
 	var speed := 0.0
 	match state:
 		"idle":
-			if distance < 9 and _sees_player(): _set_state("approach")
+			if _notices_player(distance):
+				_set_state("approach")
+			elif state_time >= ROAM_PAUSE:
+				var angle := float(roam_step) * 2.399963 + .6
+				roam_step += 1
+				roam_target = HOME + Vector3(cos(angle), 0, sin(angle)) * ROAM_RADIUS
+				_set_state("roam")
+		"roam":
+			if _notices_player(distance):
+				_set_state("approach")
+			else:
+				var route := roam_target - global_position
+				route.y = 0
+				if route.length() < .45 or state_time > 7.0:
+					_set_state("idle")
+				elif Vector2(global_position.x - HOME.x, global_position.z - HOME.z).length() > ROAM_RADIUS + .7:
+					roam_target = HOME
+					direction = HOME - global_position
+					direction.y = 0
+					direction = direction.normalized()
+					speed = ROAM_SPEED
+				else:
+					direction = route.normalized()
+					speed = ROAM_SPEED
 		"approach":
 			direction = offset.normalized()
 			speed = 3.3
@@ -121,13 +149,21 @@ func _physics_process(delta: float) -> void:
 	if speed > 0:
 		direction = _clear_direction(direction)
 		if direction.length_squared() > 0.1:
-			rotation.y = lerp_angle(rotation.y, atan2(direction.x, direction.z), minf(1, delta * 7))
+			rotation.y = lerp_angle(rotation.y, atan2(direction.x, direction.z), minf(1, delta * (1.6 if state == "roam" else 7.0)))
+			if state == "roam":
+				var forward := Vector3(sin(rotation.y), 0, cos(rotation.y))
+				speed *= maxf(0, forward.dot(direction))
+				direction = forward
 	velocity.x = direction.x * speed
 	velocity.z = direction.z * speed
 	velocity.y = -0.5 if is_on_floor() else velocity.y - 9.8 * delta
 	move_and_slide()
-	art.pose(delta, Vector2(velocity.x, velocity.z).length(), state, state_time, hit_flash)
+	var traveled := get_position_delta() / maxf(delta, .0001)
+	art.pose(delta, Vector2(traveled.x, traveled.z).length(), state, state_time, hit_flash)
 	_refresh()
+
+func _notices_player(distance: float) -> bool:
+	return distance < 9 and player.global_position.distance_to(HOME) <= LEASH_RADIUS + 2 and player.global_position.distance_to(player.spawn_position) >= 6 and _sees_player()
 
 func _clear_direction(desired: Vector3) -> Vector3:
 	for angle in [0.0, 0.8, -0.8, 1.4, -1.4]:
@@ -211,7 +247,7 @@ func _take_hit(damage: int) -> String:
 		drop.amount = 1
 		get_parent().add_child(drop)
 		drop.global_position = global_position + Vector3.UP * 0.05
-	elif state == "idle":
+	elif state in ["idle", "roam"]:
 		_set_state("approach")
 	_refresh()
 	get_parent().mark_dirty()
@@ -227,6 +263,8 @@ func restore(data: Dictionary) -> void:
 	swipe_ready = false
 	swipe_cooldown = 0
 	swipe_side = 1
+	roam_step = 0
+	roam_target = HOME
 	art.swipe_side = swipe_side
 	global_position = HOME
 	velocity = Vector3.ZERO

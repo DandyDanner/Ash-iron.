@@ -136,11 +136,121 @@
     }
   },
   "max_weights": 4,
-  "shape_changes": "Uniform normalization and coincident seam welding only; no remesh, decimation or repaint.",
+  "weighting": {
+    "method": "Surface-geodesic anatomical ownership gating with bounded shoulder-elbow-paw fields",
+    "topology_smoothing_passes": 0,
+    "distal_ownership": "Front paw and forearm shells are fully limb-owned below 0.54 m; geodesic body seeds exclude nearby throat geometry and the ramp fades through the upper forearm to the shoulder. Rear limbs retain their softer gait-oriented boundary.",
+    "distal_residuals": {
+      "FrontL": {
+        "region": "geodesic ownership > 0.95, z < 0.54 m, signed x > 0.44 m, inside the fully gated front/rear quarter",
+        "vertices": 2031,
+        "min_limb_weight": 1.0,
+        "max_spine_weight": 0.0,
+        "max_head_or_throat_weight": 0.0,
+        "max_non_limb_weight": 0.0
+      },
+      "FrontR": {
+        "region": "geodesic ownership > 0.95, z < 0.54 m, signed x > 0.44 m, inside the fully gated front/rear quarter",
+        "vertices": 2267,
+        "min_limb_weight": 1.0,
+        "max_spine_weight": 0.0,
+        "max_head_or_throat_weight": 0.0,
+        "max_non_limb_weight": 0.0
+      },
+      "RearL": {
+        "region": "geodesic ownership > 0.95, z < 0.54 m, signed x > 0.44 m, inside the fully gated front/rear quarter",
+        "vertices": 1982,
+        "min_limb_weight": 0.9628666722325003,
+        "max_spine_weight": 0.03713332776749967,
+        "max_head_or_throat_weight": 0.0,
+        "max_non_limb_weight": 0.03713332776749967
+      },
+      "RearR": {
+        "region": "geodesic ownership > 0.95, z < 0.54 m, signed x > 0.44 m, inside the fully gated front/rear quarter",
+        "vertices": 1413,
+        "min_limb_weight": 0.97635208151036,
+        "max_spine_weight": 0.023647918489639985,
+        "max_head_or_throat_weight": 0.0,
+        "max_non_limb_weight": 0.023647918489639985
+      }
+    },
+    "upper_limb_extents": {
+      "FrontLUpper": {
+        "vertices_over_10pct": 1064,
+        "bounds_over_10pct": [
+          [
+            -0.8707262992561234,
+            -0.5917477265756398,
+            0.3698203111043888
+          ],
+          [
+            -0.4742340327329291,
+            0.06143214043156302,
+            0.892798432238809
+          ]
+        ]
+      },
+      "FrontRUpper": {
+        "vertices_over_10pct": 1000,
+        "bounds_over_10pct": [
+          [
+            0.4785763080195086,
+            -0.49371015819595604,
+            0.369348300113924
+          ],
+          [
+            0.7947437152203148,
+            0.019390382268975256,
+            0.840329878256356
+          ]
+        ]
+      },
+      "RearLUpper": {
+        "vertices_over_10pct": 1145,
+        "bounds_over_10pct": [
+          [
+            -0.7998842843432011,
+            0.11553129708212977,
+            0.3692624863493422
+          ],
+          [
+            -0.40856674307945356,
+            1.0623602208457341,
+            0.8875893391312115
+          ]
+        ]
+      },
+      "RearRUpper": {
+        "vertices_over_10pct": 658,
+        "bounds_over_10pct": [
+          [
+            0.4708184896474086,
+            0.20443781514481493,
+            0.3700348455158432
+          ],
+          [
+            0.7091927552925791,
+            1.0591249148940474,
+            0.7720194399691259
+          ]
+        ]
+      }
+    }
+  },
+  "morphs": {
+    "Blink": {
+      "interface": "0 = unchanged native open eyes; 1 = locally closed native lids",
+      "moved_vertices": 343,
+      "max_displacement_m": 0.027834558058528143,
+      "mean_displacement_m": 0.010546972012991365,
+      "neutral_basis_unchanged": true
+    }
+  },
+  "shape_changes": "Uniform normalization and coincident seam welding; Blink changes only the existing local eye/lid vertices at nonzero values. No remesh, decimation or repaint.",
   "limitations": [
     "Procedural combat-driven poses, no baked animation clips",
     "No terrain foot IK or independent toes",
-    "Generated topology and broad shoulder weights need further polish"
+    "Blink is a local sculpted lid closure; no gaze, pupil or independent eyelid controls"
   ],
-  "bytes": 14446936
+  "bytes": 14574956
 }

@@ -72,6 +72,8 @@ func run() -> void:
 	check(sk.get_bone_global_pose(throat).basis.determinant() > neutral.basis.determinant() * 1.4, "Warning did not inflate the skinned throat")
 	check(art.limbs[0].rotation.is_zero_approx(), "Warning did not plant the feet")
 	check(art.pulse.visible and art.pulse.scale.x == 7, "Seven-meter warning ring changed")
+	# Compare recovery at the same idle phase; the head now looks around over time.
+	art.elapsed = 0
 	art.pose(0, 0, "idle", 0, 0)
 	sk.force_update_all_bone_transforms()
 	check(sk.get_bone_global_pose(throat).basis.is_equal_approx(neutral.basis), "Idle retained warning deformation")
