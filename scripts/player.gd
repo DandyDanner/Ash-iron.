@@ -971,7 +971,12 @@ func update_first_person_hands() -> void:
 			var nock: Vector3 = bow.nocked.position + Vector3(0,0,.39)
 			axe.hand.global_position = bow.to_global(nock)
 	elif equipped_item == "stone_spear":
-		axe.hand.rotation.x = PI / 2
+		# Index/thumb end faces the point; the wrist sits behind and outside the
+		# shaft so its rear section cannot pass through the forearm.
+		axe.hand.basis = Basis(Vector3.FORWARD, PI / 2) * Basis(Vector3.RIGHT, -PI / 2)
+		# Keep the free arm low in a guard instead of reaching beside the spear.
+		first_left_hand.position = Vector3(-.30,-.43,-.60) + Vector3(0,.01,.01) * sway
+		first_left_hand.rotation = Vector3(-1.05,.10,-.20)
 	# Wrist and shoulder are separate anchors. Rotating the hand around a shaft
 	# must not rotate a long sleeve through the camera or across the aim point.
 	_fit_first_person_sleeve(first_left_hand, Vector3(-.43,-.48,-.025))

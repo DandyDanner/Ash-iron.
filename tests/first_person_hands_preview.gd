@@ -47,6 +47,16 @@ func run() -> void:
 			player.axe.pose_swing(player.axe.CONTACT_TIME)
 			await capture(item + "-contact")
 			player.axe.cancel_swing()
+	player.equip_item("stone_spear")
+	for pitch in [-1.1, 1.1]:
+		player.camera.rotation.x = pitch
+		player.axe.elapsed = player.axe.CONTACT_TIME
+		player.axe.pose_swing(player.axe.CONTACT_TIME)
+		await capture("spear-look-down" if pitch < 0 else "spear-look-up")
+	player.camera.rotation.x = -.13
+	player.axe.cancel_swing()
+	player.equip_item("stone_axe")
+	await capture("axe-after-spear")
 	player.inventory.add("bow",1)
 	player.inventory.add("arrow",4)
 	player.equip_item("bow")

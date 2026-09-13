@@ -46,6 +46,13 @@ func run() -> void:
 				var tool: Node3D = player.axe.get_node("Tool")
 				var edge_lead: Vector3 = player.camera.to_local(tool.to_global(Vector3(.14,.4,0))) - player.camera.to_local(tool.to_global(Vector3(0,.4,0)))
 				check(edge_lead.z < -.08, "Stone axe cutting edge faces back toward the player")
+			if item == "stone_spear":
+				var hand: Node3D = player.axe.hand
+				var index_direction: Vector3 = player.camera.global_basis.inverse() * hand.global_basis.y.normalized()
+				var wrist_offset: Vector3 = player.camera.to_local(hand.arm.global_position) - player.camera.to_local(hand.global_position)
+				check(index_direction.z < -.99, "Spear grip is backwards: index end faces away from the point")
+				check(wrist_offset.z > .06 and wrist_offset.x > .055, "Spear wrist sits ahead of the grip or inside the shaft")
+				check(player.first_left_hand.position.y < -.41 and player.first_left_hand.position.x < -.25, "Free left arm lost its low spear guard")
 			check(player.axe.hand.position.is_zero_approx(), "Tool hand moved away from the shaft grip")
 		player.axe.cancel_swing()
 	player.inventory.add("bow",1)
