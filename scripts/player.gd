@@ -224,7 +224,6 @@ func _physics_process(delta: float) -> void:
 			health = mini(100, health + 1)
 			_progress_changed()
 	bow.advance(delta)
-	update_first_person_hands()
 	grounded_grace = JUMP_GRACE if is_on_floor() else maxf(0.0, grounded_grace - delta)
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -309,6 +308,7 @@ func _physics_process(delta: float) -> void:
 			elif target.is_in_group("furnaces"):
 				open_furnace(target)
 	feedback_time = maxf(0.0, feedback_time - delta)
+	update_first_person_hands()
 	_update_hud()
 
 func _aim_target() -> Dictionary:
@@ -530,6 +530,7 @@ func equip_item(item: String) -> void:
 	bow.visible = item == "bow"
 	axe.cancel_swing()
 	axe.set_item(item)
+	update_first_person_hands()
 	if not item.is_empty() and not item in hotbar:
 		var free := hotbar.find("")
 		if free >= 0:
@@ -950,17 +951,38 @@ func set_third_person(enabled: bool) -> void:
 	_progress_changed()
 
 func update_first_person_hands() -> void:
-	# The off hand counters the swing a little, so the body reads as one piece.
+	# Resting fingers point forward with the backs of the hands visible, rather
+	# than holding both palms upright. Tool pivots remain on their shaft grips.
 	var sway := sin(axe.swing_progress() * PI)
-	first_left_hand.position = Vector3(-0.32,-0.32,-0.65) + Vector3(-0.02, 0.025, 0.02) * sway
+	first_left_hand.position = Vector3(-.31,-.39,-.65) + Vector3(-.015,.015,.015) * sway
+	first_left_hand.rotation = Vector3(-.95,.10,-.12)
 	first_left_hand.set_grip(equipped_item == "bow")
 	axe.hand.set_draw_pose(equipped_item == "bow" and bow.drawing)
 	axe.hand.position = Vector3.ZERO
 	axe.hand.rotation = Vector3.ZERO
-	if equipped_item == "bow":
+	if equipped_item.is_empty():
+		# Ease the wrist upright into the jab and relax it again on recovery.
+		var punch := smoothstep(0,.07,axe.elapsed) * (1.0 - smoothstep(.30,.60,axe.elapsed)) if axe.elapsed >= 0 else 0.0
+		axe.hand.rotation = Vector3(-.95,-.10,.12) * (1.0 - punch)
+	elif equipped_item == "bow":
+		first_left_hand.rotation = Vector3.ZERO
 		first_left_hand.global_position = bow.global_position
 		if bow.drawing:
-			var nock: Vector3 = bow.nocked.position + Vector3(0,0,0.39)
+			var nock: Vector3 = bow.nocked.position + Vector3(0,0,.39)
 			axe.hand.global_position = bow.to_global(nock)
 	elif equipped_item == "stone_spear":
 		axe.hand.rotation.x = PI / 2
+	# Wrist and shoulder are separate anchors. Rotating the hand around a shaft
+	# must not rotate a long sleeve through the camera or across the aim point.
+	_fit_first_person_sleeve(first_left_hand, Vector3(-.43,-.48,-.025))
+	_fit_first_person_sleeve(axe.hand, Vector3(.43,-.48,-.025))
+
+func _fit_first_person_sleeve(hand: Node3D, elbow: Vector3) -> void:
+	var sleeve: Node3D = hand.arm
+	var wrist := sleeve.global_position
+	var direction := camera.to_global(elbow) - wrist
+	if direction.length() < .01: return
+	var z := direction.normalized()
+	var x := camera.global_basis.x.slide(z).normalized()
+	var y := z.cross(x).normalized()
+	sleeve.global_basis = Basis(x, y, z * (direction.length() / .5))

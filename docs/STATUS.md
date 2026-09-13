@@ -4,6 +4,8 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 
 ## Now
 
+- First-person hands: original connected relaxed/grip meshes, forward resting fingers, and independently fitted sleeves attached to wrist and lower camera corners. Tool pivots and bow nock tracking retained. See `docs/art/FIRST_PERSON_HANDS_REVIEW.md`.
+
 - Bellmaw motion: anchored shoulder/elbow/paw solve, planted four-beat gait, slow bounded home patrols and native eyelid blinking. Attack timings, damage, radius, size, saves and world assets retained. See `docs/art/BELLMAW_MOTION_REVIEW.md`.
 
 - Equipment/stations: prepared Rodin stone/copper axes, stone pickaxe/spear, bow and arrows; shared held/carry/drop art and a bending bow with attached moving strings. Native timber bench retains the copper upgrade; cleaned furnace retains state-driven fire. Chest unchanged. Sources, captures and limits: `docs/art/EQUIPMENT_RODIN_REVIEW.md`.
@@ -16,7 +18,7 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 
 - Equipment asset: supplied leather backpack prepared at `assets/equipment/leather_backpack.glb`, approximately 20k triangles, 2K embedded textures and 0.6 m normalized height. Not attached to player yet; fit straps/cape and resolve existing pack/quiver overlap first. See `docs/art/LEATHER_BACKPACK_REVIEW.md`.
 
-- Build: Godot 4.7.2 on Apple Silicon, Forward+ renderer (compatibility on mobile). Thirty-six headless suites pass. Native Godot review covers the latest first-person hand/weapon poses, furnace UI, player, boar and Bellmaw; see `docs/art/SURVIVAL_REFINEMENT_REVIEW.md`. Rendering pass and face maps: `docs/art/FACE_AND_RENDERING_PASS.md`.
+- Build: Godot 4.7.2 on Apple Silicon, Forward+ renderer (compatibility on mobile). Thirty-seven headless suites pass. Native Godot review covers the latest first-person hand/weapon poses, furnace UI, player, boar and Bellmaw; see `docs/art/SURVIVAL_REFINEMENT_REVIEW.md`. Rendering pass and face maps: `docs/art/FACE_AND_RENDERING_PASS.md`.
 - Approved crafting direction: **Stone → Copper → Bronze → Iron → Steel**; recorded in `docs/CRAFTSMAN_PROGRESSION.md`. Stone/copper is now playable: stone tools by hand, earned bench/furnace unlocks, copper fittings, a permanent Copperworking kit and copper axe. Next: playtest this sequence before tin/bronze. Old iron processing remains compatible.
 - Playable loop: create a traveler, gather sticks/stones, hand-craft stone tools, unlock/place a bench and furnace, smelt copper and improve the bench, chop pines, mine boulders/iron veins, smelt ingots, store and craft through linked chests, fight Bristleback and explore Echo Hollow to defeat Bellmaw for an Explorer Pack. Eight starting slots, twelve after the pack upgrade, ten saved hotbar shortcuts. Continue / Start over and Save & Quit preserve progress. Empty hands can punch for 3; a pine takes ten stone-axe hits or five copper swings.
 - Bellmaw art: native Rodin PBR replacement, 60,000 triangles, original 2K albedo/normal/metallic-roughness maps and 16 combat-driven bones. Raw height 1.34 m and runtime scale 4 retain its giant size. Actual motion and limits: `docs/art/CREATURE_RODIN_REVIEW.md`. Prior sculpt/source remain archived.
@@ -35,6 +37,13 @@ Newest first. Every session adds an entry at the top and refreshes **Now**. Keep
 - Player vitals: upper-left red health and green stamina bars with values, low-health cue (≤25) and exhaustion cue. Sprinting spends 16/s from 100; walking/rest recovers 22/s after 0.9 s. Exhaustion clears at 20; idle Shift costs nothing. Menus/focus pause, defeat resets, and both views share the HUD.
 - Saves: format 12 migrates prior Bellmaw health caps (80/160) to 300 at the same percentage, preserves death/countdowns and does not scale again on reload. Format 11 adds permanent crafting milestones and furnace metal selection; versions 1–10 keep previous recipe access and old furnaces retain Iron/contents/progress. Copper outcrop depletion saves through the existing vein data. Format 10 adds saved stamina/recovery/exhaustion; format 9 includes enemy respawn timers and furnace auto-feed. Formats 1–9 migrate without clearing progress; old Bellmaw health scales to 300 at the same percentage, old defeated enemies get a fresh respawn delay. No real player save/profile was read or edited during tests.
 - Later: iron equipment, armor with optional ore/metal/mineral decorative trim and inlays (see `docs/CRAFTSMAN_PROGRESSION.md`), combat/jump stamina costs, resource regrowth, day/night pressure and the Wayfarer's Lantern; preserve discovery/villager direction and Threadwing concept in `docs/CREATURE_DIRECTION.md`. Furniture placement ghost/manual rotation, foot IK, cloth simulation and further deformation polish remain gaps.
+
+## 2026-09-12 — Codex: first-person hand and sleeve refinement
+
+- Replaced separate tube fingers/oval palms with original connected hand meshes in relaxed and shaft-grip poses, preserving traveler skin/clothing tints and mirrored handedness.
+- Relaxed empty-hand framing; independently aimed closed sleeves from wrist to camera-side shoulder anchors for tools and bow draw. Pose updates now run after the current swing step and immediately on equip.
+- Added native first-person pose captures and regressions for tool/bow anchors, camera pitch and sleeve orientation. Source `.blend` and reproducible generator are retained outside automatic Godot import.
+- Verification: all 37 headless suites pass with unexpected engine errors rejected. Reviewed 18 actual Godot first-person poses, including raised axe, spear contact and full bow draw. Fixed folded palm triangles before the final native capture; evidence and rebuild limits are in `docs/art/FIRST_PERSON_HANDS_REVIEW.md`.
 
 ## 2026-09-12 — Codex: Bellmaw paw, walking and blinking
 
