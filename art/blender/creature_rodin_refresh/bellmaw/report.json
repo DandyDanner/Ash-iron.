@@ -1,0 +1,146 @@
+{
+  "source_sha256": "d58d4785ae9558609a58cb965af38e8c2dc26db3116bddefec2042fd4af95b8d",
+  "generation_id": "2d8dcd9c-7db7-44a1-9aa5-14fd5802c9d1",
+  "height_m": 1.34,
+  "runtime_scale": 4,
+  "source_center": [
+    0.0024823546409606934,
+    0.0009915828704833984,
+    -0.5647897124290466
+  ],
+  "uniform_scale": 1.1839770264485707,
+  "triangles": 60000,
+  "bones": [
+    "Root",
+    "Spine",
+    "Head",
+    "Throat",
+    "FrontLUpper",
+    "FrontLLower",
+    "FrontLFoot",
+    "RearLUpper",
+    "RearLLower",
+    "RearLFoot",
+    "FrontRUpper",
+    "FrontRLower",
+    "FrontRFoot",
+    "RearRUpper",
+    "RearRLower",
+    "RearRFoot"
+  ],
+  "pivots_blender": {
+    "Root": [
+      0,
+      0,
+      0
+    ],
+    "Spine": [
+      0,
+      0.05,
+      0.83
+    ],
+    "Head": [
+      0,
+      -0.73,
+      1.04
+    ],
+    "Throat": [
+      0,
+      -0.98,
+      0.6
+    ],
+    "FrontLUpper": [
+      -0.64,
+      -0.68,
+      0.83
+    ],
+    "FrontLLower": [
+      -0.84,
+      -0.7100000000000001,
+      0.37
+    ],
+    "FrontLFoot": [
+      -0.84,
+      -0.81,
+      0.085
+    ],
+    "RearLUpper": [
+      -0.64,
+      0.87,
+      0.83
+    ],
+    "RearLLower": [
+      -0.84,
+      0.84,
+      0.37
+    ],
+    "RearLFoot": [
+      -0.84,
+      0.74,
+      0.085
+    ],
+    "FrontRUpper": [
+      0.64,
+      -0.68,
+      0.83
+    ],
+    "FrontRLower": [
+      0.84,
+      -0.7100000000000001,
+      0.37
+    ],
+    "FrontRFoot": [
+      0.84,
+      -0.81,
+      0.085
+    ],
+    "RearRUpper": [
+      0.64,
+      0.87,
+      0.83
+    ],
+    "RearRLower": [
+      0.84,
+      0.84,
+      0.37
+    ],
+    "RearRFoot": [
+      0.84,
+      0.74,
+      0.085
+    ]
+  },
+  "welded_seam_vertices": 45198,
+  "material": "Bellmaw Native PBR",
+  "textures": {
+    "albedo": {
+      "name": "bellmaw_native_albedo",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "metallic_roughness": {
+      "name": "bellmaw_native_metallic_roughness",
+      "size": [
+        2048,
+        2048
+      ]
+    },
+    "normal": {
+      "name": "bellmaw_native_normal",
+      "size": [
+        2048,
+        2048
+      ]
+    }
+  },
+  "max_weights": 4,
+  "shape_changes": "Uniform normalization and coincident seam welding only; no remesh, decimation or repaint.",
+  "limitations": [
+    "Procedural combat-driven poses, no baked animation clips",
+    "No terrain foot IK or independent toes",
+    "Generated topology and broad shoulder weights need further polish"
+  ],
+  "bytes": 14446936
+}

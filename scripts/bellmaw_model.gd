@@ -1,9 +1,9 @@
 extends Node3D
-## Largest creature from the new Bellmaw sculpt, colored and weighted in Blender. Gameplay owns timing and collision.
+## Native-textured Rodin Bellmaw, weighted in Blender. Gameplay owns timing and collision.
 const Attacks = preload("res://scripts/bellmaw_attacks.gd")
 const M = preload("res://scripts/traveler_model.gd")
 const SCENE = preload("res://assets/creatures/bellmaw.glb")
-var boom_radius := 6.0
+var boom_radius := Attacks.SLAM_RADIUS
 var body: Node3D
 var spine: Node3D
 var head: Node3D
@@ -48,16 +48,16 @@ func _ready() -> void:
 			named[key + "Foot"] = foot
 	var imported: Node3D = SCENE.instantiate()
 	body.add_child(imported)
-	# The sculpt uses portable vertex colors; Godot's glTF import leaves this flag off.
+	# Preserve the new native PBR maps. Legacy sculpt colors remain supported for offline comparisons.
 	for mesh in imported.find_children("*", "MeshInstance3D", true, false):
 		for surface in range(mesh.mesh.get_surface_count()):
 			var source = mesh.get_active_material(surface)
-			if source is StandardMaterial3D:
+			if source is StandardMaterial3D and source.resource_name != "Bellmaw Native PBR":
 				var material: StandardMaterial3D = source.duplicate()
 				material.vertex_color_use_as_albedo = true
 				material.vertex_color_is_srgb = false
 				mesh.set_surface_override_material(surface, material)
-	# The source contains editable clips; runtime drives the same rig from combat state.
+	# Combat state drives the rig; stop optional source clips to avoid competing poses.
 	for animation in imported.find_children("*", "AnimationPlayer", true, false):
 		animation.stop()
 		animation.active = false
@@ -118,52 +118,77 @@ func pose(delta: float, speed: float, state: String, state_time: float, hit_flas
 		pulse.scale = Vector3(boom_radius, 1, boom_radius)
 		pulse.material_override.albedo_color.a = (.25 + inflation * .4) if state == "warn" else (1 - state_time / .45) * .65
 
-func _plant_limb(index: int) -> void:
-	# Counter the torso tilt at the shoulder/hip so supporting paws stay in place.
+func _plant_limb(index: int, knee_bend: float = 0.0) -> void:
+	# Counter torso motion at the shoulder/hip so weight-bearing paws stay in place.
 	var side := -1.0 if index < 2 else 1.0
 	var z := .68 if index in [0, 2] else -.87
+	var foot_z := .81 if index in [0, 2] else -.74
+	var anchor := body.to_global(Vector3(side * .84, .085, foot_z))
 	limbs[index].position = spine.transform.affine_inverse() * Vector3(side * .64, .83, z)
 	limbs[index].quaternion = spine.quaternion.inverse()
 	knees[index].rotation = Vector3.ZERO
 	feet[index].rotation = Vector3.ZERO
+	if knee_bend > 0:
+		knees[index].rotation.x = knee_bend
+		feet[index].rotation.x = -knee_bend * .45
+	limbs[index].global_position += anchor - feet[index].global_position
 
 func _pose_attack(state: String, time: float) -> void:
 	if state == "warn":
 		var lift := Attacks.slam_lift(time)
-		spine.rotation.x = -.28 * lift
+		var brace := Attacks.slam_brace(time)
+		spine.rotation.x = -.31 * lift + .045 * brace
 		var pivot := Vector3(0, .75, -.9)
 		spine.position = pivot + Basis(Vector3.RIGHT, spine.rotation.x) * (Vector3(0, .83, -.05) - pivot)
-		head.rotation.x -= .10 * lift
-		for i in [1, 3]: _plant_limb(i)
+		spine.position.y -= .055 * brace
+		spine.position.z -= .075 * brace
+		head.rotation.x += .075 * brace - .13 * lift
+		for i in [1, 3]: _plant_limb(i, .13 * brace + .035 * lift)
 		for i in [0, 2]:
-			limbs[i].rotation.x = -.55 * lift
-			knees[i].rotation.x = .60 * lift
-			feet[i].rotation.x = -.05 * lift
+			_plant_limb(i, .08 * brace)
+			var release := smoothstep(.18, .38, time)
+			var lifted_rotation := Quaternion.from_euler(Vector3(-.62 * lift, 0, (-.045 if i == 0 else .045) * lift))
+			limbs[i].position = limbs[i].position.lerp(limb_rest[i], release)
+			limbs[i].quaternion = limbs[i].quaternion.slerp(lifted_rotation, release)
+			knees[i].rotation.x = lerpf(knees[i].rotation.x, .68 * lift, release)
+			feet[i].rotation.x = lerpf(feet[i].rotation.x, -.11 * lift, release)
 	elif state == "recover":
+		var impact := 1.0 - smoothstep(0, .18, time)
 		var dip := sin(clampf(time / 1.25, 0, 1) * PI)
-		spine.position.y = .83 - .07 * dip
-		spine.rotation.x = .055 * dip
-		head.rotation.x += .12 * dip
-		for i in range(4): _plant_limb(i)
+		spine.position.y = .83 - .095 * impact - .06 * dip
+		spine.position.z = -.05 + .035 * impact
+		spine.rotation.x = .095 * impact + .06 * dip
+		head.rotation.x += .16 * impact + .13 * dip
+		for i in range(4):
+			var bend := (.16 if i in [0, 2] else .08) * impact + .04 * dip
+			_plant_limb(i, bend)
 		# Visible exhausted breaths while the throat is vulnerable.
 		var breath := sin(time * 13.0) * .025 * dip
 		throat.scale += Vector3.ONE * breath
 	elif state in ["swipe_warn", "swipe", "swipe_recover"]:
 		var active := 0 if swipe_side < 0 else 2
-		var windup := smoothstep(0, .65, time) if state == "swipe_warn" else 1.0
-		var sweep := smoothstep(0, Attacks.SWIPE_SWING, time) if state == "swipe" else 0.0
-		var release := 1.0 - smoothstep(0, Attacks.SWIPE_RECOVERY, time) if state == "swipe_recover" else 1.0
+		var windup := smoothstep(0, .68, time) if state == "swipe_warn" else 1.0
+		var sweep := Attacks.swipe_sweep(time) if state == "swipe" else 0.0
+		var release := 1.0 - smoothstep(.10, .92, time) if state == "swipe_recover" else 1.0
 		if state == "swipe_recover": sweep = 1.0
-		spine.rotation.z = -swipe_side * .055 * windup * release
-		head.rotation.y = swipe_side * lerpf(-.10, .14, sweep) * windup * release
+		var weight := windup * release
+		spine.position.x = -swipe_side * .075 * weight
+		spine.position.y -= .03 * weight
+		spine.rotation.z = swipe_side * .075 * weight
+		spine.rotation.y = swipe_side * lerpf(-.07, .11, sweep) * weight
+		head.rotation.y = swipe_side * lerpf(-.14, .19, sweep) * weight
+		head.rotation.z = -swipe_side * .035 * weight
 		for i in range(4):
-			if i != active: _plant_limb(i)
-		limbs[active].rotation.x = lerpf(-.85, -.25, sweep) * windup * release
-		limbs[active].rotation.z = swipe_side * lerpf(.55, -.65, sweep) * windup * release
-		limbs[active].position.y += .16 * windup * (1.0 - sweep) * release
-		limbs[active].position.z += .20 * sin(sweep * PI) * release
-		knees[active].rotation.x = lerpf(.65, .20, sweep) * windup * release
-		feet[active].rotation.x = .10 * windup * release
+			if i != active:
+				var support_bend := .11 if i == (3 if active == 0 else 1) else .055
+				_plant_limb(i, support_bend * weight)
+		limbs[active].rotation.x = lerpf(-.92, -.20, sweep) * weight
+		limbs[active].rotation.z = swipe_side * lerpf(.60, -.72, sweep) * weight
+		limbs[active].position.x += swipe_side * (.045 + .10 * sin(sweep * PI)) * weight
+		limbs[active].position.y += lerpf(.19, .035, sweep) * weight
+		limbs[active].position.z += lerpf(-.08, .16, sweep) * weight
+		knees[active].rotation.x = lerpf(.72, .16, sweep) * weight
+		feet[active].rotation.x = lerpf(.14, -.06, sweep) * weight
 
 func _make_attack_effects() -> void:
 	swipe_marker = MeshInstance3D.new()
@@ -218,8 +243,9 @@ func _pose_effects(state: String, time: float) -> void:
 	dust_material.albedo_color.a = .42 * (1.0 - progress)
 	for i in range(dust_puffs.size()):
 		var angle := TAU * float(i % 8) / 8
-		var side := -1.0 if i < 8 else 1.0
-		var origin := Vector3(side * .84, .025, .81) * body.scale.x
+		var foot_index := 0 if i < 8 else 2
+		var origin := dust.to_local(feet[foot_index].global_position)
+		origin.y = .025
 		dust_puffs[i].position = origin + Vector3(cos(angle), 0, sin(angle)) * (.12 + progress * .75)
 		dust_puffs[i].position.y += .04 + sin(progress * PI) * .14
 		var size := .16 + progress * .38

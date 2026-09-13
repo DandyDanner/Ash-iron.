@@ -17,18 +17,24 @@ func run() -> void:
 	check(meshes.size() == 1, "Extra concept-sheet figures leaked into Bellmaw")
 	var mesh: MeshInstance3D = meshes[0]
 	check(mesh.skin != null, "Bellmaw mesh has no skin")
-	check(mesh.get_active_material(0).vertex_color_use_as_albedo, "Sculpt lost its vertex-color material in Godot")
+	var native: StandardMaterial3D = mesh.get_active_material(0)
+	check(native.resource_name == "Bellmaw Native PBR" and not native.vertex_color_use_as_albedo, "Bellmaw lost its native PBR material")
+	check(native == mesh.mesh.surface_get_material(0), "Bellmaw material was replaced at runtime")
+	check(native.albedo_texture != null and native.albedo_texture.get_width() == 2048, "Native albedo missing")
+	check(native.normal_enabled and native.normal_texture != null and native.normal_texture.get_width() == 2048, "Native normal missing")
+	check(native.roughness_texture != null and native.metallic_texture != null, "Native packed metallic/roughness missing")
 	var a := mesh.mesh.surface_get_arrays(0)
-	check(a[Mesh.ARRAY_COLOR].size() == a[Mesh.ARRAY_VERTEX].size(), "Sculpt is missing portable hide colors")
 	var weights: PackedFloat32Array = a[Mesh.ARRAY_WEIGHTS]
 	var bones: PackedInt32Array = a[Mesh.ARRAY_BONES]
 	var vertices: PackedVector3Array = a[Mesh.ARRAY_VERTEX]
-	check(a[Mesh.ARRAY_INDEX].size() < 180000, "Gameplay mesh exceeds 60,000 triangles")
+	check(a[Mesh.ARRAY_INDEX].size() <= 180000, "Gameplay mesh exceeds 60,000 triangles")
 	check(weights.size() == vertices.size() * 4, "Missing vertex weights")
 	var throat_bind := -1
 	for i in range(mesh.skin.get_bind_count()):
 		if str(mesh.skin.get_bind_name(i)) == "Throat": throat_bind = i
 	var throat_vertices := 0
+	var seam_weights := {}
+	var seam_count := 0
 	for i in range(vertices.size()):
 		var total := 0.0
 		for j in range(4):
@@ -36,6 +42,19 @@ func run() -> void:
 			total += w
 			if bones[i * 4 + j] == throat_bind and w > .5: throat_vertices += 1
 		check(absf(total - 1) < .001, "Unnormalized skin weights")
+		var by_bone := {}
+		for j in range(4):
+			if weights[i * 4 + j] > .00001:
+				by_bone[bones[i * 4 + j]] = weights[i * 4 + j]
+		var p := vertices[i]
+		var key := Vector3i(roundi(p.x * 100000), roundi(p.y * 100000), roundi(p.z * 100000))
+		if seam_weights.has(key):
+			seam_count += 1
+			for bone in by_bone:
+				check(absf(float(seam_weights[key].get(bone, 0)) - float(by_bone[bone])) < .005, "Bellmaw UV seam would separate during an attack")
+		else:
+			seam_weights[key] = by_bone
+	check(seam_count > 1000, "Bellmaw seam check did not exercise imported split vertices")
 	check(throat_vertices > 100, "Warning throat is not bound to visible geometry")
 	var throat := sk.find_bone("Throat")
 	var leg := sk.find_bone("FrontLUpper")
@@ -52,13 +71,13 @@ func run() -> void:
 	sk.force_update_all_bone_transforms()
 	check(sk.get_bone_global_pose(throat).basis.determinant() > neutral.basis.determinant() * 1.4, "Warning did not inflate the skinned throat")
 	check(art.limbs[0].rotation.is_zero_approx(), "Warning did not plant the feet")
-	check(art.pulse.visible and art.pulse.scale.x == 6, "Six-meter warning ring changed")
+	check(art.pulse.visible and art.pulse.scale.x == 7, "Seven-meter warning ring changed")
 	art.pose(0, 0, "idle", 0, 0)
 	sk.force_update_all_bone_transforms()
 	check(sk.get_bone_global_pose(throat).basis.is_equal_approx(neutral.basis), "Idle retained warning deformation")
 	art.body.scale = Vector3.ONE * 2
 	art.pose(0, 0, "warn", 1.2, 0)
-	check(art.pulse.global_basis.get_scale().x == 6, "Body scale incorrectly doubled the blast ring")
+	check(art.pulse.global_basis.get_scale().x == 7, "Body scale incorrectly changed the blast ring")
 	art.queue_free()
 	await process_frame
 	if not failed: print("PASS: Bellmaw skin, weighted throat, gait, recovery and independent warning ring")

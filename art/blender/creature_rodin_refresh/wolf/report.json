@@ -1,0 +1,325 @@
+{
+  "source": "art/blender/creature_rodin_refresh/wolf/source.glb",
+  "source_sha256": "a46e3fa291e34c4ad1effb7b8b09a385ba6bddcece8d51caedd6104106e6d10d",
+  "source_bounds": {
+    "min": [
+      -0.24598835408687592,
+      -0.9494408965110779,
+      -0.6556406617164612
+    ],
+    "max": [
+      0.24587275087833405,
+      0.9488828778266907,
+      0.6586949229240417
+    ],
+    "dimensions": [
+      0.49186110496520996,
+      1.8983237743377686,
+      1.314335584640503
+    ]
+  },
+  "normalization_scale": 0.951050877571106,
+  "height_m": 1.25,
+  "triangles": 60000,
+  "vertices_before_weld": 53163,
+  "vertices_after_weld": 30000,
+  "welded_seam_vertices": 23163,
+  "textures": {
+    "albedo": {
+      "file": "assets/creatures/hollow_wolf_hollow_wolf_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "2c7cad0113383c0eec6325d95c71aa1bc7a0d3ce2b657ca057911218ea1a0964"
+    },
+    "metallic_roughness": {
+      "file": "assets/creatures/hollow_wolf_hollow_wolf_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "8555c170d750c75c6e92fd6bdabf59405c237f0e5c925da53e1bb8d937015857"
+    },
+    "normal": {
+      "file": "assets/creatures/hollow_wolf_hollow_wolf_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "ee5d4618f3cf6cd271bf5bd126d267ec47a07ff92076e1a8ced3509d3689c073"
+    }
+  },
+  "material": "Hollow Wolf Native PBR",
+  "species": "wolf",
+  "display_name": "Hollow Wolf",
+  "generation_id": "bcc4f6f7-72e0-44b7-8b83-068d93083464",
+  "asset": "assets/creatures/hollow_wolf.glb",
+  "editable_blend": "art/blender/creature_rodin_refresh/wolf/hollow_wolf.blend",
+  "asset_bytes": 13043500,
+  "bones": [
+    "Root",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontLUpper",
+    "FrontLLower",
+    "FrontLPaw",
+    "HindLUpper",
+    "HindLLower",
+    "HindLPaw",
+    "FrontRUpper",
+    "FrontRLower",
+    "FrontRPaw",
+    "HindRUpper",
+    "HindRLower",
+    "HindRPaw"
+  ],
+  "pivots_blender_z_up_front_minus_y": {
+    "Root": [
+      [
+        0.0,
+        0.24,
+        0.73
+      ],
+      [
+        0.0,
+        0.02,
+        0.79
+      ]
+    ],
+    "Spine": [
+      [
+        0.0,
+        0.02,
+        0.79
+      ],
+      [
+        0.0,
+        -0.28,
+        0.84
+      ]
+    ],
+    "Chest": [
+      [
+        0.0,
+        -0.28,
+        0.84
+      ],
+      [
+        0.0,
+        -0.49,
+        0.9
+      ]
+    ],
+    "Neck": [
+      [
+        0.0,
+        -0.49,
+        0.9
+      ],
+      [
+        0.0,
+        -0.68,
+        0.88
+      ]
+    ],
+    "Head": [
+      [
+        0.0,
+        -0.68,
+        0.88
+      ],
+      [
+        0.0,
+        -0.92,
+        0.73
+      ]
+    ],
+    "TailBase": [
+      [
+        0.0,
+        0.58,
+        0.72
+      ],
+      [
+        0.0,
+        0.91,
+        0.36
+      ]
+    ],
+    "TailTip": [
+      [
+        0.0,
+        0.91,
+        0.36
+      ],
+      [
+        0.0,
+        0.99,
+        0.32
+      ]
+    ],
+    "FrontLUpper": [
+      [
+        -0.16,
+        -0.35,
+        0.8
+      ],
+      [
+        -0.16,
+        -0.38,
+        0.45
+      ]
+    ],
+    "FrontLLower": [
+      [
+        -0.16,
+        -0.38,
+        0.45
+      ],
+      [
+        -0.16,
+        -0.39,
+        0.12
+      ]
+    ],
+    "FrontLPaw": [
+      [
+        -0.16,
+        -0.39,
+        0.12
+      ],
+      [
+        -0.16,
+        -0.5,
+        0.035
+      ]
+    ],
+    "HindLUpper": [
+      [
+        -0.16,
+        0.35,
+        0.73
+      ],
+      [
+        -0.17,
+        0.26,
+        0.43
+      ]
+    ],
+    "HindLLower": [
+      [
+        -0.17,
+        0.26,
+        0.43
+      ],
+      [
+        -0.17,
+        0.42,
+        0.15
+      ]
+    ],
+    "HindLPaw": [
+      [
+        -0.17,
+        0.42,
+        0.15
+      ],
+      [
+        -0.17,
+        0.34,
+        0.035
+      ]
+    ],
+    "FrontRUpper": [
+      [
+        0.16,
+        -0.35,
+        0.8
+      ],
+      [
+        0.16,
+        -0.38,
+        0.45
+      ]
+    ],
+    "FrontRLower": [
+      [
+        0.16,
+        -0.38,
+        0.45
+      ],
+      [
+        0.16,
+        -0.39,
+        0.12
+      ]
+    ],
+    "FrontRPaw": [
+      [
+        0.16,
+        -0.39,
+        0.12
+      ],
+      [
+        0.16,
+        -0.5,
+        0.035
+      ]
+    ],
+    "HindRUpper": [
+      [
+        0.16,
+        0.35,
+        0.73
+      ],
+      [
+        0.17,
+        0.26,
+        0.43
+      ]
+    ],
+    "HindRLower": [
+      [
+        0.17,
+        0.26,
+        0.43
+      ],
+      [
+        0.17,
+        0.42,
+        0.15
+      ]
+    ],
+    "HindRPaw": [
+      [
+        0.17,
+        0.42,
+        0.15
+      ],
+      [
+        0.17,
+        0.34,
+        0.035
+      ]
+    ]
+  },
+  "godot_orientation": "+Y up, +Z forward",
+  "states": [
+    "idle",
+    "walk",
+    "trot",
+    "alert",
+    "flee"
+  ],
+  "shape_changes": "Uniform scale, X/Y recentering, ground offset, and coincident-position seam weld at 1e-6 m. No repaint, sculpting, remesh, or decimation; source triangles and loop UVs are preserved.",
+  "prototype_limits": [
+    "No foot IK or terrain adaptation",
+    "Procedural runtime poses rather than authored animation clips",
+    "Automatic regional weights favor stable seams and silhouettes over production muscle deformation"
+  ]
+}

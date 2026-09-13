@@ -5,8 +5,9 @@ const Save = preload("res://scripts/game_save.gd")
 const A = preload("res://scripts/bellmaw_attacks.gd")
 var failures := 0
 func _initialize() -> void:
-	Profile.storage_path = Paths.path("bellmaw_attacks_profile.json")
-	Save.storage_path = Paths.path("bellmaw_attacks_save.json")
+	var run_id := Time.get_ticks_usec()
+	Profile.storage_path = Paths.path("bellmaw_attacks_profile_%d.json" % run_id)
+	Save.storage_path = Paths.path("bellmaw_attacks_save_%d.json" % run_id)
 	Save.clear()
 	call_deferred("run")
 func check(ok: bool, message: String) -> void:
@@ -39,6 +40,14 @@ func run() -> void:
 	bell.art.pose(0, 0, "warn", 0, 0)
 	var rear: Vector3 = bell.art.feet[1].global_position
 	var front: Vector3 = bell.art.feet[0].global_position
+	var neutral_spine: Vector3 = bell.art.spine.position
+	bell.art.pose(0, 0, "warn", .12, 0)
+	check(bell.art.feet[0].global_position.distance_to(front) < .001 and bell.art.feet[1].global_position.distance_to(rear) < .001, "Slam anticipation slid planted paws")
+	check(bell.art.spine.position.z < neutral_spine.z - .02, "Slam has no rearward weight shift before lifting")
+	bell.art.pose(0, 0, "warn", .17, 0)
+	var before_lift: Vector3 = bell.art.feet[0].global_position
+	bell.art.pose(0, 0, "warn", .19, 0)
+	check(bell.art.feet[0].global_position.distance_to(before_lift) < .03, "Front paw jumped when the planted brace became a lift")
 	bell.art.pose(0, 0, "warn", .9, 0)
 	check(bell.art.feet[0].global_position.y > front.y + .65 and bell.art.feet[2].global_position.y > front.y + .65, "Slam did not visibly raise both front paws")
 	check(bell.art.feet[1].global_position.distance_to(rear) < .001, "Rear supporting paw slipped during slam windup")
@@ -46,7 +55,7 @@ func run() -> void:
 	bell.art.pose(0, 0, "warn", 1.2, 0)
 	check(bell.art.feet[0].global_position.distance_to(front) < .001, "Paws did not meet the ground at boom contact")
 	bell.art.pose(0, 0, "recover", .05, 0)
-	check(bell.art.dust.visible, "Slam impact has no dust burst")
+	check(bell.art.dust.visible and bell.art.spine.position.y < .77, "Slam impact lacks dust or body compression")
 	bell.art.pose(0, 0, "recover", .7, 0)
 	check(not bell.art.dust.visible and bell.art.head.rotation.x > .1, "Recovery lacks a sag or retained dust too long")
 	# The actual slam is the sole unlock for the side attack; cooldown prevents repetition.
@@ -64,6 +73,14 @@ func run() -> void:
 	bell._physics_process(.60)
 	check(player.health == 100 and bell.rotation.y == facing and bell.art.swipe_marker.visible, "Swipe windup hit early or tracked the player")
 	check(bell.art.feet[2].global_position.y > bell.art.feet[0].global_position.y + .2, "Swipe did not lift its chosen paw")
+	var supporting_paw: Vector3 = bell.art.feet[0].global_position
+	bell.art.pose(0, 0, "swipe_warn", 0, 0)
+	var supporting_neutral: Vector3 = bell.art.feet[0].global_position
+	bell.art.pose(0, 0, "swipe_warn", .60, 0)
+	var support_drift: float = bell.art.feet[0].global_position.distance_to(supporting_neutral)
+	check(support_drift < .001, "Swipe weight shift slid the opposite front paw (%f m)" % support_drift)
+	check(supporting_paw.distance_to(bell.art.feet[0].global_position) < .001, "Repeated swipe pose changed the support contact")
+	check(is_equal_approx(A.swipe_sweep(A.SWIPE_CONTACT), .5), "Swipe pose contact no longer matches damage contact")
 	# Pause does not advance the windup, cooldown or visual pose.
 	player._capture_controls(false)
 	var before: float = bell.state_time

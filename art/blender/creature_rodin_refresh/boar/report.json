@@ -1,0 +1,326 @@
+{
+  "source": "art/blender/creature_rodin_refresh/boar/source.glb",
+  "source_sha256": "936a5b6b04c556b6eea71b9ecb101fa176c63cf6a18ff0d069540ff6e1830ece",
+  "source_bounds": {
+    "min": [
+      -0.28533515334129333,
+      -0.9514182209968567,
+      -0.5946778059005737
+    ],
+    "max": [
+      0.2831551134586334,
+      0.9527720808982849,
+      0.5934916734695435
+    ],
+    "dimensions": [
+      0.5684902667999268,
+      1.9041903018951416,
+      1.1881694793701172
+    ]
+  },
+  "normalization_scale": 1.009956955909729,
+  "height_m": 1.2,
+  "triangles": 60000,
+  "vertices_before_weld": 82774,
+  "vertices_after_weld": 29982,
+  "welded_seam_vertices": 52792,
+  "textures": {
+    "albedo": {
+      "file": "assets/creatures/bristleback_bristleback_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "4d8186094e64c36701922e9e63ada37706b802983b95478137d5a7d862b9a6d2"
+    },
+    "metallic_roughness": {
+      "file": "assets/creatures/bristleback_bristleback_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "a9378284d35db3e9b7ca325f89dbc6a2bcf4c64f47e414a3785b1cafe6171cb9"
+    },
+    "normal": {
+      "file": "assets/creatures/bristleback_bristleback_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "f206864416317b7d7dd74f834b94beb2b71b93e6fce29144536662bdb5bb727a"
+    }
+  },
+  "material": "Bristleback Native PBR",
+  "species": "boar",
+  "display_name": "Bristleback",
+  "generation_id": "5c880441-57cf-4799-b35a-284988f81d01",
+  "asset": "assets/creatures/bristleback.glb",
+  "editable_blend": "art/blender/creature_rodin_refresh/boar/bristleback.blend",
+  "asset_bytes": 14181072,
+  "bones": [
+    "Root",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontLUpper",
+    "FrontLLower",
+    "FrontLPaw",
+    "HindLUpper",
+    "HindLLower",
+    "HindLPaw",
+    "FrontRUpper",
+    "FrontRLower",
+    "FrontRPaw",
+    "HindRUpper",
+    "HindRLower",
+    "HindRPaw"
+  ],
+  "pivots_blender_z_up_front_minus_y": {
+    "Root": [
+      [
+        0.0,
+        0.28,
+        0.74
+      ],
+      [
+        0.0,
+        0.02,
+        0.8
+      ]
+    ],
+    "Spine": [
+      [
+        0.0,
+        0.02,
+        0.8
+      ],
+      [
+        0.0,
+        -0.28,
+        0.82
+      ]
+    ],
+    "Chest": [
+      [
+        0.0,
+        -0.28,
+        0.82
+      ],
+      [
+        0.0,
+        -0.47,
+        0.77
+      ]
+    ],
+    "Neck": [
+      [
+        0.0,
+        -0.47,
+        0.77
+      ],
+      [
+        0.0,
+        -0.64,
+        0.69
+      ]
+    ],
+    "Head": [
+      [
+        0.0,
+        -0.64,
+        0.69
+      ],
+      [
+        0.0,
+        -0.91,
+        0.57
+      ]
+    ],
+    "TailBase": [
+      [
+        0.0,
+        0.67,
+        0.75
+      ],
+      [
+        0.0,
+        0.91,
+        0.7
+      ]
+    ],
+    "TailTip": [
+      [
+        0.0,
+        0.91,
+        0.7
+      ],
+      [
+        0.0,
+        0.99,
+        0.6599999999999999
+      ]
+    ],
+    "FrontLUpper": [
+      [
+        -0.22,
+        -0.34,
+        0.75
+      ],
+      [
+        -0.22,
+        -0.36,
+        0.4
+      ]
+    ],
+    "FrontLLower": [
+      [
+        -0.22,
+        -0.36,
+        0.4
+      ],
+      [
+        -0.22,
+        -0.37,
+        0.1
+      ]
+    ],
+    "FrontLPaw": [
+      [
+        -0.22,
+        -0.37,
+        0.1
+      ],
+      [
+        -0.22,
+        -0.46,
+        0.035
+      ]
+    ],
+    "HindLUpper": [
+      [
+        -0.22,
+        0.39,
+        0.72
+      ],
+      [
+        -0.23,
+        0.42,
+        0.4
+      ]
+    ],
+    "HindLLower": [
+      [
+        -0.23,
+        0.42,
+        0.4
+      ],
+      [
+        -0.23,
+        0.43,
+        0.11
+      ]
+    ],
+    "HindLPaw": [
+      [
+        -0.23,
+        0.43,
+        0.11
+      ],
+      [
+        -0.23,
+        0.34,
+        0.035
+      ]
+    ],
+    "FrontRUpper": [
+      [
+        0.22,
+        -0.34,
+        0.75
+      ],
+      [
+        0.22,
+        -0.36,
+        0.4
+      ]
+    ],
+    "FrontRLower": [
+      [
+        0.22,
+        -0.36,
+        0.4
+      ],
+      [
+        0.22,
+        -0.37,
+        0.1
+      ]
+    ],
+    "FrontRPaw": [
+      [
+        0.22,
+        -0.37,
+        0.1
+      ],
+      [
+        0.22,
+        -0.46,
+        0.035
+      ]
+    ],
+    "HindRUpper": [
+      [
+        0.22,
+        0.39,
+        0.72
+      ],
+      [
+        0.23,
+        0.42,
+        0.4
+      ]
+    ],
+    "HindRLower": [
+      [
+        0.23,
+        0.42,
+        0.4
+      ],
+      [
+        0.23,
+        0.43,
+        0.11
+      ]
+    ],
+    "HindRPaw": [
+      [
+        0.23,
+        0.43,
+        0.11
+      ],
+      [
+        0.23,
+        0.34,
+        0.035
+      ]
+    ]
+  },
+  "godot_orientation": "+Y up, +Z forward",
+  "states": [
+    "idle",
+    "approach",
+    "return",
+    "warn",
+    "charge",
+    "recover"
+  ],
+  "shape_changes": "Uniform scale, X/Y recentering, ground offset, and coincident-position seam weld at 1e-6 m. No repaint, sculpting, remesh, or decimation; source triangles and loop UVs are preserved.",
+  "prototype_limits": [
+    "No foot IK or terrain adaptation",
+    "Procedural runtime poses rather than authored animation clips",
+    "Automatic regional weights favor stable seams and silhouettes over production muscle deformation"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "date": "2026-09-12",
+  "source": "Hyper3D Rodin Gen-2.5",
+  "settings": {
+    "geometry_file_format": "glb",
+    "mesh_mode": "Raw",
+    "quality_override": 60000,
+    "tier": "Gen-2.5-Medium"
+  },
+  "jobs": {
+    "bellmaw": {
+      "generation_id": "2d8dcd9c-7db7-44a1-9aa5-14fd5802c9d1",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/2d8dcd9c-7db7-44a1-9aa5-14fd5802c9d1",
+      "prompt": "Exactly one Bellmaw creature matching the reference: squat powerful quadruped amphibian, broad knobbly olive charcoal back, small dark eyes, wide closed toad mouth and distinctive amber resonating throat sac. Preserve natural textured hide, believable shoulders and elbows, four separate sturdy limbs and four broad clawed paws. Clean detailed PBR stylized realism, subtle moss mottling, leathery olive skin and warm amber throat. Neutral symmetric standing rigging pose with feet flat, limbs slightly apart, head forward and throat mildly inflated. Preserve proportions and identity, all four legs distinct. No base, ground, extra figures, backpack, props, environment or text."
+    },
+    "boar": {
+      "generation_id": "5c880441-57cf-4799-b35a-284988f81d01",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/5c880441-57cf-4799-b35a-284988f81d01",
+      "prompt": "One adult Bristleback wild boar for Ash and Iron. Believable stocky quadruped: muscular high shoulders, compact hindquarters, long wedge head, leathery oval snout and nostrils, small dark eyes, pointed ears, two short curved ivory tusks, exactly four sturdy separate legs with cloven black hooves, short curled tail. Warm russet coarse fur, darker swept bristle mane and natural color variation. Clean detailed PBR fur, horn and leathery snout. Premium stylized realism with readable anatomy matching a hand-painted fantasy adventurer, no cartoon oval features. Neutral standing bind pose, feet flat and slightly apart, all four limbs clear of torso, mouth closed. Symmetrical anatomy ready for rigging. One animal only. No ground, base, grass, props, harness, rider or armor."
+    },
+    "deer": {
+      "generation_id": "aa3267a3-7ad5-4fc1-8ce6-29247cff3a50",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/aa3267a3-7ad5-4fc1-8ce6-29247cff3a50",
+      "prompt": "One adult Meadow Buck deer for Ash and Iron. Graceful believable woodland stag: lean tawny brown torso, cream throat and belly, dark moist nose, large gentle dark eyes, long leaf-shaped ears, modest symmetrical branched antlers with three tines per side, four long slender separate legs, black cloven hooves, short tail with pale underside. Anatomically correct deer hocks and knees, clean muzzle, natural coat texture, detailed PBR hide and horn. Premium stylized realism matching a hand-painted fantasy adventurer, readable forms and convincing joints, not clay or toy. Neutral standing quadruped bind pose, head level looking ahead, feet flat and slightly apart with every leg clear of body, mouth closed. One entire animal ready for rigging. No base, ground, foliage, equipment, harness, rider or other animals."
+    },
+    "wolf": {
+      "generation_id": "bcc4f6f7-72e0-44b7-8b83-068d93083464",
+      "status": "completed",
+      "display_url": "https://hyper3d.ai/workspace/rodin/bcc4f6f7-72e0-44b7-8b83-068d93083464",
+      "prompt": "One Hollow Wolf for Ash and Iron, an eerie wilderness predator with believable grey wolf anatomy. Lean athletic quadruped, deep narrow chest, long muzzle, pointed ears, four separate digitigrade legs and detailed paws, long bushy tail. Dense charcoal and smoke-gray layered fur, pale ash-colored cheek mask, subdued amber eyes, a few darker ragged mane tufts suggest something changed by the woods. Threatening through anatomy and watchful expression, no exposed organs, no skull face, no glow effects, no floating smoke, no humanoid limbs, no cloak. Premium textured stylized realism matching a hand-painted fantasy adventurer, realistic fur normals and natural anatomy. Neutral symmetrical standing bind pose, head forward, mouth closed, paws flat slightly apart, each limb clear of body, tail held relaxed. One complete animal only. No ground, base, environment, props or additional figures."
+    }
+  },
+  "bellmaw_reference": {
+    "mode": "built-in image_gen, reference-based edit",
+    "input": "docs/art/bellmaw-concept-v1.png",
+    "output": "docs/art/creature-rodin-refresh/bellmaw-reference.png",
+    "brief": "One clean isolated 3D reference preserving Bellmaw identity: broad olive quadruped, amber resonating throat, four readable clawed paws, neutral standing rigging pose, realistic PBR hide, no concept-sheet miniatures, backpack, labels or scenery.",
+    "upload_approved_by_user": true
+  }
+}

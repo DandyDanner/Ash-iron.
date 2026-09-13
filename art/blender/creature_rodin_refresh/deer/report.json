@@ -1,0 +1,325 @@
+{
+  "source": "art/blender/creature_rodin_refresh/deer/source.glb",
+  "source_sha256": "592290da6325dcd43d32390e86f71943ad8f7c1c15781bea6c51521208190cc1",
+  "source_bounds": {
+    "min": [
+      -0.5136116147041321,
+      -0.5170915126800537,
+      -0.9494248628616333
+    ],
+    "max": [
+      0.5160698294639587,
+      0.5132777690887451,
+      0.9484397172927856
+    ],
+    "dimensions": [
+      1.0296814441680908,
+      1.0303692817687988,
+      1.897864580154419
+    ]
+  },
+  "normalization_scale": 1.0538159608840942,
+  "height_m": 2.0,
+  "triangles": 60000,
+  "vertices_before_weld": 41493,
+  "vertices_after_weld": 30000,
+  "welded_seam_vertices": 11493,
+  "textures": {
+    "albedo": {
+      "file": "assets/creatures/meadow_buck_meadow_buck_albedo.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "48ce5784fd257cc939aae74533500f23a5a63a0e1c78809db81bb4f08cc81070"
+    },
+    "metallic_roughness": {
+      "file": "assets/creatures/meadow_buck_meadow_buck_metallic_roughness.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "00126be227cdc7e27159b5afe8afdd482f179a7acc6c370bfafa9d2e175973b8"
+    },
+    "normal": {
+      "file": "assets/creatures/meadow_buck_meadow_buck_normal.png",
+      "size": [
+        2048,
+        2048
+      ],
+      "sha256": "c64ac50854a18a493afd1483975280117ea6f625de43291caa2338353fedb62d"
+    }
+  },
+  "material": "Meadow Buck Native PBR",
+  "species": "deer",
+  "display_name": "Meadow Buck",
+  "generation_id": "aa3267a3-7ad5-4fc1-8ce6-29247cff3a50",
+  "asset": "assets/creatures/meadow_buck.glb",
+  "editable_blend": "art/blender/creature_rodin_refresh/deer/meadow_buck.blend",
+  "asset_bytes": 12338756,
+  "bones": [
+    "Root",
+    "Spine",
+    "Chest",
+    "Neck",
+    "Head",
+    "TailBase",
+    "TailTip",
+    "FrontLUpper",
+    "FrontLLower",
+    "FrontLPaw",
+    "HindLUpper",
+    "HindLLower",
+    "HindLPaw",
+    "FrontRUpper",
+    "FrontRLower",
+    "FrontRPaw",
+    "HindRUpper",
+    "HindRLower",
+    "HindRPaw"
+  ],
+  "pivots_blender_z_up_front_minus_y": {
+    "Root": [
+      [
+        0.0,
+        0.18,
+        1.15
+      ],
+      [
+        0.0,
+        0.04,
+        1.21
+      ]
+    ],
+    "Spine": [
+      [
+        0.0,
+        0.04,
+        1.21
+      ],
+      [
+        0.0,
+        -0.17,
+        1.27
+      ]
+    ],
+    "Chest": [
+      [
+        0.0,
+        -0.17,
+        1.27
+      ],
+      [
+        0.0,
+        -0.3,
+        1.42
+      ]
+    ],
+    "Neck": [
+      [
+        0.0,
+        -0.3,
+        1.42
+      ],
+      [
+        0.0,
+        -0.39,
+        1.61
+      ]
+    ],
+    "Head": [
+      [
+        0.0,
+        -0.39,
+        1.61
+      ],
+      [
+        0.0,
+        -0.51,
+        1.47
+      ]
+    ],
+    "TailBase": [
+      [
+        0.0,
+        0.39,
+        1.21
+      ],
+      [
+        0.0,
+        0.51,
+        1.08
+      ]
+    ],
+    "TailTip": [
+      [
+        0.0,
+        0.51,
+        1.08
+      ],
+      [
+        0.0,
+        0.59,
+        1.04
+      ]
+    ],
+    "FrontLUpper": [
+      [
+        -0.31,
+        -0.22,
+        1.26
+      ],
+      [
+        -0.31,
+        -0.23,
+        0.71
+      ]
+    ],
+    "FrontLLower": [
+      [
+        -0.31,
+        -0.23,
+        0.71
+      ],
+      [
+        -0.31,
+        -0.23,
+        0.17
+      ]
+    ],
+    "FrontLPaw": [
+      [
+        -0.31,
+        -0.23,
+        0.17
+      ],
+      [
+        -0.31,
+        -0.29,
+        0.035
+      ]
+    ],
+    "HindLUpper": [
+      [
+        -0.31,
+        0.25,
+        1.18
+      ],
+      [
+        -0.31,
+        0.16,
+        0.7
+      ]
+    ],
+    "HindLLower": [
+      [
+        -0.31,
+        0.16,
+        0.7
+      ],
+      [
+        -0.31,
+        0.27,
+        0.29
+      ]
+    ],
+    "HindLPaw": [
+      [
+        -0.31,
+        0.27,
+        0.29
+      ],
+      [
+        -0.31,
+        0.2,
+        0.035
+      ]
+    ],
+    "FrontRUpper": [
+      [
+        0.31,
+        -0.22,
+        1.26
+      ],
+      [
+        0.31,
+        -0.23,
+        0.71
+      ]
+    ],
+    "FrontRLower": [
+      [
+        0.31,
+        -0.23,
+        0.71
+      ],
+      [
+        0.31,
+        -0.23,
+        0.17
+      ]
+    ],
+    "FrontRPaw": [
+      [
+        0.31,
+        -0.23,
+        0.17
+      ],
+      [
+        0.31,
+        -0.29,
+        0.035
+      ]
+    ],
+    "HindRUpper": [
+      [
+        0.31,
+        0.25,
+        1.18
+      ],
+      [
+        0.31,
+        0.16,
+        0.7
+      ]
+    ],
+    "HindRLower": [
+      [
+        0.31,
+        0.16,
+        0.7
+      ],
+      [
+        0.31,
+        0.27,
+        0.29
+      ]
+    ],
+    "HindRPaw": [
+      [
+        0.31,
+        0.27,
+        0.29
+      ],
+      [
+        0.31,
+        0.2,
+        0.035
+      ]
+    ]
+  },
+  "godot_orientation": "+Y up, +Z forward",
+  "states": [
+    "idle",
+    "walk",
+    "trot",
+    "alert",
+    "flee"
+  ],
+  "shape_changes": "Uniform scale, X/Y recentering, ground offset, and coincident-position seam weld at 1e-6 m. No repaint, sculpting, remesh, or decimation; source triangles and loop UVs are preserved.",
+  "prototype_limits": [
+    "No foot IK or terrain adaptation",
+    "Procedural runtime poses rather than authored animation clips",
+    "Automatic regional weights favor stable seams and silhouettes over production muscle deformation"
+  ]
+}

@@ -34,6 +34,7 @@ Goal: make simply moving through the prototype world feel competent.
 - [x] Focused procedural scout/boar refinement: smooth forms, swept hair, face details, patterned cape/hood, tusks, and layered fur
 - [x] Blender modeling studio, packed references, and verified GLB round trip to Godot
 - [x] Twenty-six Blender modeling/render/review cycles: reconstructed traveler faces/ears/hair/garments and wildlife anatomy, fitted eyes, coats and hooves (offline art only)
+- [x] Native Rodin Bellmaw and Bristleback replacements; animated Hollow Wolf and Meadow Buck preview assets, with editable rigs and original PBR maps
 - [x] Approved native-textured Willow replacement, 14-bone skin, original PBR maps and Willow-specific weapon fit; preserved traveler selection and earned archery gear
 - [x] Four supplied Rodin travelers with painted 2K textures, surface-based skins, separate open fingers and preserved selection/saves
 - [x] Willow’s visible archery gear follows inventory; removed sculpted bow/arrow tips and fitted earned carry props clear of her bag
@@ -108,8 +109,8 @@ Current order: spear and Bristleback Boar → ore/furnace → one strange creatu
 - [x] First animal/enemy: territorial Bristleback Boar, warning, straight charge, recovery, and one hide reward
 - [x] Player/enemy health, safe camp recovery, and defeat returning the player with inventory intact
 - [x] Bellmaw: warned radial boom, distance/cover counterplay, recovery, one saved hide reward per defeat
-- [x] Double Bellmaw body dimensions, matching collision/obstacle clearance and raised cues; warning ring now expanded to the actual 6 m blast radius
-- [x] Expand Bellmaw boom from 4.5 to 6 m, with matched warning ring and approach trigger
+- [x] Double Bellmaw body dimensions, matching collision/obstacle clearance and raised cues; warning ring now expanded to the actual blast radius
+- [x] Expand Bellmaw boom to 7 m, matching warning ring and approach trigger; planted anticipation, impact compression and weighted paw swipe
 - [x] More dangerous Bellmaw: 300 health, guarded hide, 34-damage boom, faster pursuit and shorter recovery
 - [x] New supplied Bellmaw sculpt: isolated largest creature, optimized/colorized/rigged, twice the previous runtime size with matching collision and paw reach; old save health percentages preserved
 - [x] Both enemies respawn after 120 active seconds, away from the player and only into clear space; timer persists
